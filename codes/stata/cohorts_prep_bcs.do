@@ -12,7 +12,6 @@ tempfile bcsdem1
 save `bcsdem1'
 
 use "$bcsraw/1970_birth/bcs1derived.dta", clear
-
 rename BCSID bcsid
 rename BD1CNTRY bcs_country 
 lab var bcs_country 		"Country of Interview"
@@ -54,7 +53,6 @@ save `bcsdem3'
 
 * 5 Year Survey - Rutter (parental module)
 use "$bcsraw/1975/f699a.dta", clear
-
 keep bcsid d025-d043 d006-d009
 tempfile bcsrutter5y
 save `bcsrutter5y'
@@ -74,25 +72,29 @@ keep bcsid agetest5 *_z
 tempfile bcscog5y
 save `bcscog5y'
 
+*INCOME	 ******************************************************************
+use "$data/SEPdata/create37_BCS1980.dta", clear // income
+rename q_bu_net_total_p incq
+gen faminc 			= bu_net_total_p
+replace faminc 		= faminc/adjBCS/1000
+tempfile bcsinc10y
+save `bcsinc10y'
+
+
+
+********************************************************************************
+// 5 YEARS FILE
+********************************************************************************
+
+/* MERGE to get 5Y file */ 
 * merge all
 use `bcsdem1', clear
 merge 1:1 bcsid using `bcsdem2', nogen
 merge 1:1 bcsid using `bcsdem3', gen(bcs_merge_ethn)
-merge 1:1 bcsid using `bcsrutter5y', gen(bcs_merge_rut)
-merge 1:1 bcsid using `bcscog5y', gen(bcs_merge_cog)
-
-
-*INCOME	 ******************************************************************
-merge 1:1 bcsid using "$data/SEPdata/create37_BCS1980.dta" // income
-rename q_bu_net_total_p incq
-gen faminc 			= bu_net_total_p
-replace faminc 		= faminc/adjBCS/1000
-
+merge 1:1 bcsid using `bcsrutter5y', gen(bcs_merge_rut5y)
+merge 1:1 bcsid using `bcscog5y', gen(bcs_merge_cog5y)
+merge 1:1 bcsid using `bcsinc10y', gen(bcs_merge_inc10y)
 drop if sex<1		/* missing observations */
-
-
-********************************************************************************
-********************************************************************************
 
 
 * RUTTER RECODING

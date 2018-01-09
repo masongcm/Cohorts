@@ -1,0 +1,694 @@
+\documentclass[pdftex,10pt,twoside,a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amstext}% for resizing the symbol in math
+\usepackage{amsthm}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[babel]{csquotes}
+\usepackage{booktabs}
+\usepackage{tocloft}
+\usepackage{dsfont}
+\usepackage{bbm}
+\usepackage{xcolor}
+\usepackage{accents}
+\usepackage{setspace} % for spacing
+\onehalfspacing
+\usepackage{rotating}
+\usepackage{fullpage}
+\usepackage{pdflscape}  % for landscape page
+\usepackage{lmodern}  %font
+\usepackage{natbib}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{bm}
+\usepackage{tabularx}
+\usepackage{marvosym}
+\usepackage{calc}
+\usepackage{array}
+\usepackage{verbatim}
+\usepackage{multirow}
+\usepackage[multiple]{footmisc}   % for multiple footnotes
+\usepackage{textgreek}            % for greek letters in text
+
+\setlength{\jot}{11pt} % increase vertical spacing in equations
+\usepackage{txfonts}
+\usepackage[T1]{fontenc}
+
+% define new columns
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\renewcommand{\arraystretch}{1.2}%
+
+% appendices and numeration
+\usepackage[nottoc,numbib]{tocbibind} 		% bibliography in TOC
+\usepackage[toc,page]{appendix} %appendix
+\newcommand{\tocless}[2]{\bgroup\let\addcontentsline=\nocontentsline#1{#2}\egroup} % for empty section
+\numberwithin{equation}{section} %for section eq numeration
+
+\usepackage{hyperref}                            % references
+\AtBeginDocument{%
+\renewcommand\sectionautorefname{Section}        % custom autoref names
+\renewcommand\subsectionautorefname{Section}
+}
+\newcommand{\aref}[1]{\hyperref[#1]{Appendix~\ref{#1}}} % for appendix sections
+\usepackage{cleveref}
+
+%tikz
+\usepackage{tikz}
+\usetikzlibrary{shapes,intersections}
+\usetikzlibrary{positioning,arrows, arrows.meta}
+
+%lists
+\usepackage[inline]{enumitem}
+\setlist{noitemsep}
+\setlist[enumerate]{labelsep=*, leftmargin=*}
+\setlist[itemize]{labelsep=*, leftmargin=*}
+\usepackage[textfont={small},labelfont={bf,small},justification=centering]{caption}     % to allow multiple lines in captions, and customize the look
+
+% page setup (from Racine)
+\setlength{\topmargin}{0cm}
+\setlength{\textheight}{24cm}
+\setlength{\oddsidemargin}{.0cm}
+\setlength{\evensidemargin}{.0cm}
+\setlength{\textwidth}{16.5cm}
+\setlength{\footskip}{1.5cm}
+\setlength{\footnotesep}{0.4cm}
+\linespread{1.3}
+
+% additional symbols
+\newcommand{\me}{\mathrm{e}}
+\newcommand{\veps}{\varepsilon}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\1}{\mathds{1}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Corr}{\mathrm{Corr}}
+\newcommand{\vect}{\mathrm{vec}}
+\newcommand{\vecht}{\mathrm{vech}}
+\newcommand{\ubar}[1]{\underaccent{\bar}{#1}}
+\def\chk{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;}
+
+% additional commands
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\bnm}{\begin{enumerate}}
+\newcommand{\enm}{\end{enumerate}}
+
+
+\title{IFA Comparison of Noncognitive Skills \\ BCS and MCS}
+\author{Giacomo Mason \\ University College London}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+
+<<MAIN,cache=FALSE,echo=FALSE,results='hide',message=FALSE,warning=FALSE>>=
+rm(list=ls())         # Clear all objects from memory 
+  opts_chunk$set(concordance=FALSE,
+                 echo=FALSE,
+                 tidy=FALSE,
+                 autodep=TRUE,
+                 cache=T, # REPLACE LATER
+                 message=FALSE, 
+                 warning=FALSE,
+                 size='scriptsize',
+                 results='hide',
+                 comment=NA, 
+                 fig.width=4,
+                 fig.height=4, 
+                 out.width='.5\\textwidth',
+                 fig.show='hold',
+                 tikzDefaultEngine='pdftex',
+                 tikzDocumentDeclaration = "\\documentclass[10pt]{article}",
+                 tikzMetricPackages = c("\\usepackage[utf8]{inputenc}","\\usepackage[T1]{fontenc}", "\\usetikzlibrary{calc}", "\\usepackage{amssymb}")
+                 )
+
+
+@
+
+
+<<READ, cache=FALSE >>=
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/1_load.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/2_efa.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/3_mifa_invariance.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/3_mifa_final.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/3_mifa_cog.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/4_graphs.R")
+
+@
+
+<<PREAMBLE, cache=F>>=
+@
+
+<<LOAD_DATA>>=
+@
+
+\section{MCS 5y vs BCS 5y Noncognitive Ability Items}
+
+Maternal reports on child behaviours were surveyed with two different instruments in the two cohorts. For BCS, the Rutter A Scale was used \citep{Rutter1970}. The mother is presented with a list of behaviours that a child might exhibit, and is asked for each whether it 'Does not apply', it 'Somewhat applies', or it 'Certainly applies' to her child. In the MCS cohort, mothers were administered the Strengths and Difficulties Questionnaire (SDQ, \citealp{Goodman1994,Goodman1997}). The SDQ was created as an updated version of the Rutter scales, expanding it to more recent advances in child psychopathology \cite{Stone2010}. Similarly to the Rutter scale, it asks the parent to rate the child on different behaviours, with the options of 'Not true', 'Somewhat true', 'Certainly true'. Summary scores obtained from the SDQ has been shown to correlate highly with the ones from Rutter scales, but the invariance properties of the scales are sensitive to the wording of the questions \citep{Goodman2007}.
+
+\subsection{BCS: Rutter scale}
+
+For BCS, I augment the 20-item Rutter Scale with 4 other parent-reported questions from the parental questionnaire. 
+\begin{enumerate}
+\item Very restless. Often running about or jumping up and down. Hardly ever still.
+\item Is squirmy or fidgety.
+\item Often destroys own or others’ belongings.
+\item Frequently fights other children.
+\item Not much liked by other children.
+\item Often worried, worries about many things
+\item Tends to do things on his/her own – rather solitary.
+\item Irritable. Is quick to fly off the handle.
+\item Often appears miserable, unhappy, tearful or distressed.
+\item Sometimes takes things belonging to others.
+\item Has twitches, mannerisms or tics of the face or body.
+\item Frequently sucks thumb or finger.
+\item Frequently bites nails or fingers.
+\item Is often disobedient.
+\item Cannot settle to anything for more than a few moments.
+\item Tends to be fearful or afraid of new things or new situations.
+\item Is over fussy or over particular.
+\item Often tells lies.
+\item Bullies other children.
+\item[A] Complains of headaches.
+\item[B] Complains of stomach-ache or has vomited.
+\item[C] Complais of biliousness.
+\item[D] Has temper tantrums (that is, complete loss of temper with shouting, angry movements, etc.).
+\end{enumerate}
+The Rutter items are rated on three levels: Does not apply, Somewhat applies, Certainly applies. Since they are all indicators of low skills, I encode all of them in reverse, i.e. ``Certainly applies" = 0, ``Somewhat applies" = 1, ``Does not apply" = 2. The last 4 items are rated on 4 levels: Never in the last 12 months, less than once a month, at least once a month, at least once a week. I recode these into binary indicators, with \emph{Never} and \emph{Less than once a month}=1 and zero otherwise. 
+
+To increase comparability between the two cohorts, I merge together two pairs of items: 4 and 19 (to mirror the SDQ question ``Often fights with other children or bullies them"), and also A and B (to mirror the SDQ question ``Often complains of head-aches, stomach-ache or sickness"). I assign the lowest category among the two original items to the newly obtained item. I also recode items 5 and 14 to binary instead of three categories. These items are recorded with a positive phrasing in MCS, so a 3-category form would be harder to compare.
+
+
+\subsection{MCS: Strengths and Difficulties Questionnare}
+
+In MCS, I consider the 25-item strengths and difficulties questionnaire \citep{Goodman1997}.
+
+\textbf{Hyperactivity Scale}
+\begin{itemize}
+\item Restless, overactive, cannot stay still for long	2
+\item Constantly fidgeting or squirming	10
+\item Easily distracted, concentration wanders	15
+\item (+) Thinks things out before acting	21
+\item (+) Sees tasks through to the end, good attention span	25
+\end{itemize}
+\textbf{Emotional Symptoms Scale}
+\begin{itemize}
+\item Often complains of head- aches, stomach-ache or sickness	3
+\item Many worries, often seems worried	8
+\item Often unhappy, down-hearted or tearful	13
+\item Nervous or clingy in new situations, easily loses confidence	16
+\item Many fears, easily scared	24
+\end{itemize}
+\textbf{Conduct Problems Scale}	
+\begin{itemize}
+\item Often has temper tantrums or hot tempers	5
+\item (+) Generally obedient, usually does what adults request	7
+\item Often fights with other children or bullies them	12
+\item Often argumentative with adults		18
+\item Can be spiteful to others		22
+\end{itemize}
+\textbf{Peer Problems Scale}
+\begin{itemize}
+\item Rather solitary, tends to play alone	6
+\item (+) Has at least one good friend	11
+\item (+) Generally liked by other children	14
+\item Picked on or bullied by other children	19
+\item Gets on better with adults than with other children	23
+\end{itemize}
+\textbf{Prosocial Scale}
+\begin{itemize}
+\item (+) Considerate of other people's feelings	1
+\item (+) Shares readily with other children (treats, toys, pencils, etc.)	4
+\item (+) Helpful if someone is hurt, upset or feeling ill	9
+\item (+) Kind to younger children	17
+\item (+) Often volunteers to help others (parents, teachers, other children)	20
+\end{itemize}
+
+All items are recorded on a 4-point scale: Not true, Somewhat true, Certainly true, Can't say. I set the latter to missing and recode the rest in ascending order of skill as for the BCS items, i.e. ``Certainly true" = 0, ``Somewhat true" = 1, ``Not true" = 2. For comparability with BCS, I retain items 3, 5, 7, and 14 in a binary format.
+
+
+\subsection{Exploratory Analysis}
+
+Our aim is to assess whether the two scales can be used to derive measures of noncognitive ability that are invariant, and can therefore be compared across cohorts. In the first step of our analysis, we consider a subset of each scale's items, selecting only those that present very similar wording across scales. The selection process results in a new 11-item scale, reported in \autoref{tab:comm} with the original wording and the prevalence of each option. As highlighted above, some of the items are coded differently in the two original scales and we thus turn them into binary dummies to ensure comparability.
+
+The second step to our invariance analysis seeks to justify a common latent factor structure across the two cohorts. The Rutter scale is constructed to measure two latent constructs: anti-social (externalising problems), and neurotic (internalising problems) behaviours. To validate these constructs in our new scale, we carry out exploratory factor analysis based on the matrix of pairwise tetrachoric correlations between the item responses. Various methods to assess the optimal number of factors underlying these items give inconsistent results, ranging from 1 (Velicer MAP) to 7 or even 8 (BIC). I choose to conduct analyses with two factors as suggested by the theory and by the Very Simple Structure method.
+
+For ease of interpretation, I choose to rescale the factor loadings using \emph{oblimin} rotation: this method allows the underlying factors to be correlated to each other. From the results of the exploratory FA and IRT analysis with 2 factors, the pattern that seems to emerge is consistent with the theoretical constructs of externalising (EXT) and internalising (INT) behaviour problems.
+
+<<BCSEFA>>=
+@
+
+<<BCSEFARES, dependson='BCSEFA', echo=T, results='markup'>>=
+@
+
+
+
+The five-factor structure at the basis of the full SDQ has been validated in many contexts \citep{Stone2010}; however, lower-dimensional structures have been also suggested \citep{Dickey2004}, and recent research has shown that there are some benefits to using broader subscales that correspond to the externalising and internalising factors in Rutter \citep{Goodman2010}. To assess whether the two-factor conceptualisation suggested by the theory is valid in our ``reduced" 12-item scale, we conduct exploratory factor analysis (EFA) on the new 11-item scale separately for each cohort sample. Different methodologies for quantifying the optimal number of factors produce inconclusive results, but both Velicer MAP and very simple structure (VSS) seem to indicate that a two-factor structure is suitable. An EFA model with two factors, employing the usual cutoff of .3 for the loadings, delivers a neat and sensible separation between items, as shown in the second column of \autoref{tab:comm}. Thus, our two-factor structure seems justifiable on both theoretical and empirical grounds.
+
+
+
+<<MCSEFA>>=
+@
+
+<<MCSEFARES, dependson='BCSEFA', echo=T, results='markup'>>=
+@
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+
+
+
+<<MEANTABLE>>=
+# make table with means
+@
+
+\clearpage
+\begin{landscape}
+\begin{table}[ht]
+\centering
+\footnotesize
+\caption{Item Commonalities}\label{tab:comm}
+<<MEANTABLE_RES, dependson="LOAD_DATA", results='asis'>>=
+require(xtable)
+
+table <- meantab
+
+print(xtable(table,
+                                  # item num        Factor          Num cats        BCS text        BCS num           BCS Certain     BCS Somewhat    BCS Applies             MCS text          MCS num         
+                    align="L{0cm}C{.04\\textwidth}C{.05\\textwidth}C{.05\\textwidth}L{.3\\textwidth}C{.03\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}L{.3\\textwidth}C{.03\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
+                    digits = 1
+                    ), 
+             size="\\small",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0)),
+                              command = c(
+                              # header
+                                    paste(" & & &
+                                              \\multicolumn{5}{c}{\\textbf{BCS}} &
+                                              \\multicolumn{5}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){4-8}  \\cmidrule(lr){9-13} 
+                                            Item & Factor & N. categ &
+                                              Text & & Cert. Applies & Somet. Applies & Applies &
+                                              Text & & Cert. True & Somet. True & True \\\\ \\midrule
+                                          "
+                                            , sep="")
+                                    )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = ".8\\textwidth",
+             floating = FALSE
+)
+
+@
+\end{table}
+\end{landscape}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Measurement Invariance}
+
+\subsubsection{Model notation}
+Before any meaningful comparison across cohorts can be made, measurement invariance (MI) needs to be established. Examination of the invariance properties of a measurement system is aimed at assessing whether the latent constructs in each group are measured in a comparable way, both in terms of scale and location. In the case of continuous measures, MI analysis proceeds in a relatively straightforward way \citep{Vanderberg2000a}; MI properties in systems of categorical outcomes are instead more problematic, due to the more complex nature of identification \citep{Millsap2004, Wu2016}.
+
+I set up a (confirmatory) item factor analysis (IFA) model for the full list of 11 common items. Given the results of the exploratory analysis -- where each measure separates neatly on one of the two factors -- I assume a \emph{dedicated} factor structure \citep{Carneiro2003}, where each measure is restricted to load on one of the two factors only.\footnote{This structure is commonly assumed in economic research to enable a more straightforward interpretation of the latent constructs in question \citep{ACFMR,Heckman2012a}. It can also be denominated \emph{congeneric} factor stucture \citep{Millsap2004}.}
+
+To account for the ordered nature of the measures, I specify a threshold model \citep{Muthen1984}. Individual $j=1\dots N_c$ in group $c=\{A,B\}$ is assumed to have a latent continuous propensity $X^*_{ijc}$ for each item $i=1,\dots,I$. In our application, $j$ indexes the child, the group $c$ corresponds to the cohort, and $i$ indexes each behaviour in the 11-item scale summarised in \autoref{tab:comm}. Thus, $X^*_{ijc}$ is the child's propensity to exhibit each of the Rutter/SDQ behaviours.
+This propensity is modelled as a function of item-specific intercepts $\nu$ and loadings $\lambda$, and the individual's level on a latent construct vector $\bm{\theta}$, plus an independent error component $u_{cij}$. In our application, the latent factor is bidimensional, and corresponds to the internalising ($\theta^{I}$) and externalising ($\theta^{E}$) traits. The dedicated factors structure implies that each item is assumed to only depend on a single latent dimensions, as delineated in the exploratory factor analysis in \autoref{tab:comm}. 
+
+The propensity for each item can be written as follows:
+
+\begin{align}\label{eq:propens}
+\begin{split}
+X^*_{ijc} &=\nu_{ci} + \lambda_{ci}\theta^{EXT}_{cj} + u_{cji} \qquad \text{for} \; i=1,\dots, 6 \\
+X^*_{ijc} &=\nu_{ci} + \lambda_{ci}\theta^{INT}_{cj} + u_{cji} \qquad \text{for} \; i=7,\dots, 11
+\end{split}
+\end{align}
+
+or more compactly
+$$X^*_{jc} =\bm{\nu}_c + \bm{\Lambda}_{c}\bm{\theta}_{jc} + \bm{u}_{jc}$$
+
+with the additional assumptions
+$$\bm{\Theta}_{jc} \sim N(\bm{\kappa}_c, \bm{\Phi}_c) \qquad \text{and} \qquad \bm{u}_{jc} \sim N(\bm{0}, \bm{\Psi}_c)$$
+
+The model implies the following expression for the mean and covariance structure of the latent propensities:
+$$\bm{\mu}_c=\bm{\nu}_c + \bm{\Lambda}_c\bm{\kappa}_c \qquad \text{and} \qquad \Sigma_c = \bm{\Lambda}_c \bm{\Phi}_c \bm{\Lambda}_c^\prime + \bm{\Psi}_c.$$
+
+For each item $i$, we observe either a binary or ordinal (3-categories) manifestation $X_{cji}$. Given \eqref{eq:propens}, the observed outcome as a function of the propensities $X^*$ can be defined as a function of additional threshold parameters $\tau$, as follows:
+$$X_{cji} = s \qquad \text{if} \; \tau_{s,ci} \leq X^*_{cji} < \tau_{s+1,ci} \qquad \text{for} \; s=0,1,2$$
+with $\tau_{0,ci}=-\infty$ and $\tau_{3,ci}=+\infty$.
+The probability of observing each category for a binary item takes values:
+\begin{equation}
+X_{cji}=
+\begin{cases}
+\qquad 0 \qquad \text{if} \; X^*_{cji}<\tau_{1,ci} \\
+\qquad 1 \qquad \text{if} \; X^*_{cji}\geq\tau_{1,ci}
+\end{cases}
+\end{equation}
+
+An ordinal item takes values:\footnote{As a consequence of the normality assumption on the error terms $\veps$, the probability that individual $j$ in group $c$ exhibits item $i$ with ``intensity" $s$ is:
+\begin{align*}
+\Pr(X_{cji}=0) &= 1- \Phi(-\tau_{1,ci} + \nu_{ci} + \lambda_{ci}\theta^{EXT}_{j}) \\
+\Pr(X_{cji}=1) &= \Phi(-\tau_{1,ci} + \nu_{ci} + \lambda_{ci}\theta^{EXT}_{j})
+\end{align*}
+for binary items and
+\begin{align*}
+\Pr(X_{cji}=0) &= 1- \Phi(-\tau_{1,ci} + \nu_{ci} + \lambda_{ci}\theta^{EXT}_{j}) \\
+\Pr(X_{cji}=1) &= \Phi(-\tau_{1,ci} + \nu_{ci} + \lambda_{ci}\theta^{EXT}_{j}) - \Phi(-\tau_{2,ci} + \nu_{ci} + \lambda_{ci}\theta^{EXT}_{j})\\
+\Pr(X_{cji}=2) &= \Phi(-\tau_{2,ci} +  \nu_{ci} + \lambda_{ci}\theta^{EXT}_{j})
+\end{align*}
+for ordinal items. This IFA model can also be written as a 2-parameter Logit IRT model with item difficulty $b$ and item discrimination $a$. In the simplest case for a binary item $1$:
+$$\text{Probit}(X_{cj1}=1) = a_{c1}(\theta^{EXT}_j - b_{c1})$$
+such that $\tau_{c1}=a_{c1}b_{c1}$ and $a_{c1}=\lambda_{c1}$.}
+
+\begin{equation}
+X_{cji}=
+\begin{cases}
+\qquad 0 \qquad \text{if} \; X^*_{cji}<\tau_{1,ci} \\
+\qquad 1 \qquad \text{if} \; \tau_{1,ci} \leq X^*_{cji}<\tau_{2,ci} \\
+\qquad 2 \qquad \text{if} \; X^*_{cji}\geq\tau_{2,ci}
+\end{cases}
+\end{equation}
+
+
+
+\subsubsection{Invariance analysis}
+There are infinite ways in which the above system can be parameterised and a scale obtained -- the well-known issue of factor indeterminacy. A configural model is defined as a minimal set of parameter restrictions that ensure identification of the system across groups, without restricting the model further. Widely used parameterisations for the configural model are:
+\bnm[label=\Alph*:]
+\item Delta parameterisation {[WE{\textDelta}]} \citep{Wu2016}
+
+For all groups: $$\text{diag}(\bm{\Phi}) = \bm{I}, \quad \bm{\kappa}=\bm{0}, \quad \bm{\nu}=\bm{0}, \quad \text{and} \; \text{diag}(\bm{\Sigma})=\bm{I}.$$
+
+\item Theta parameterisation {[WE{\textTheta}]} \citep{Wu2016}
+
+For all groups: $$\text{diag}(\bm{\Phi}) = \bm{I}, \quad \bm{\kappa}=\bm{0}, \quad \bm{\nu}=\bm{0}, \quad \text{and} \; \text{diag}\bm{\Psi}=\bm{I}.$$
+
+\item Anchored parameterisation {[MT]} \citep{Millsap2004}
+  \bi
+  \item For all groups, normalise a reference loading to 1 for each factor
+  \item Set invariant across groups one threshold per item (e.g. $\tau_{0,Ai} = \tau_{0,Bi}$), and an additional threshold in the reference items above
+  \item In the first group: $\bm{\kappa_A}=\bm{0}$, $\text{diag}(\bm{\Sigma}_A)=\bm{I}$
+  \item Set all intercepts $\bm{\nu}$ to zero
+  \ei
+\enm
+The first two parameterisations (WE{\textDelta} and WE{\textTheta}) work by normalising the mean and variance of factors to the same constants in both groups, and they leave all loadings and intercepts to be freely estimated. The MT parameterisation instead proceeds by first identifying one group, and then imposing cross-group equality constraints to identify other groups \citep{Wu2016}.
+
+
+To test measurement invariance, one needs to estimate nested models that place increasing restrictions on the item parameters across groups $c$. In the case of continuous measures, the usual approach is to restrict one set of parameters at a time. As an example, starting from the configural model, one would restrict all loadings to be equal across groups; if the fit of this restricted model is not worse than the configural model, \emph{metric invariance} is estabilished \citep{Vanderberg2000a}. The hierarchy of the nested models usually proceeds by testing loadings first, and then intercepts (metric and scalar invariance). Metric and scalar invariance are the minimum requirements to be able to meaningfully compare means and variances of the latent factors across groups.
+
+A substantially identical approach is proposed for categorical measures by \cite{Millsap2004}. However, new identification results in \cite{Wu2016} indicate that, in the case of categorical measures, invariance properties cannot be examined by simply restricting one set of parameters at a time. This is because the identification conditions used in the configural baseline model, while being minimally restrictive on their own, become restrictive once certain additional restrictions are imposed. In light of this, they propose sets of restrictions that identify structures of different invariance levels. They find that some restrictions cannot be tested alone against the configural model, because they give rise to statistically equivalent models. This is true of loading invariance, and also of threshold invariance in the case when the number of categories of each ordinal item is 3 or less. Furthermore, they suggest that comparison of both latent means and variances requires invariance in loadings, thresholds, and intercepts.
+
+Following the ordering in \cite{Wu2016}, I estimate the following increasingly restrictive models:
+\bi
+\item \textbf{Configural} model -- see WE{\textDelta} above
+\item \textbf{Threshold invariance} model
+  \bi
+  \item $\tau_{1,Ai} = \tau_{1,Bi}$ for $i=1,\dots,11$, $\tau_{2,Ai} = \tau_{2,Bi}$ for $i=\{1,2,3,4,7,8,9,10\}$
+  \item For all groups: $$\text{diag}(\bm{\Phi}) = \bm{I}, \quad \bm{\kappa}=\bm{0}$$
+  \item For the reference group: $$\bm{\nu}_A=\bm{0}, \quad \; \text{diag}(\bm{\Sigma}_A)=\bm{I}$$
+  \item In our case, the number of categories in the outcomes is 3, thus this model is statistically equivalent to the configural model
+  \ei
+\item \textbf{Threshold and Loading invariance} model
+  \bi
+  \item $\tau_{1,Ai} = \tau_{1,Bi}$ for $i=1,\dots,11$, $\tau_{2,Ai} = \tau_{2,Bi}$ for $i=\{1,2,3,4,7,8,9,10\}$
+  \item $\lambda_{Ai} = \lambda_{Bi}$ for $i=1,\dots,11$
+  \item For all groups: $$\bm{\kappa}=\bm{0}$$
+  \item For the reference group: $$\bm{\nu}_A=\bm{0}, \quad \; \text{diag}(\bm{\Sigma}_A)=\bm{I}, \quad \text{diag}(\bm{\Phi}_A) = \bm{I}$$
+  \item This set of restriction allows comparison of latent factor variances
+  \ei
+\item \textbf{Threshold, Loading, and Intercept invariance} model
+  \bi
+  \item $\tau_{1,Ai} = \tau_{1,Bi}$ for $i=1,\dots,11$, $\tau_{2,Ai} = \tau_{2,Bi}$ for $i=\{1,2,3,4,7,8,9,10\}$
+  \item $\lambda_{Ai} = \lambda_{Bi}$ for $i=1,\dots,11$
+  \item For all groups: $$\bm{\nu}=\bm{0}$$
+  \item For the reference group: $$\bm{\kappa}_A=\bm{0}, \quad \; \text{diag}(\bm{\Sigma}_A)=\bm{I}, \quad \text{diag}(\bm{\Phi}_A) = \bm{I}$$
+  \item This set of restriction allows comparison of latent factor means and variances
+  \ei
+\ei
+
+
+<<FA_INVARIANCE, dependson='LOAD_DATA'>>=
+@
+
+
+<<FA_FIT, dependson='FA_INVARIANCE'>>=
+@
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Fit indices}\label{tab:fit}
+<<FA_FIT_RES, dependson="FA_FIT", results='asis'>>=
+require(xtable)
+
+table <- afitab
+
+print(xtable(table,
+                    align="L{0cm}L{.18\\textwidth}C{.05\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
+                    digits = 4
+                    ),
+             size="\\small",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0)),
+                              command = c(
+                              # header
+                                    paste("
+                                            Model & Num. params & $\\chi^2$ & RMSEA & MFI & CFI & G-hat & \\textDelta MFI & \\textDelta CFI & \\textDelta G-hat \\\\
+                                          "
+                                            , sep="")
+                                    )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = "\\textwidth",
+             floating = FALSE
+)
+
+@
+\end{table}
+
+I estimate each of the models listed above by Weighted Least Squares.\footnote{All estimates are computed using the \texttt{lavaan} package in \textbf{\textsf{R}} \citep{Rosseel2012}. Parameters of the model are estimated by mean- and variance adjusted weighted least squares (WLSMV), due to \cite{Mplus2017}. Point estimated for model parameters are obtained starting from the polychoric correlations, using diagonally weighted least squares (DWLS), and the full weight matrix is used to compute robust standard errors and test statistics. Robust WLS has proved in simulation studies to be moderately robust to small violations of the normality assumption in the latent underlying measures \citep{Flora2011}, and generally outperforms maximum likelihood in large samples \citep{Beauducel2009,Li2016}.} The fit of the increasingly restrictive models presented above is compared in \autoref{tab:fit}. For all models, a chi-squared difference would point to a lack of measurement invariance. However, this test is know to overestimate invariance in large samples. Alternative fit indices should thus be used when comparing nested models. \cite{Cheung2002} suggest relying on Comparative Fit Index (CFI, \citealp{Bentler1990}), McDonald Non-Centrality Index (MFI, \citealp{McDonald1989}), and Gamma Hat index \citep{Steiger1989} for the case of ordered measures. Commonly accepted thresholds for rejecting the restricted model are $\Delta CFI < - 0.01$, $\Delta MFI < - 0.02$, and $\Delta Gamma hat < - 0.001$. 
+
+The overall fit of the configural model is satisfactory according to widely accepted rules of thumb \citep{Maccallum1996}.\footnote{{\color{red} BETTER CITATIONS FOR OVERALL FIT}.} As discussed above, when items have less than four categories, the model with restricted thresholds is statistically equivalent to the configural model. Restricting thresholds and loadings seems to provide a satisfying fit compared to the configural model.\footnote{\cite{Meade2008}, using the results from a simulation study, suggests stricter thresholds that should apply in a variety of conditions. For CFI, a single cutoff values of $.002$ is proposed, while cutoffs for MFI depend on the problem's characteristics; in our case (2 factors, 11 items), they suggest $.0066$. \cite{Sass2014} however cast some doubts of the generalisability of these cutoffs to WLSMV estimators.} However, the model that additionally restricts intercepts -- thus allowing for latent mean comparison -- has a substantially worse fit. 
+
+
+
+<<FA_FINAL, dependson='FA_PARTINV'>>=
+@
+
+<<FA_FINAL_PARS, dependson='FA_FINAL'>>=
+@
+
+
+\begin{table}[ht]
+\caption{Estimated loadings and thresholds} \label{tab:allpars}
+\resizebox{\textwidth}{!}{
+<<RES_FA_PAR, dependson="FA_FINAL_PARS", results='asis'>>=
+require(xtable)
+
+table <- allpar
+
+# sequences to add rows
+rws <- seq(2, (nrow(table)-1), by = 1) # start from row 2 (exclude model titles)
+rwsl <- as.list(rws)
+
+print.xtable(xtable(table,
+                    # align = "ll|cccc|cccc"
+                    align="L{0cm}L{2cm}C{2.5cm}C{2.5cm}C{2.5cm}C{2.5cm}C{1.5cm}",
+                    digits = 3
+                    ),
+             size="\\small",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0)),
+                              command = c(
+                              # header
+                                    paste(" & Loadings
+                                            & \\multicolumn{2}{c}{\\textbf{Thresholds}}
+                                            & Intercepts
+                                            & \\\\ \\cmidrule(lr){3-4}
+
+                                            & $\\bm{\\lambda}$
+                                            & $\\bm{\\tau}_1$
+                                            & $\\bm{\\tau}_2$
+                                            & $\\bm{\\nu}$ \\\\
+                                            Measure & BCS = MCS
+                                            & BCS = MCS
+                                            & BCS = MCS
+                                            & MCS (BCS=0)
+                                            & Factor
+                                            \\\\", sep=""))),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabularx", width = "\\textwidth",
+             floating = FALSE
+)
+
+@
+}
+\end{table}
+
+
+\begin{table}[ht]
+\caption{Estimated latent variable means and covariances} \label{tab:lvpars}
+\centering
+<<RES_FA_LV, dependson="FA_FINAL_PARS", results='asis'>>=
+require(xtable)
+
+table <- lvpars
+
+print.xtable(xtable(table,
+                    align = "llccc",
+                    # align="L{0cm}L{.1\\textwidth}L{.2\\textwidth}L{.15\\textwidth}L{.15\\textwidth}L{.15\\textwidth}L{.15\\textwidth}",
+                    digits = 3
+                    ),
+             size="\\small",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0,2)),
+                              command = c(
+                              # header
+                                    paste(" & \\multicolumn{3}{c}{\\textbf{BCS}} \\\\ \\midrule
+                                            & \\multicolumn{1}{c}{\\textbf{Mean}}
+                                            & \\multicolumn{2}{c}{\\textbf{Covariance}} \\\\
+                                            && $\\theta^{EXT}$ & $\\theta^{INT}$ \\\\", sep=""),
+                                    paste(" \\midrule & \\multicolumn{3}{c}{\\textbf{MCS}} \\\\ \\midrule
+                                            & \\multicolumn{1}{c}{\\textbf{Mean}}
+                                            & \\multicolumn{2}{c}{\\textbf{Covariance}} \\\\
+                                            && $\\theta^{EXT}$ & $\\theta^{INT}$ \\\\", sep="")
+                                    )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabularx", width = ".5\\textwidth",
+             floating = FALSE
+)
+
+@
+\end{table}
+
+\begin{table}[ht]
+\caption{Estimated latent variable means and covariances -- model with restricted intercepts} \label{tab:lvpars2}
+\centering
+<<RES_FA_LV2, dependson="FA_FINAL_PARS", results='asis'>>=
+require(xtable)
+
+table <- lvpars2
+
+print.xtable(xtable(table,
+                    align = "llccc",
+                    # align="L{0cm}L{.1\\textwidth}L{.2\\textwidth}L{.15\\textwidth}L{.15\\textwidth}L{.15\\textwidth}L{.15\\textwidth}",
+                    digits = 3
+                    ),
+             size="\\small",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0,2)),
+                              command = c(
+                              # header
+                                    paste(" & \\multicolumn{3}{c}{\\textbf{BCS}} \\\\ \\midrule
+                                            & \\multicolumn{1}{c}{\\textbf{Mean}}
+                                            & \\multicolumn{2}{c}{\\textbf{Covariance}} \\\\
+                                            && $\\theta^{EXT}$ & $\\theta^{INT}$ \\\\", sep=""),
+                                    paste(" \\midrule & \\multicolumn{3}{c}{\\textbf{MCS}} \\\\ \\midrule
+                                            & \\multicolumn{1}{c}{\\textbf{Mean}}
+                                            & \\multicolumn{2}{c}{\\textbf{Covariance}} \\\\
+                                            && $\\theta^{EXT}$ & $\\theta^{INT}$ \\\\", sep="")
+                                    )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabularx", width = ".5\\textwidth",
+             floating = FALSE
+)
+
+@
+\end{table}
+
+<<CLEANUP, dependson='FA_FINAL'>>=
+@
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\subsection{Inequality in noncognitive ability}
+Although the results of our measurement invariance analysis imply that comparison of latent means is not justified, the model with restricted loadings and thresholds can nevertheless be used to investigate how inequality of noncognitive skills has changed between the two cohorts. The variances of the $EXT$ and $INT$ factors are estimated to be larger in the MCS children by \Sexpr{round(lv.covs$MCS[1,1]-1,2)} and \Sexpr{round(lv.covs$MCS[2,2]-1,2)} of a standard deviation, respectively, indicating larger dispersion.
+
+<<FA_SCORES, dependson='FA_FINAL'>>=
+@
+
+<<FA_REGS, dependson='FA_SCORES'>>=
+
+reg.bcs.ext <- lm(EXT~as.factor(incq), data=subset(facandraw, cohort=="BCS"))
+bcs.51.ext <- round(reg.bcs.ext$coefficients["as.factor(incq)5"],2)
+reg.bcs.int <- lm(INT~as.factor(incq), data=subset(facandraw, cohort=="BCS"))
+bcs.51.int <- round(reg.bcs.int$coefficients["as.factor(incq)5"],2)
+
+reg.mcs.ext <- lm(EXT~as.factor(incq), data=subset(facandraw, cohort=="MCS"))
+mcs.51.ext <- round(reg.mcs.ext$coefficients["as.factor(incq)5"],2)
+reg.mcs.int <- lm(INT~as.factor(incq), data=subset(facandraw, cohort=="MCS"))
+mcs.51.int <- round(reg.mcs.int$coefficients["as.factor(incq)5"],2)
+
+@
+
+We can derive scores for $\theta^{EXT}$ and $\theta^{INT}$ directly, and plot them against socioeconomic measures observed in the data. Our main socioeconomic indicator is a measure of weekly total family net income in the prices of the interview year.\footnote{This measure is harmonised across cohorts and derived as part of CLOSER, which is funded by the ESRC.} Using the estimated parameters for the model with invariant thresholds and loadings (but non-invariant intercepts), I compute the scores for each individual in the sample (using the Empirical Bayes modal approach). In \autoref{fig:boxscores}, we can see that the gradient in noncognitive skills along family income quintiles is more pronounced in the MCS cohort. In particular, a five-year old at the top quintile of the income distribution in 1975 has a better score by \Sexpr{bcs.51.ext} in the externalising dimension and \Sexpr{bcs.51.int} in the internalising dimension, compared to a child at the bottom quintile. In 2005, the differences amount to \Sexpr{mcs.51.ext} and \Sexpr{mcs.51.int}, respectively.
+
+
+\clearpage
+\begin{figure}
+<<FACDENS, dev='tikz', fig.height=5, fig.width=10, out.width='1\\linewidth'>>=
+@
+\caption{Density of Scored Factors}
+{\scriptsize \emph{Notes}: The figure shows estimated kernel densities of the scored factors from model \eqref{eq:finalmod}, separately by cohort.  \par}
+\end{figure}
+
+\begin{figure}
+<<FACRAW, dev='tikz', fig.height=10, fig.width=10, out.width='1\\linewidth'>>=
+@
+\caption{Raw vs Scored Factors}
+{\scriptsize \emph{Notes}: The figure plots the scored factors from model \eqref{eq:finalmod} on the vertical axis against the ``raw" scores on the horizontal axis, i.e. scores obtained by simply summing the number of positive answers to each of the items. \par}
+\end{figure}
+
+\begin{figure}
+<<FACSCAT, dev='tikz', fig.height=5, fig.width=10, out.width='1\\linewidth'>>=
+@
+\caption{Scatterplots of factor scores by cohort}
+{\scriptsize \emph{Notes}: The figure plots the scored factors from model \eqref{eq:finalmod} separately by cohort. The externalising and internalising scores are plotted against one another. \par}
+\end{figure}
+
+\begin{figure}
+<<FACINEQ, dev='tikz', fig.height=10, fig.width=10, out.width='1\\linewidth'>>=
+@
+\caption{Distribution of scores across income quintiles}\label{fig:boxscores}
+{\scriptsize \emph{Notes}: The figure plots the distribution of the scored factors from model \eqref{eq:finalmod} across the quintiles in the income distribution. \par}
+\end{figure}
+
+\begin{figure}
+<<FACLOESS, dev='tikz', fig.height=5, fig.width=10, out.width='1\\linewidth'>>=
+@
+\caption{Scores and family income}
+{\scriptsize \emph{Notes}: The figure plots LOESS of the scored factors from model \eqref{eq:finalmod} against family income. \par}
+\end{figure}
+
+
+
+\clearpage
+\bibliographystyle{chicago}
+\bibliography{/Users/giacomomason/Documents/BibTeX/Papers-cohorts_nc}
+
+
+
+\end{document}

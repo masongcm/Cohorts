@@ -249,11 +249,11 @@ egen ncmiss=rowmiss(bcs10_rut*)
 drop if ncmiss >22
 
 keep bcsid bcs_country sex bcs_region age*10 incq faminc ysch_moth ysch_fath bcs10_rut* bcs10_ws*
-saveold "$rdata/bcsrut10y.dta", replace version(12)
+saveold "$rdata/bcs10y.dta", replace version(12)
 
 // england only
 keep if bcs_country==1
-saveold "$rdata/bcsrut10yeng.dta", replace version(12)
+saveold "$rdata/bcs10yeng.dta", replace version(12)
 restore
 
 
@@ -266,11 +266,11 @@ egen ncmiss=rowmiss(bcs5_rut*)
 drop if ncmiss >22
 
 keep bcsid bcs_country sex bcs_region age*5 incq faminc ysch_moth ysch_fath epvt_z copy_z hfd_z bcs5_rut*
-saveold "$rdata/bcsrut5y.dta", replace version(12)
+saveold "$rdata/bcs5y.dta", replace version(12)
 
 // england only
 keep if bcs_country==1
-saveold "$rdata/bcsrut5yeng.dta", replace version(12)
+saveold "$rdata/bcs5yeng.dta", replace version(12)
 restore
 
 

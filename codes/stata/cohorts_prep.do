@@ -17,13 +17,14 @@ global proj			"/Users/giacomomason/Documents/Projects/CohortStudies"
 global dofiles  	"$proj/codes/stata"
 global tables  		"$proj/tables"
 global graphs  		"$proj/graphs"
-global rdata  		"$proj/data"
+global suppdata  	"$proj/suppdata"
+global rdata  		"$proj/rdata"
 
 
 ********************************************************************************
 *****                REAL GDP DATA              ********************************
 ********************************************************************************
-import delimited "$rdata/ukrealgdp.csv", varn(1)
+import delimited "$suppdata/ukrealgdp.csv", varn(1)
 rename ïlocation location
 keep if location == "GBR"
 keep time value
@@ -48,7 +49,7 @@ scalar rgdp2010 = r(mean)
 *****                NOMINAL GDP DATA              *****************************
 ********************************************************************************
 clear
-import delimited "$rdata/ukgdp.csv", varn(1)
+import delimited "$suppdata/ukgdp.csv", varn(1)
 rename ïlocation location
 keep if location == "GBR"
 keep time value
@@ -74,7 +75,7 @@ scalar ngdp2010 = r(mean)
 clear
 
 /* ONS dataset */
-import delimited "$rdata/ukcpi.csv", varn(1)
+import delimited "$suppdata/ukcpi.csv", varn(1)
 gen year = real(substr(date,length(date)-3,.))
 collapse (mean) cpi, by(year)
 
@@ -115,28 +116,28 @@ di "FINAL 2010: " adjMCS
 
 
 ****************************************** BCS *************************************
-do "$dofiles/noncog_prep_bcs.do"
+do "$dofiles/cohorts_prep_bcs.do"
 
 
 ****************************************** MCS *************************************
-do "$dofiles/noncog_prep_mcs.do"
+do "$dofiles/cohorts_prep_mcs.do"
 
-
-/* compare ages at interview (england only) */
-use "$rdata/mcssdq5yeng.dta", clear
-keep ageint5 faminc
+ex
+/* compare ages at testing (5y) */
+use "$rdata/mcs5yeng_rwt.dta", clear
+keep agetest5 faminc
 gen cohort = 2
 tempfile mcsage
 save `mcsage'
 
-use "$rdata/bcsrut5yeng.dta", clear
-keep ageint5 faminc
+use "$rdata/bcs5yeng.dta", clear
+keep agetest5 faminc
 gen cohort = 1
 append using `mcsage'
 tw 		(kdensity faminc if cohort==1 , width(1)  color(navy)) || ///
 		(kdensity faminc if cohort==2 , width(1)  lcolor(red)), ///
 		legend(label(1 "BCS") label(2 "MCS")) title("Weekly Family Income")
 
-tw 		(hist ageint5 if cohort==1 , width(1)  color(navy)) || ///
-		(hist ageint5 if cohort==2 , width(1)  fcolor(none) lcolor(red)), ///
+tw 		(hist agetest5 if cohort==1 , width(1)  color(navy)) || ///
+		(hist agetest5 if cohort==2 , width(1)  fcolor(none) lcolor(red)), ///
 		legend(label(1 "BCS") label(2 "MCS")) title("Age at interview")

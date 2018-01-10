@@ -95,7 +95,7 @@ lvpars2 <- cbind( Measure = as.matrix(
 ## ---- CLEANUP
 rm(BCS.lambda, BCS.tau1, BCS.tau2, MCS.lambda, MCS.tau1, MCS.tau2, 
    lambdas, means, pta, tau1, tau2, 
-   Xtemp.bcs, Xtemp.mcs, bcs_rutb419, bcs_rutbAB, bcs_rutc419,
+   Xtemp.bcs, Xtemp.mcs, bcs5_rutb419, bcs5_rutbAB, bcs5_rutc419,
    cohort, dmfi, dcfi, dgam, indsel, mcskeepb, mnames, ncats, ncomm, nn,
    t, t2)
 

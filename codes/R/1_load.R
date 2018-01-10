@@ -23,7 +23,7 @@ library(tikzDevice)
 library(gtools)
 
 
-dir_data  <- c("/Users/giacomomason/Documents/Projects/CohortStudies/data/")
+dir_data  <- c("/Users/giacomomason/Documents/Projects/CohortStudies/rdata/")
 
 # define printfit function
 printfit <- function(m) {
@@ -33,108 +33,108 @@ printfit <- function(m) {
 ## ---- LOAD_DATA
 
 # BCS -------------------------------------------
-bcsdata <- read.dta(paste(dir_data, "bcsrut5yeng.dta", sep=""), convert.factors = F) # all BCS data
-bcsrutb <- bcsdata[,grep("bcs_rutb", names(bcsdata), value=TRUE)]                 # BINARY Rutter items only
-bcsrutc <- bcsdata[,grep("bcs_rutc", names(bcsdata), value=TRUE)]                 # 3CAT Rutter items only
+bcs5data <- read.dta(paste(dir_data, "bcs5yeng.dta", sep=""), convert.factors = F) # all BCS data
+bcs5rutb <- bcs5data[,grep("bcs5_rutb", names(bcs5data), value=TRUE)]                 # BINARY Rutter items only
+bcs5rutc <- bcs5data[,grep("bcs5_rutc", names(bcs5data), value=TRUE)]                 # 3CAT Rutter items only
 
 # BINARY VERSION
 # merge Rutter items 4 and 19
-bcs_rutb419 <- bcsrutb[,"bcs_rutb4"]
-bcs_rutb419[which(bcsrutb[,"bcs_rutb19"] == 1)] <- 1
+bcs5_rutb419 <- bcs5rutb[,"bcs5_rutb4"]
+bcs5_rutb419[which(bcs5rutb[,"bcs5_rutb19"] == 1)] <- 1
 # merge extra items A and B
-bcs_rutbAB <- bcsrutb[,"bcs_rutbA"]
-bcs_rutbAB[which(bcsrutb[,"bcs_rutbB"] == 0)] <- 0
+bcs5_rutbAB <- bcs5rutb[,"bcs5_rutbA"]
+bcs5_rutbAB[which(bcs5rutb[,"bcs5_rutbB"] == 0)] <- 0
 # assemble final data
-bcsrutb <- bcsrutb[,!names(bcsrutb) %in% c("bcs_rutb4", "bcs_rutb19", "bcs_rutbA", "bcs_rutbB")]  # remove merged
-bcsrutb$bcs_rutb419 <- bcs_rutb419
-bcsrutb$bcs_rutbAB <- bcs_rutbAB
+bcs5rutb <- bcs5rutb[,!names(bcs5rutb) %in% c("bcs5_rutb4", "bcs5_rutb19", "bcs5_rutbA", "bcs5_rutbB")]  # remove merged
+bcs5rutb$bcs5_rutb419 <- bcs5_rutb419
+bcs5rutb$bcs5_rutbAB <- bcs5_rutbAB
 # version with factor (binary)
-bcsrutbf <- bcsrutb
-for (i in 1:ncol(bcsrutb)) bcsrutbf[,i] <- as.ordered(bcsrutb[,i])
+bcs5rutbf <- bcs5rutb
+for (i in 1:ncol(bcs5rutb)) bcs5rutbf[,i] <- as.ordered(bcs5rutb[,i])
 
 
 # 3CAT version
 # merge Rutter items 4 and 19 (3cat)
-bcs_rutc419 <- apply(cbind(bcsrutc[,"bcs_rutc4"], bcsrutc[,"bcs_rutc19"]), 1, min)
+bcs5_rutc419 <- apply(cbind(bcs5rutc[,"bcs5_rutc4"], bcs5rutc[,"bcs5_rutc19"]), 1, min)
 # assemble final data (3cat)
-bcsrutc <- bcsrutc[,!names(bcsrutc) %in% c("bcs_rutc4", "bcs_rutc19", "bcs_rutc14", "bcs_rutc5")]  # remove merged (4,19) and 14,5 (binary for comparability)
-bcsrutc$bcs_rutc419 <- bcs_rutc419
-bcsrutc$bcs_rutbAB <- bcs_rutbAB
-bcsrutc$bcs_rutbC <- bcsrutb$bcs_rutbC   # get extra items from binary version
-bcsrutc$bcs_rutbD <- bcsrutb$bcs_rutbD
-bcsrutc$bcs_rutb14 <- bcsrutb$bcs_rutb14
-bcsrutc$bcs_rutb5 <- bcsrutb$bcs_rutb5
+bcs5rutc <- bcs5rutc[,!names(bcs5rutc) %in% c("bcs5_rutc4", "bcs5_rutc19", "bcs5_rutc14", "bcs5_rutc5")]  # remove merged (4,19) and 14,5 (binary for comparability)
+bcs5rutc$bcs5_rutc419 <- bcs5_rutc419
+bcs5rutc$bcs5_rutbAB <- bcs5_rutbAB
+bcs5rutc$bcs5_rutbC <- bcs5rutb$bcs5_rutbC   # get extra items from binary version
+bcs5rutc$bcs5_rutbD <- bcs5rutb$bcs5_rutbD
+bcs5rutc$bcs5_rutb14 <- bcs5rutb$bcs5_rutb14
+bcs5rutc$bcs5_rutb5 <- bcs5rutb$bcs5_rutb5
 
 # version with factor (3cat)
-bcsrutcf <- bcsrutc
-for (i in 1:ncol(bcsrutc)) bcsrutcf[,i] <- as.ordered(bcsrutc[,i])
+bcs5rutcf <- bcs5rutc
+for (i in 1:ncol(bcs5rutc)) bcs5rutcf[,i] <- as.ordered(bcs5rutc[,i])
 
 
 # auxiliary variables
-bcsaux <- cbind(bcsdata[,c("bcsid", "faminc", "incq", "ysch_moth", "ysch_fath", "ageint5")],
-                cog1 = bcsdata$epvt_z,
-                cog2 = bcsdata$hfd_z,
-                cog3 = bcsdata$copy_z
+bcs5aux <- cbind(bcs5data[,c("bcsid", "faminc", "incq", "ysch_moth", "ysch_fath", "ageint5")],
+                cog1 = bcs5data$epvt_z,
+                cog2 = bcs5data$hfd_z,
+                cog3 = bcs5data$copy_z
                 )
 
 
 # MCS -------------------------------------------
-mcsdata <- read.dta(paste(dir_data, "mcssdq5yeng_reweighted.dta", sep=""), convert.factors = F) # all MCS data
+mcs5data <- read.dta(paste(dir_data, "mcs5yeng_rwt.dta", sep=""), convert.factors = F) # all MCS data
 
 # items to keep (binary version)
 mcskeepb <- c(2,3,5,6,7,8,10,12,13,14,15,16,18,19,22,23,24)  # excluding prosocial scale (itm 1 4 9 17 20)
                                                              # & three positively worded items (itm 11 21 25)
-mcssdqb <- mcsdata[,paste("mcs_sdqb", mcskeepb, sep="")]         # BINARY SDQ items only      
+mcs5sdqb <- mcs5data[,paste("mcs5_sdqb", mcskeepb, sep="")]         # BINARY SDQ items only      
 
 # version with factor (3cat)
-mcssdqbf <- mcssdqb
-for (i in 1:ncol(mcssdqb)) mcssdqbf[,i] <- as.ordered(mcssdqb[,i]) 
+mcs5sdqbf <- mcs5sdqb
+for (i in 1:ncol(mcs5sdqb)) mcs5sdqbf[,i] <- as.ordered(mcs5sdqb[,i]) 
 
 # items to keep (3cat version)
-mcssdqc <- mcsdata[,c("mcs_sdqc2", 
-                     "mcs_sdqb3",  # binary (for comparability)
-                     "mcs_sdqb5",  # binary (for comparability)
-                     "mcs_sdqc6",
-                     "mcs_sdqb7",  # binary (for comparability)
-                     "mcs_sdqc8",
-                     "mcs_sdqc10",
-                     "mcs_sdqc12",
-                     "mcs_sdqc13",
-                     "mcs_sdqb14", # binary (for comparability)
-                     "mcs_sdqc15",
-                     "mcs_sdqc16",
-                     "mcs_sdqc18",
-                     "mcs_sdqc19",
-                     "mcs_sdqc22",
-                     "mcs_sdqc23",
-                     "mcs_sdqc24")]
+mcs5sdqc <- mcs5data[,c("mcs5_sdqc2", 
+                     "mcs5_sdqb3",  # binary (for comparability)
+                     "mcs5_sdqb5",  # binary (for comparability)
+                     "mcs5_sdqc6",
+                     "mcs5_sdqb7",  # binary (for comparability)
+                     "mcs5_sdqc8",
+                     "mcs5_sdqc10",
+                     "mcs5_sdqc12",
+                     "mcs5_sdqc13",
+                     "mcs5_sdqb14", # binary (for comparability)
+                     "mcs5_sdqc15",
+                     "mcs5_sdqc16",
+                     "mcs5_sdqc18",
+                     "mcs5_sdqc19",
+                     "mcs5_sdqc22",
+                     "mcs5_sdqc23",
+                     "mcs5_sdqc24")]
 
 # version with factor (3cat)
-mcssdqcf <- mcssdqc
-for (i in 1:ncol(mcssdqc)) mcssdqcf[,i] <- as.ordered(mcssdqc[,i])                    
+mcs5sdqcf <- mcs5sdqc
+for (i in 1:ncol(mcs5sdqc)) mcs5sdqcf[,i] <- as.ordered(mcs5sdqc[,i])                    
 
 # add SES and cognitive data
-mcsaux <- cbind(mcsdata[,c("mcsid", "faminc", "incq", "ysch_moth", "ysch_fath", "ageint5")],
-                cog1 = mcsdata$nvoc_bastz,
-                cog2 = mcsdata$psim_bastz,
-                cog3 = mcsdata$patc_bastz
+mcs5aux <- cbind(mcs5data[,c("mcsid", "faminc", "incq", "ysch_moth", "ysch_fath", "ageint5")],
+                cog1 = mcs5data$nvoc_bastz,
+                cog2 = mcs5data$psim_bastz,
+                cog3 = mcs5data$patc_bastz
 )
 
 
 # common items
-Xtemp.bcs <- cbind( bcsaux,      # additional variables
-                    matrix("BCS", dim(bcsrutc)[1], 1),                                                             # cohort identifier
-                    bcsrutcf[,c("bcs_rutc1", "bcs_rutc2", "bcs_rutc419", "bcs_rutc15", "bcs_rutbD", "bcs_rutb14")], # EXT
-                    bcsrutcf[,c("bcs_rutc6", "bcs_rutc16", "bcs_rutc7", "bcs_rutc9", "bcs_rutbAB")]                # INT
+Xtemp.bcs <- cbind( bcs5aux,      # additional variables
+                    matrix("BCS", dim(bcs5rutc)[1], 1),                                                             # cohort identifier
+                    bcs5rutcf[,c("bcs5_rutc1", "bcs5_rutc2", "bcs5_rutc419", "bcs5_rutc15", "bcs5_rutbD", "bcs5_rutb14")], # EXT
+                    bcs5rutcf[,c("bcs5_rutc6", "bcs5_rutc16", "bcs5_rutc7", "bcs5_rutc9", "bcs5_rutbAB")]                # INT
 )
-Xtemp.mcs <- cbind( mcsaux,      # additional variables
-                    matrix("MCS", dim(mcssdqc)[1], 1),                                                              # cohort identifier
-                    mcssdqcf[,c("mcs_sdqc2", "mcs_sdqc10", "mcs_sdqc12", "mcs_sdqc15", "mcs_sdqb5", "mcs_sdqb7")], # EXT
-                    mcssdqcf[,c("mcs_sdqc8", "mcs_sdqc16", "mcs_sdqc6", "mcs_sdqc13", "mcs_sdqb3")]               # INT
+Xtemp.mcs <- cbind( mcs5aux,      # additional variables
+                    matrix("MCS", dim(mcs5sdqc)[1], 1),                                                              # cohort identifier
+                    mcs5sdqcf[,c("mcs5_sdqc2", "mcs5_sdqc10", "mcs5_sdqc12", "mcs5_sdqc15", "mcs5_sdqb5", "mcs5_sdqb7")], # EXT
+                    mcs5sdqcf[,c("mcs5_sdqc8", "mcs5_sdqc16", "mcs5_sdqc6", "mcs5_sdqc13", "mcs5_sdqb3")]               # INT
 )
 
 # append BCS and MCS
-nn <- c(colnames(bcsaux), "cohort", "X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10", "X11")
+nn <- c(colnames(bcs5aux), "cohort", "X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10", "X11")
 nn[1] <- "ID"
 colnames(Xtemp.bcs) <- nn
 colnames(Xtemp.mcs) <- nn

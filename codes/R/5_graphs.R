@@ -1,50 +1,25 @@
-# FUNCTION FOR SCORES AND GRAPHS (12 ITEMS)
 
 ############################################################################################
-## ---- FA_SCORES
-indices <- inspect(finalmod,"case.idx")   # indices for observations used
-scores <- lavPredict(finalmod)
-items.scored <- cbind(X[,c("ID", "faminc","incq" )], items.c, matrix(NA, nrow(items.c), 2))
-colnames(items.scored) <- c("ID", "faminc","incq", colnames(items.c), "EXT", "INT")
-items.scored[indices[[1]],"EXT"] <- scores[[1]][,"EXT"]
-items.scored[indices[[2]],"EXT"] <- scores[[2]][,"EXT"]
-items.scored[indices[[1]],"INT"] <- scores[[1]][,"INT"]
-items.scored[indices[[2]],"INT"] <- scores[[2]][,"INT"]
-
-# add raw scores
-raw.ext <- rowSums(items[,paste("X", seq(1,6), sep="")], na.rm = T)
-raw.int <- rowSums(items[,paste("X", seq(7,11), sep="")], na.rm = T)
-facandraw <- cbind(items.scored[,c("ID","incq","faminc", "cohort", "EXT", "INT")], INT.RAW=as.matrix(raw.int), EXT.RAW=as.matrix(raw.ext))
-
 ## ---- FACDENS
-require(tikzDevice)
-require(ggplot2)
-require(cowplot)
-pdext.ebm <- ggplot(items.scored, aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1) + ggtitle("EXT (EBM Scores)")
-pdint.ebm <- ggplot(items.scored, aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1) + ggtitle("INT (EBM Scores)")
+# densities of factor scores (residuals)
+pdext.ebm <- ggplot(items.scored, aes(x=EXTr, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1) + ggtitle("EXT (EBM Scores)")
+pdint.ebm <- ggplot(items.scored, aes(x=INTr, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1) + ggtitle("INT (EBM Scores)")
 plot_grid(pdext.ebm, pdint.ebm, ncol=2, align="h")
-
 
 ## ---- FACRAW
 # see how scored factors compare with raw scores
-box.ext.bcs <- ggplot(data=subset(facandraw, cohort=="BCS"), aes(x=as.factor(EXT.RAW), y=EXT)) + geom_boxplot() + ggtitle("BCS EXT")
-box.int.bcs <- ggplot(data=subset(facandraw, cohort=="BCS"), aes(x=as.factor(INT.RAW), y=INT)) + geom_boxplot() + ggtitle("BCS INT")
-box.ext.mcs <- ggplot(data=subset(facandraw, cohort=="MCS"), aes(x=as.factor(EXT.RAW), y=EXT)) + geom_boxplot() + ggtitle("MCS EXT")
-box.int.mcs <- ggplot(data=subset(facandraw, cohort=="MCS"), aes(x=as.factor(INT.RAW), y=INT)) + geom_boxplot() + ggtitle("MCS INT")
+box.ext.bcs <- ggplot(data=subset(items.scored, cohort=="BCS"), aes(x=as.factor(EXT.RAW), y=EXTr)) + geom_boxplot() + ggtitle("BCS EXT")
+box.int.bcs <- ggplot(data=subset(items.scored, cohort=="BCS"), aes(x=as.factor(INT.RAW), y=INTr)) + geom_boxplot() + ggtitle("BCS INT")
+box.ext.mcs <- ggplot(data=subset(items.scored, cohort=="MCS"), aes(x=as.factor(EXT.RAW), y=EXTr)) + geom_boxplot() + ggtitle("MCS EXT")
+box.int.mcs <- ggplot(data=subset(items.scored, cohort=="MCS"), aes(x=as.factor(INT.RAW), y=INTr)) + geom_boxplot() + ggtitle("MCS INT")
 plot_grid(box.ext.bcs, box.int.bcs, box.ext.mcs, box.int.mcs, ncol=2, align="h")
 
-# scat.ext.bcs <- ggplot(data=subset(facandraw, cohort=="BCS")) + stat_binhex(aes(x=EXT, y=EXT.RAW, na.rm=TRUE)) + ggtitle("BCS EXT")
-# scat.int.bcs <- ggplot(data=subset(facandraw, cohort=="BCS")) + stat_binhex(aes(x=INT, y=INT.RAW, na.rm=TRUE)) + ggtitle("BCS INT")
-# scat.ext.mcs <- ggplot(data=subset(facandraw, cohort=="MCS")) + stat_binhex(aes(x=EXT, y=EXT.RAW, na.rm=TRUE)) + ggtitle("MCS EXT")
-# scat.int.mcs <- ggplot(data=subset(facandraw, cohort=="MCS")) + stat_binhex(aes(x=INT, y=INT.RAW, na.rm=TRUE)) + ggtitle("MCS INT")
-# plot_grid(scat.ext.bcs, scat.int.bcs, scat.ext.mcs, scat.int.mcs, ncol=2, align="h")
-
 ## ---- FACSCAT
-scat.bcs <- ggplot(data=subset(facandraw, cohort=="BCS"), aes(EXT, INT)) + stat_binhex(bins=75) + ggtitle("BCS") + xlim(-3, 1.9) + ylim(-3.5, 1.4)
-scat.mcs <- ggplot(data=subset(facandraw, cohort=="MCS"), aes(EXT, INT)) + stat_binhex(bins=75) + ggtitle("MCS") + xlim(-3, 1.9) + ylim(-3.5, 1.4)
+scat.bcs <- ggplot(data=subset(items.scored, cohort=="BCS"), aes(EXTr, INTr)) + stat_binhex(bins=75) + ggtitle("BCS") + xlim(-3, 1.9) + ylim(-3.5, 1.4)
+scat.mcs <- ggplot(data=subset(items.scored, cohort=="MCS"), aes(EXTr, INTr)) + stat_binhex(bins=75) + ggtitle("MCS") + xlim(-3, 1.9) + ylim(-3.5, 1.4)
 plot_grid(scat.bcs, scat.mcs, ncol=2, align="h")
 
-## ---- FACINEQ
+## ---- FACINEQ2
 ineq.ext.bcs <- ggplot(data=subset(facandraw, cohort=="BCS" & !is.na(facandraw$incq)), aes(x=as.factor(incq), y=EXT)) + ggtitle("BCS EXT") +
                 geom_boxplot() + scale_x_discrete("Family Income Quintile at 10") + scale_y_continuous(limits = c(-3, 2))
 ineq.int.bcs <- ggplot(data=subset(facandraw, cohort=="BCS" & !is.na(facandraw$incq)), aes(x=as.factor(incq), y=INT)) + ggtitle("BCS INT") +
@@ -56,10 +31,40 @@ ineq.int.mcs <- ggplot(data=subset(facandraw, cohort=="MCS" & !is.na(facandraw$i
 
 plot_grid(ineq.ext.bcs, ineq.ext.mcs, ineq.int.bcs, ineq.int.mcs, ncol=2, align="h")
 
+## ---- FACINEQ
+# boxplots of scores by gender and cohort
+
+#common options
+addopts <- function(x) {
+  x <- x + geom_boxplot() + scale_x_discrete("Family Income Quintile at 10") + scale_y_continuous(name = "Factor score", limits = c(-3.5, 2.2)) +
+      stat_summary(fun.y=mean, geom="point", size=4, fill="white", color="black", aes(shape=cohort),position=position_dodge(.8))+
+      labs(list(fill="", shape="")) + theme(legend.position="none")
+  return(x)
+} 
+ineq.ext.m <- ggplot(data=subset(items.scored, sex==1 & !is.na(items.scored$incq)), aes(x=as.factor(incq), y=EXTr, fill=cohort)) + ggtitle("Males Externalising")
+ineq.ext.f <- ggplot(data=subset(items.scored, sex==2 & !is.na(items.scored$incq)), aes(x=as.factor(incq), y=EXTr, fill=cohort)) + ggtitle("Females Externalising")
+ineq.int.m <- ggplot(data=subset(items.scored, sex==1 & !is.na(items.scored$incq)), aes(x=as.factor(incq), y=INTr, fill=cohort)) + ggtitle("Males Internalising")
+ineq.int.f <- ggplot(data=subset(items.scored, sex==2 & !is.na(items.scored$incq)), aes(x=as.factor(incq), y=INTr, fill=cohort)) + ggtitle("Females Internalising")
+
+ineqlist <- list(ineq.ext.m, ineq.ext.f, ineq.int.m, ineq.int.f) 
+ineqlist <- lapply(ineqlist, addopts) # apply options to all graphs
+
+# arrange the plots in a single column
+pcol <- plot_grid( ineqlist[[1]],ineqlist[[2]],ineqlist[[3]],ineqlist[[4]],
+                   align = 'vh',
+                   hjust = -1,
+                   nrow = 2
+)
+# add the legend underneath the row we made earlier. Give it 10% of the height of one plot (via rel_heights).
+legend_b <- get_legend(ineqlist[[1]] + theme(legend.position="bottom"))
+p <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
+p
+
+
 ## ---- FACLOESS
 # loess plot of scores on income
-loess.ext <- ggplot(data=facandraw, aes(x=faminc, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + geom_smooth(method = "loess") + xlab("Weekly Family Income at 10 (,000£ 2015)") + ylab("EXT")
-loess.int <- ggplot(data=facandraw, aes(x=faminc, y=INT, group=cohort, fill=cohort, colour=cohort) ) + geom_smooth(method = "loess") + xlab("Weekly Family Income at 10 (,000£ 2015)") + ylab("INT")
+loess.ext <- ggplot(data=items.scored, aes(x=faminc, y=EXTr, group=cohort, fill=cohort, colour=cohort) ) + geom_smooth(method = "loess") + xlab("Weekly Family Income at 10 (,000£ 2015)") + ylab("EXT")
+loess.int <- ggplot(data=items.scored, aes(x=faminc, y=INTr, group=cohort, fill=cohort, colour=cohort) ) + geom_smooth(method = "loess") + xlab("Weekly Family Income at 10 (,000£ 2015)") + ylab("INT")
 plot_grid(loess.ext, loess.int, ncol=2, align="h")
 
 ## ---- FACNPREG

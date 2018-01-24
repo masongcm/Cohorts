@@ -138,8 +138,8 @@ read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/1_load.
 read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/2_efa.R")
 read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/3_mifa_invariance.R")
 read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/3_mifa_final.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/3_mifa_cog.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/4_graphs.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/4_scores.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/5_graphs.R")
 
 @
 
@@ -524,11 +524,11 @@ print.xtable(xtable(table,
                                             & $\\bm{\\lambda}$
                                             & $\\bm{\\tau}_1$
                                             & $\\bm{\\tau}_2$
-                                            & $\\bm{\\nu}$ \\\\
+                                            & $\\bm{\\varepsilon}$ \\\\
                                             Measure & BCS = MCS
                                             & BCS = MCS
                                             & BCS = MCS
-                                            & MCS (BCS=0)
+                                            & MCS (BCS=1)
                                             & Factor
                                             \\\\", sep=""))),
              sanitize.text.function = function(x){x},
@@ -551,72 +551,30 @@ require(xtable)
 table <- lvpars
 
 print.xtable(xtable(table,
-                    align = "llccc",
-                    # align="L{0cm}L{.1\\textwidth}L{.2\\textwidth}L{.15\\textwidth}L{.15\\textwidth}L{.15\\textwidth}L{.15\\textwidth}",
+                    align="L{0cm}L{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}",
                     digits = 3
                     ),
              size="\\small",
              include.rownames=F,
              include.colnames=F,
              booktabs = T,
-             add.to.row = list(pos = c(list(0,2)),
+             add.to.row = list(pos = c(list(0)),
                               command = c(
                               # header
-                                    paste(" & \\multicolumn{3}{c}{\\textbf{BCS}} \\\\ \\midrule
-                                            & \\multicolumn{1}{c}{\\textbf{Mean}}
-                                            & \\multicolumn{2}{c}{\\textbf{Covariance}} \\\\
-                                            && $\\theta^{EXT}$ & $\\theta^{INT}$ \\\\", sep=""),
-                                    paste(" \\midrule & \\multicolumn{3}{c}{\\textbf{MCS}} \\\\ \\midrule
-                                            & \\multicolumn{1}{c}{\\textbf{Mean}}
-                                            & \\multicolumn{2}{c}{\\textbf{Covariance}} \\\\
-                                            && $\\theta^{EXT}$ & $\\theta^{INT}$ \\\\", sep="")
+                                    paste(" & \\multicolumn{4}{c}{\\textbf{BCS}}
+                                            & \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){2-5} \\cmidrule(lr){6-9}
+                                            & Mean & \\multicolumn{2}{c}{Covariance} & Corr. & Mean & \\multicolumn{2}{c}{Covariance} & Corr. \\\\
+                                            ", sep="")
                                     )),
              sanitize.text.function = function(x){x},
              sanitize.rownames.function = function(x){""}, # to not print row numbers
-             tabular.environment = "tabularx", width = ".5\\textwidth",
+             tabular.environment = "tabularx", width = ".85\\textwidth",
              floating = FALSE
 )
 
 @
 \end{table}
 
-\begin{table}[ht]
-\caption{Estimated latent variable means and covariances -- model with restricted intercepts} \label{tab:lvpars2}
-\centering
-<<RES_FA_LV2, dependson="FA_FINAL_PARS", results='asis'>>=
-require(xtable)
-
-table <- lvpars2
-
-print.xtable(xtable(table,
-                    align = "llccc",
-                    # align="L{0cm}L{.1\\textwidth}L{.2\\textwidth}L{.15\\textwidth}L{.15\\textwidth}L{.15\\textwidth}L{.15\\textwidth}",
-                    digits = 3
-                    ),
-             size="\\small",
-             include.rownames=F,
-             include.colnames=F,
-             booktabs = T,
-             add.to.row = list(pos = c(list(0,2)),
-                              command = c(
-                              # header
-                                    paste(" & \\multicolumn{3}{c}{\\textbf{BCS}} \\\\ \\midrule
-                                            & \\multicolumn{1}{c}{\\textbf{Mean}}
-                                            & \\multicolumn{2}{c}{\\textbf{Covariance}} \\\\
-                                            && $\\theta^{EXT}$ & $\\theta^{INT}$ \\\\", sep=""),
-                                    paste(" \\midrule & \\multicolumn{3}{c}{\\textbf{MCS}} \\\\ \\midrule
-                                            & \\multicolumn{1}{c}{\\textbf{Mean}}
-                                            & \\multicolumn{2}{c}{\\textbf{Covariance}} \\\\
-                                            && $\\theta^{EXT}$ & $\\theta^{INT}$ \\\\", sep="")
-                                    )),
-             sanitize.text.function = function(x){x},
-             sanitize.rownames.function = function(x){""}, # to not print row numbers
-             tabular.environment = "tabularx", width = ".5\\textwidth",
-             floating = FALSE
-)
-
-@
-\end{table}
 
 <<CLEANUP, dependson='FA_FINAL'>>=
 @
@@ -632,14 +590,14 @@ Although the results of our measurement invariance analysis imply that compariso
 
 <<FA_REGS, dependson='FA_SCORES'>>=
 
-reg.bcs.ext <- lm(EXT~as.factor(incq), data=subset(facandraw, cohort=="BCS"))
+reg.bcs.ext <- lm(EXT~as.factor(incq) + age, data=subset(items.scored, cohort=="BCS"))
 bcs.51.ext <- round(reg.bcs.ext$coefficients["as.factor(incq)5"],2)
-reg.bcs.int <- lm(INT~as.factor(incq), data=subset(facandraw, cohort=="BCS"))
+reg.bcs.int <- lm(INT~as.factor(incq) + age, data=subset(items.scored, cohort=="BCS"))
 bcs.51.int <- round(reg.bcs.int$coefficients["as.factor(incq)5"],2)
 
-reg.mcs.ext <- lm(EXT~as.factor(incq), data=subset(facandraw, cohort=="MCS"))
+reg.mcs.ext <- lm(EXT~as.factor(incq) + age, data=subset(items.scored, cohort=="MCS"))
 mcs.51.ext <- round(reg.mcs.ext$coefficients["as.factor(incq)5"],2)
-reg.mcs.int <- lm(INT~as.factor(incq), data=subset(facandraw, cohort=="MCS"))
+reg.mcs.int <- lm(INT~as.factor(incq) + age, data=subset(items.scored, cohort=="MCS"))
 mcs.51.int <- round(reg.mcs.int$coefficients["as.factor(incq)5"],2)
 
 @
@@ -670,7 +628,7 @@ We can derive scores for $\theta^{EXT}$ and $\theta^{INT}$ directly, and plot th
 \end{figure}
 
 \begin{figure}
-<<FACINEQ, dev='tikz', fig.height=10, fig.width=10, out.width='1\\linewidth'>>=
+<<FACINEQ, dev='tikz', fig.height=12, fig.width=10, out.width='1\\linewidth'>>=
 @
 \caption{Distribution of scores across income quintiles}\label{fig:boxscores}
 {\scriptsize \emph{Notes}: The figure plots the distribution of the scored factors from model \eqref{eq:finalmod} across the quintiles in the income distribution. \par}

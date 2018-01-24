@@ -1,14 +1,13 @@
 # ############################################################################################
 ## ---- FA_FINAL
-# select final model
 
 # select final model
-finalmod <- fa.thr.load.we.th
-pta <- partable(finalmod)
+finalmod <- fa.thr.load.int.we.th
 
 ##################################################################################
 ## ---- FA_FINAL_PARS
-# for model with constrained loadings and thresholds
+# extract parameters and make table for final model estimates
+pta <- partable(finalmod)
 
 # item parameters ----------------------------------------------------------
 # extract loadings
@@ -32,17 +31,17 @@ tau2 <- BCS.tau2
 tau2$measure <- tau2$lhs
 tau2 <- tau2[ , -which(names(tau2) %in% c("rhs","lhs"))] # drop useless columns
 
-# extract intercepts (group 2 only)
-MCS.nu = pta[(pta$op == "~1" & pta$rhs == "" & pta$group == 2),c("lhs", "rhs","est")]
-nu <- MCS.nu
-nu$measure <- nu$lhs
-nu <- nu[ , -which(names(nu) %in% c("rhs","lhs"))] # drop useless columns
+# extract variances (group 2 only)
+MCS.eps = pta[(pta$op == "~~" & substr(pta$rhs,1,1) == "X" & pta$group == 2),c("lhs", "rhs","est")]
+eps <- MCS.eps
+eps$measure <- eps$lhs
+eps <- eps[ , -which(names(eps) %in% c("rhs","lhs"))] # drop useless columns
 
 
 # merge parameters together
 allpar <- merge(lambdas,tau1,by="measure", all.x = T)
 allpar <- merge(allpar,tau2,by="measure", all.x = T)
-allpar <- merge(allpar,nu,by="measure", all.x = T)
+allpar <- merge(allpar,eps,by="measure", all.x = T)
 allpar <- allpar[mixedorder(allpar$measure),]
 
 # name variables
@@ -50,7 +49,7 @@ colnames(allpar) <- c("measure",
                       "$\\lambda_{BCS} = \\lambda_{MCS}$",
                       "$\\tau_{1,BCS} = \\tau_{1_MCS}$",
                       "$\\tau_{2,BCS} = \\tau_{2,MCS}$",
-                      "$\\nu_{MCS}$ ($\\nu_{BCS}=0$)"
+                      "$\\varepsilon_{MCS}$ ($\\varepsilon_{BCS}=1$)"
 )
 
 # add latent factors
@@ -64,37 +63,21 @@ allpar <- cbind(allpar,
 lv.means <- inspect(finalmod, what="mean.lv") # means
 lv.covs <- inspect(finalmod, what="cov.lv")   # covariances
 for (i in 1:2) upperTriangle(lv.covs[[i]]) <- NA
+lv.corrs <- lapply(lv.covs,cov2cor)
 
-lvpars <- data.frame(rbind(
-  cbind(as.matrix(lv.means[[1]]), lv.covs[[1]]),
-  cbind(as.matrix(lv.means[[2]]), lv.covs[[2]])
-))
+
+lvpars <- data.frame(
+  cbind(as.matrix(lv.means[[1]]), lv.covs[[1]], as.matrix(c(NA,lv.corrs[[1]][2,1])), as.matrix(lv.means[[2]]), lv.covs[[2]], as.matrix(c(NA,lv.corrs[[2]][2,1])))
+)
 
 lvpars <- cbind( Measure = as.matrix( 
-  c("$\\theta^{EXT}$", "$\\theta^{INT}$",
-    "$\\theta^{EXT}$", "$\\theta^{INT}$")),
+  c("$\\theta^{EXT}$", "$\\theta^{INT}$")),
   lvpars)
-
-# model with threshold, loading and intercept invariance
-lv.means <- inspect(fa.thr.load.int.we.th, what="mean.lv") # means
-lv.covs <- inspect(fa.thr.load.int.we.th, what="cov.lv")   # covariances
-for (i in 1:2) upperTriangle(lv.covs[[i]]) <- NA
-
-lvpars2 <- data.frame(rbind(
-  cbind(as.matrix(lv.means[[1]]), lv.covs[[1]]),
-  cbind(as.matrix(lv.means[[2]]), lv.covs[[2]])
-))
-
-lvpars2 <- cbind( Measure = as.matrix( 
-  c("$\\theta^{EXT}$", "$\\theta^{INT}$",
-    "$\\theta^{EXT}$", "$\\theta^{INT}$")),
-  lvpars2)
-
 
 
 ## ---- CLEANUP
-rm(BCS.lambda, BCS.tau1, BCS.tau2, MCS.lambda, MCS.tau1, MCS.tau2, 
-   lambdas, means, pta, tau1, tau2, 
+rm(BCS.lambda, BCS.tau1, BCS.tau2, MCS.lambda, MCS.tau1, MCS.tau2, MCS.eps,
+   lambdas, means, pta, tau1, tau2, eps,
    Xtemp.bcs, Xtemp.mcs, bcs5_rutb419, bcs5_rutbAB, bcs5_rutc419,
    cohort, dmfi, dcfi, dgam, indsel, mcskeepb, mnames, ncats, ncomm, nn,
    t, t2)

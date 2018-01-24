@@ -1,7 +1,97 @@
 
-
 ############################################################################################
 ## ---- FA_INVARIANCE
+
+# MT CONFIGURAL - THETA PARAMETERISATION
+# - one anchor loadings = 1 for each factor
+# - all intercepts = 0
+# - factor means = 0 in group 1 only
+# - thresholds: tau1 restricted equal across groups, tau2 invariant only for anchors
+
+config.mt.th <- "
+EXT =~ c(1, 1)*X2 + X1 + X3 + X4 + X5 + X6
+INT =~ c(1, 1)*X8 + X7 + X9 + X10 + X11
+X2 | c(t1_2, t1_2)*t1 + c(t2_2, t2_2)*t2
+X1 | c(t1_1, t1_1)*t1 + t2
+X3 | c(t1_3, t1_3)*t1 + t2
+X4 | c(t1_4, t1_4)*t1 + t2
+X5 | c(t1_5, t1_5)*t1
+X6 | c(t1_6, t1_6)*t1
+X8 | c(t1_8, t1_8)*t1 + c(t2_8, t2_8)*t2
+X7 | c(t1_7, t1_7)*t1 + t2
+X10 | c(t1_10, t1_10)*t1 + t2
+X11 | c(t1_11, t1_11)*t1
+X1  ~ c(0, 0)*1
+X2  ~ c(0, 0)*1
+X3  ~ c(0, 0)*1
+X4  ~ c(0, 0)*1
+X5  ~ c(0, 0)*1
+X6  ~ c(0, 0)*1
+X7  ~ c(0, 0)*1
+X8  ~ c(0, 0)*1
+X9  ~ c(0, 0)*1
+X10  ~ c(0, 0)*1
+X11  ~ c(0, 0)*1
+X1 ~~ c(1,NA)*X1
+X2 ~~ c(1,NA)*X2
+X3 ~~ c(1,NA)*X3
+X4 ~~ c(1,NA)*X4
+X5 ~~ c(1,NA)*X5
+X6 ~~ c(1,NA)*X6
+X7 ~~ c(1,NA)*X7
+X8 ~~ c(1,NA)*X8
+X9 ~~ c(1,NA)*X9
+X10 ~~ c(1,NA)*X10
+X11 ~~ c(1,NA)*X11
+EXT ~~ NA*EXT
+INT ~~ NA*INT
+EXT ~~ NA*INT
+EXT ~ c(0, NA)*1
+INT ~ c(0, NA)*1
+"
+
+# MT CONFIGURAL - DELTA PARAMETERISATION
+config.mt.d <- "
+EXT =~ c(1, 1)*X2 + X1 + X3 + X4 + X5 + X6
+INT =~ c(1, 1)*X8 + X7 + X9 + X10 + X11
+X2 | c(t1_2, t1_2)*t1 + c(t2_2, t2_2)*t2
+X1 | c(t1_1, t1_1)*t1 + t2
+X3 | c(t1_3, t1_3)*t1 + t2
+X4 | c(t1_4, t1_4)*t1 + t2
+X5 | c(t1_5, t1_5)*t1
+X6 | c(t1_6, t1_6)*t1
+X8 | c(t1_8, t1_8)*t1 + c(t2_8, t2_8)*t2
+X7 | c(t1_7, t1_7)*t1 + t2
+X10 | c(t1_10, t1_10)*t1 + t2
+X11 | c(t1_11, t1_11)*t1
+X1  ~ c(0, 0)*1
+X2  ~ c(0, 0)*1
+X3  ~ c(0, 0)*1
+X4  ~ c(0, 0)*1
+X5  ~ c(0, 0)*1
+X6  ~ c(0, 0)*1
+X7  ~ c(0, 0)*1
+X8  ~ c(0, 0)*1
+X9  ~ c(0, 0)*1
+X10  ~ c(0, 0)*1
+X11  ~ c(0, 0)*1
+X1 ~*~ c(1,NA)*X1
+X2 ~*~ c(1,NA)*X2
+X3 ~*~ c(1,NA)*X3
+X4 ~*~ c(1,NA)*X4
+X5 ~*~ c(1,NA)*X5
+X6 ~*~ c(1,NA)*X6
+X7 ~*~ c(1,NA)*X7
+X8 ~*~ c(1,NA)*X8
+X9 ~*~ c(1,NA)*X9
+X10 ~*~ c(1,NA)*X10
+X11 ~*~ c(1,NA)*X11
+EXT ~~ NA*EXT
+INT ~~ NA*INT
+EXT ~~ NA*INT
+EXT ~ c(0,NA)*1
+INT ~ c(0,NA)*1
+"
 
 # WE CONFIGURAL - THETA PARAMETERISATION (Condition 8)
 # free loadings and thresholds
@@ -12,17 +102,6 @@
 config.we.th <- "
 EXT =~ c(NA, NA)*X2 + X1 + X3 + X4 + X5 + X6
 INT =~ c(NA, NA)*X8 + X7 + X9 + X10 + X11
-X1 ~ age + sex
-X2 ~ age + sex
-X3 ~ age + sex
-X4 ~ age + sex
-X5 ~ age + sex
-X6 ~ age + sex
-X7 ~ age + sex
-X8 ~ age + sex
-X9 ~ age + sex
-X10 ~ age + sex
-X11 ~ age + sex
 X1 | t1 + t2
 X2 | t1 + t2
 X3 | t1 + t2
@@ -73,17 +152,6 @@ INT ~ c(0, 0)*1
 config.we.d <- "
 EXT =~ c(NA, NA)*X2 + X1 + X3 + X4 + X5 + X6
 INT =~ c(NA, NA)*X8 + X7 + X9 + X10 + X11
-X1 ~ age + sex
-X2 ~ age + sex
-X3 ~ age + sex
-X4 ~ age + sex
-X5 ~ age + sex
-X6 ~ age + sex
-X7 ~ age + sex
-X8 ~ age + sex
-X9 ~ age + sex
-X10 ~ age + sex
-X11 ~ age + sex
 X1 | t1 + t2
 X2 | t1 + t2
 X3 | t1 + t2
@@ -134,17 +202,6 @@ INT ~ c(0, 0)*1
 thr.we.th <- "
 EXT =~ c(NA, NA)*X2 + X1 + X3 + X4 + X5 + X6
 INT =~ c(NA, NA)*X8 + X7 + X9 + X10 + X11
-X1 ~ age + sex
-X2 ~ age + sex
-X3 ~ age + sex
-X4 ~ age + sex
-X5 ~ age + sex
-X6 ~ age + sex
-X7 ~ age + sex
-X8 ~ age + sex
-X9 ~ age + sex
-X10 ~ age + sex
-X11 ~ age + sex
 X2 | c(t1_2, t1_2)*t1 + c(t2_2, t2_2)*t2
 X1 | c(t1_1, t1_1)*t1 + c(t2_1, t2_1)*t2
 X3 | c(t1_3, t1_3)*t1 + c(t2_3, t2_3)*t2
@@ -195,17 +252,6 @@ INT ~ c(0, 0)*1
 thr.load.we.th <- "
 EXT =~ c(NA, NA)*X2 + X1 + X3 + X4 + X5 + X6
 INT =~ c(NA, NA)*X8 + X7 + X9 + X10 + X11
-X1 ~ age + sex
-X2 ~ age + sex
-X3 ~ age + sex
-X4 ~ age + sex
-X5 ~ age + sex
-X6 ~ age + sex
-X7 ~ age + sex
-X8 ~ age + sex
-X9 ~ age + sex
-X10 ~ age + sex
-X11 ~ age + sex
 X2 | c(t1_2, t1_2)*t1 + c(t2_2, t2_2)*t2
 X1 | c(t1_1, t1_1)*t1 + c(t2_1, t2_1)*t2
 X3 | c(t1_3, t1_3)*t1 + c(t2_3, t2_3)*t2
@@ -256,17 +302,6 @@ INT ~ c(0, 0)*1
 thr.int.we.d <- "
 EXT =~ c(NA, NA)*X2 + X1 + X3 + X4 + X5 + X6
 INT =~ c(NA, NA)*X8 + X7 + X9 + X10 + X11
-X1 ~ age + sex
-X2 ~ age + sex
-X3 ~ age + sex
-X4 ~ age + sex
-X5 ~ age + sex
-X6 ~ age + sex
-X7 ~ age + sex
-X8 ~ age + sex
-X9 ~ age + sex
-X10 ~ age + sex
-X11 ~ age + sex
 X2 | c(t1_2, t1_2)*t1 + c(t2_2, t2_2)*t2
 X1 | c(t1_1, t1_1)*t1 + c(t2_1, t2_1)*t2
 X3 | c(t1_3, t1_3)*t1 + c(t2_3, t2_3)*t2
@@ -318,17 +353,6 @@ INT ~ c(NA, NA)*1
 thr.load.int.we.th <- "
 EXT =~ c(NA, NA)*X2 + X1 + X3 + X4 + X5 + X6
 INT =~ c(NA, NA)*X8 + X7 + X9 + X10 + X11
-X1 ~ age + sex
-X2 ~ age + sex
-X3 ~ age + sex
-X4 ~ age + sex
-X5 ~ age + sex
-X6 ~ age + sex
-X7 ~ age + sex
-X8 ~ age + sex
-X9 ~ age + sex
-X10 ~ age + sex
-X11 ~ age + sex
 X2 | c(t1_2, t1_2)*t1 + c(t2_2, t2_2)*t2
 X1 | c(t1_1, t1_1)*t1 + c(t2_1, t2_1)*t2
 X3 | c(t1_3, t1_3)*t1 + c(t2_3, t2_3)*t2
@@ -375,15 +399,15 @@ INT ~ c(0, NA)*1
 # fa.config.mt.d<- cfa(config.mt.d, data = items.c, group = "cohort", estimator="wlsmv", parameterization="delta")
 # printfit(fa.config.mt.d)
 
-fa.config.we.th <- cfa(config.we.th, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="theta")
+fa.config.we.th <- cfa(config.we.th, data = items.c, group = "cohort", estimator="wlsmv", parameterization="theta")
 printfit(fa.config.we.th)
-fa.config.we.d <- cfa(config.we.d, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="delta")
+fa.config.we.d <- cfa(config.we.d, data = items.c, group = "cohort", estimator="wlsmv", parameterization="delta")
 printfit(fa.config.we.d)
-fa.thr.we.th <- cfa(thr.we.th, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="theta")
+fa.thr.we.th <- cfa(thr.we.th, data = items.c, group = "cohort", estimator="wlsmv", parameterization="theta")
 printfit(fa.thr.we.th)
 
 # first restrictive model: THRESHOLDS + LOADINGS
-fa.thr.load.we.th <- cfa(thr.load.we.th, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.thr.load.we.th <- cfa(thr.load.we.th, data = items.c, group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
 printfit(fa.thr.load.we.th)
 
 # # THRESHOLDS + INTERCEPTS (does not converge)
@@ -391,7 +415,7 @@ printfit(fa.thr.load.we.th)
 # printfit(fa.thr.int.we.d)
 
 # second restrictive model: THRESHOLDS + LOADINGS + INTERCEPTS
-fa.thr.load.int.we.th <- cfa(thr.load.int.we.th, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.thr.load.int.we.th <- cfa(thr.load.int.we.th, data = items.c, group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
 printfit(fa.thr.load.int.we.th)
 
 
@@ -427,6 +451,5 @@ afitab$dgam <- as.matrix(dgam)
 
 # add names
 afitab <- data.frame(cbind(mnames = as.matrix(mnames), afitab))
-
 
 

@@ -71,7 +71,7 @@ for (i in 1:ncol(bcs5rutc)) bcs5rutcf[,i] <- as.ordered(bcs5rutc[,i])
 
 
 # auxiliary variables
-bcs5aux <- cbind(bcs5data[,c("bcsid", "faminc", "incq", "ysch_moth", "ysch_fath", "ageint5")],
+bcs5aux <- cbind(bcs5data[,c("bcsid", "faminc", "incq", "ysch_moth", "ysch_fath", "ageint5", "sex")],
                 cog1 = bcs5data$epvt_z,
                 cog2 = bcs5data$hfd_z,
                 cog3 = bcs5data$copy_z
@@ -114,7 +114,7 @@ mcs5sdqcf <- mcs5sdqc
 for (i in 1:ncol(mcs5sdqc)) mcs5sdqcf[,i] <- as.ordered(mcs5sdqc[,i])                    
 
 # add SES and cognitive data
-mcs5aux <- cbind(mcs5data[,c("mcsid", "faminc", "incq", "ysch_moth", "ysch_fath", "ageint5")],
+mcs5aux <- cbind(mcs5data[,c("mcsid", "faminc", "incq", "ysch_moth", "ysch_fath", "ageint5","sex")],
                 cog1 = mcs5data$nvoc_bastz,
                 cog2 = mcs5data$psim_bastz,
                 cog3 = mcs5data$patc_bastz
@@ -146,10 +146,19 @@ items.c <- X[,c(grep("X", names(X), value=T), "cohort")]   # noncog items only
 items  <- items.c                              # numeric version of noncog items only
 for (i in 1:ncol(items.c)) items[,i] <- as.numeric(items.c[,i]) - 1
 
+# with age and sex
+items.cb <- X[,c(grep("X", names(X), value=T), "cohort", "ageint5","sex")]
+colnames(items.cb)[colnames(items.cb) == "ageint5"] <- "age"
+items.cb$sex <- factor(items.cb$sex)
 
-# ADD cognitive measures
-itemsa.c <- X[,c(grep("X", names(X), value=T), grep("cog", names(X), value=T), "cohort")]   # include cognitive measures
-
+# with age, cohort+sex group
+items.cc <- X[,c(grep("X", names(X), value=T), "cohort", "ageint5", "sex")]
+colnames(items.cc)[colnames(items.cc) == "ageint5"] <- "age"
+items.cc$cohortsex <- interaction(items.cc[c("cohort","sex")]) # generate interaction
+items.cc$cohortsex <- factor(items.cc$cohortsex,levels(items.cc$cohortsex)[c(1,3,2,4)]) # reorder
+levels(items.cc$cohortsex) <- c("BCS.M", "BCS.F", "MCS.M", "MCS.F")
+items.cc <- items.cc[ , !(names(items.cc) %in% c("cohort","sex"))] # drop cohort and sex
+items.cc <- items.cc[!is.na(items.cc$cohortsex),] # drop missings
 
 ## ---- MEANTABLE
 # table of mean values of items

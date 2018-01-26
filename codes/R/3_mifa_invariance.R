@@ -9,60 +9,8 @@
 # lv variances = 1
 # intercepts = 0
 # unique variances = 1
-config.we.th <- "
-EXT =~ c(NA, NA)*X2 + X1 + X3 + X4 + X5 + X6
-INT =~ c(NA, NA)*X8 + X7 + X9 + X10 + X11
-X1 ~ age + sex
-X2 ~ age + sex
-X3 ~ age + sex
-X4 ~ age + sex
-X5 ~ age + sex
-X6 ~ age + sex
-X7 ~ age + sex
-X8 ~ age + sex
-X9 ~ age + sex
-X10 ~ age + sex
-X11 ~ age + sex
-X1 | t1 + t2
-X2 | t1 + t2
-X3 | t1 + t2
-X4 | t1 + t2
-X5 | t1
-X6 | t1
-X7 | t1 + t2
-X8 | t1 + t2
-X9 | t1 + t2
-X10 | t1 + t2
-X11 | t1
-X1  ~ c(0, 0)*1
-X2  ~ c(0, 0)*1
-X3  ~ c(0, 0)*1
-X4  ~ c(0, 0)*1
-X5  ~ c(0, 0)*1
-X6  ~ c(0, 0)*1
-X7  ~ c(0, 0)*1
-X8  ~ c(0, 0)*1
-X9  ~ c(0, 0)*1
-X10  ~ c(0, 0)*1
-X11  ~ c(0, 0)*1
-X1 ~~ c(1,1)*X1
-X2 ~~ c(1,1)*X2
-X3 ~~ c(1,1)*X3
-X4 ~~ c(1,1)*X4
-X5 ~~ c(1,1)*X5
-X6 ~~ c(1,1)*X6
-X7 ~~ c(1,1)*X7
-X8 ~~ c(1,1)*X8
-X9 ~~ c(1,1)*X9
-X10 ~~ c(1,1)*X10
-X11 ~~ c(1,1)*X11
-EXT ~~ c(1,1)*EXT
-INT ~~ c(1,1)*INT
-EXT ~~ NA*INT
-EXT ~ c(0, 0)*1
-INT ~ c(0, 0)*1
-"
-
+config.we.th <- collapse(readLines(paste0(dir_syntax, "config_we_th.lav")), sep=" \n  ")
+config.we.thb <- collapse(readLines(paste0(dir_syntax, "config_we_thb.lav")), sep=" \n  ")
 
 # WE CONFIGURAL - DELTA PARAMETERISATION (Condition 7)
 # free loadings and thresholds
@@ -70,59 +18,8 @@ INT ~ c(0, 0)*1
 # lv variances = 1
 # intercepts = 0
 # scales = 1
-config.we.d <- "
-EXT =~ c(NA, NA)*X2 + X1 + X3 + X4 + X5 + X6
-INT =~ c(NA, NA)*X8 + X7 + X9 + X10 + X11
-X1 ~ age + sex
-X2 ~ age + sex
-X3 ~ age + sex
-X4 ~ age + sex
-X5 ~ age + sex
-X6 ~ age + sex
-X7 ~ age + sex
-X8 ~ age + sex
-X9 ~ age + sex
-X10 ~ age + sex
-X11 ~ age + sex
-X1 | t1 + t2
-X2 | t1 + t2
-X3 | t1 + t2
-X4 | t1 + t2
-X5 | t1
-X6 | t1
-X7 | t1 + t2
-X8 | t1 + t2
-X9 | t1 + t2
-X10 | t1 + t2
-X11 | t1
-X1  ~ c(0, 0)*1
-X2  ~ c(0, 0)*1
-X3  ~ c(0, 0)*1
-X4  ~ c(0, 0)*1
-X5  ~ c(0, 0)*1
-X6  ~ c(0, 0)*1
-X7  ~ c(0, 0)*1
-X8  ~ c(0, 0)*1
-X9  ~ c(0, 0)*1
-X10  ~ c(0, 0)*1
-X11  ~ c(0, 0)*1
-X1 ~*~ c(1,1)*X1
-X2 ~*~ c(1,1)*X2
-X3 ~*~ c(1,1)*X3
-X4 ~*~ c(1,1)*X4
-X5 ~*~ c(1,1)*X5
-X6 ~*~ c(1,1)*X6
-X7 ~*~ c(1,1)*X7
-X8 ~*~ c(1,1)*X8
-X9 ~*~ c(1,1)*X9
-X10 ~*~ c(1,1)*X10
-X11 ~*~ c(1,1)*X11
-EXT ~~ c(1,1)*EXT
-INT ~~ c(1,1)*INT
-EXT ~~ NA*INT
-EXT ~ c(0, 0)*1
-INT ~ c(0, 0)*1
-"
+config.we.d <- collapse(readLines(paste0(dir_syntax, "config_we_d.lav")), sep=" \n  ")
+
 
 # WE THRESHOLD invariance, theta par (Condition 15)
 # --> equivalent to configural for K=2
@@ -131,59 +28,9 @@ INT ~ c(0, 0)*1
 # lv variances = 1
 # unique variances free in group 2 (except binary items)
 # intercepts free in group 2
-thr.we.th <- "
-EXT =~ c(NA, NA)*X2 + X1 + X3 + X4 + X5 + X6
-INT =~ c(NA, NA)*X8 + X7 + X9 + X10 + X11
-X1 ~ age + sex
-X2 ~ age + sex
-X3 ~ age + sex
-X4 ~ age + sex
-X5 ~ age + sex
-X6 ~ age + sex
-X7 ~ age + sex
-X8 ~ age + sex
-X9 ~ age + sex
-X10 ~ age + sex
-X11 ~ age + sex
-X2 | c(t1_2, t1_2)*t1 + c(t2_2, t2_2)*t2
-X1 | c(t1_1, t1_1)*t1 + c(t2_1, t2_1)*t2
-X3 | c(t1_3, t1_3)*t1 + c(t2_3, t2_3)*t2
-X4 | c(t1_4, t1_4)*t1 + c(t2_4, t2_4)*t2
-X5 | c(t1_5, t1_5)*t1
-X6 | c(t1_6, t1_6)*t1
-X8 | c(t1_8, t1_8)*t1 + c(t2_8, t2_8)*t2
-X7 | c(t1_7, t1_7)*t1 + c(t2_7, t2_7)*t2
-X9 | c(t1_9, t1_9)*t1 + c(t2_9, t2_9)*t2
-X10 | c(t1_10, t1_10)*t1 + c(t2_10, t2_10)*t2
-X11 | c(t1_11, t1_11)*t1
-X1  ~ c(0, NA)*1
-X2  ~ c(0, NA)*1
-X3  ~ c(0, NA)*1
-X4  ~ c(0, NA)*1
-X5  ~ c(0, NA)*1
-X6  ~ c(0, NA)*1
-X7  ~ c(0, NA)*1
-X8  ~ c(0, NA)*1
-X9  ~ c(0, NA)*1
-X10  ~ c(0, NA)*1
-X11  ~ c(0, NA)*1
-X1 ~~ c(1,NA)*X1
-X2 ~~ c(1,NA)*X2
-X3 ~~ c(1,NA)*X3
-X4 ~~ c(1,NA)*X4
-X5 ~~ c(1,1)*X5
-X6 ~~ c(1,1)*X6
-X7 ~~ c(1,NA)*X7
-X8 ~~ c(1,NA)*X8
-X9 ~~ c(1,NA)*X9
-X10 ~~ c(1,NA)*X10
-X11 ~~ c(1,1)*X11
-EXT ~~ c(1,1)*EXT
-INT ~~ c(1,1)*INT
-EXT ~~ NA*INT
-EXT ~ c(0, 0)*1
-INT ~ c(0, 0)*1
-"
+thr.we.th <- collapse(readLines(paste0(dir_syntax, "thr_we_th.lav")), sep=" \n  ")
+thr.we.thb <- collapse(readLines(paste0(dir_syntax, "thr_we_thb.lav")), sep=" \n  ")
+
 
 # WE THRESHOLD+LOADINGS invariance, theta par (Condition 19)
 # thresholds constrained across groups (specified in cfa call)
@@ -192,59 +39,9 @@ INT ~ c(0, 0)*1
 # lv variances free in group 2
 # unique variances free in group 2 (except binary items)
 # intercepts free in group 2
-thr.load.we.th <- "
-EXT =~ c(NA, NA)*X2 + X1 + X3 + X4 + X5 + X6
-INT =~ c(NA, NA)*X8 + X7 + X9 + X10 + X11
-X1 ~ age + sex
-X2 ~ age + sex
-X3 ~ age + sex
-X4 ~ age + sex
-X5 ~ age + sex
-X6 ~ age + sex
-X7 ~ age + sex
-X8 ~ age + sex
-X9 ~ age + sex
-X10 ~ age + sex
-X11 ~ age + sex
-X2 | c(t1_2, t1_2)*t1 + c(t2_2, t2_2)*t2
-X1 | c(t1_1, t1_1)*t1 + c(t2_1, t2_1)*t2
-X3 | c(t1_3, t1_3)*t1 + c(t2_3, t2_3)*t2
-X4 | c(t1_4, t1_4)*t1 + c(t2_4, t2_4)*t2
-X5 | c(t1_5, t1_5)*t1
-X6 | c(t1_6, t1_6)*t1
-X8 | c(t1_8, t1_8)*t1 + c(t2_8, t2_8)*t2
-X7 | c(t1_7, t1_7)*t1 + c(t2_7, t2_7)*t2
-X9 | c(t1_9, t1_9)*t1 + c(t2_9, t2_9)*t2
-X10 | c(t1_10, t1_10)*t1 + c(t2_10, t2_10)*t2
-X11 | c(t1_11, t1_11)*t1
-X1  ~ c(0, NA)*1
-X2  ~ c(0, NA)*1
-X3  ~ c(0, NA)*1
-X4  ~ c(0, NA)*1
-X5  ~ c(0, NA)*1
-X6  ~ c(0, NA)*1
-X7  ~ c(0, NA)*1
-X8  ~ c(0, NA)*1
-X9  ~ c(0, NA)*1
-X10  ~ c(0, NA)*1
-X11  ~ c(0, NA)*1
-X1 ~~ c(1,NA)*X1
-X2 ~~ c(1,NA)*X2
-X3 ~~ c(1,NA)*X3
-X4 ~~ c(1,NA)*X4
-X5 ~~ c(1,1)*X5
-X6 ~~ c(1,1)*X6
-X7 ~~ c(1,NA)*X7
-X8 ~~ c(1,NA)*X8
-X9 ~~ c(1,NA)*X9
-X10 ~~ c(1,NA)*X10
-X11 ~~ c(1,1)*X11
-EXT ~~ c(1,NA)*EXT
-INT ~~ c(1,NA)*INT
-EXT ~~ NA*INT
-EXT ~ c(0, 0)*1
-INT ~ c(0, 0)*1
-"
+thr.load.we.th <- collapse(readLines(paste0(dir_syntax, "thr_load_we_th.lav")), sep=" \n  ")
+thr.load.we.thb <- collapse(readLines(paste0(dir_syntax, "thr_load_we_thb.lav")), sep=" \n  ")
+
 
 # WE THRESHOLD+INTERCEPT invariance, delta par (Condition 21)
 # thresholds constrained across groups (specified in cfa call)
@@ -253,59 +50,7 @@ INT ~ c(0, 0)*1
 # lv variances constrained to 1
 # unique variances free in group 2 (except binary items)
 # intercepts free in group 2
-thr.int.we.d <- "
-EXT =~ c(NA, NA)*X2 + X1 + X3 + X4 + X5 + X6
-INT =~ c(NA, NA)*X8 + X7 + X9 + X10 + X11
-X1 ~ age + sex
-X2 ~ age + sex
-X3 ~ age + sex
-X4 ~ age + sex
-X5 ~ age + sex
-X6 ~ age + sex
-X7 ~ age + sex
-X8 ~ age + sex
-X9 ~ age + sex
-X10 ~ age + sex
-X11 ~ age + sex
-X2 | c(t1_2, t1_2)*t1 + c(t2_2, t2_2)*t2
-X1 | c(t1_1, t1_1)*t1 + c(t2_1, t2_1)*t2
-X3 | c(t1_3, t1_3)*t1 + c(t2_3, t2_3)*t2
-X4 | c(t1_4, t1_4)*t1 + c(t2_4, t2_4)*t2
-X5 | c(t1_5, t1_5)*t1
-X6 | c(t1_6, t1_6)*t1
-X8 | c(t1_8, t1_8)*t1 + c(t2_8, t2_8)*t2
-X7 | c(t1_7, t1_7)*t1 + c(t2_7, t2_7)*t2
-X9 | c(t1_9, t1_9)*t1 + c(t2_9, t2_9)*t2
-X10 | c(t1_10, t1_10)*t1 + c(t2_10, t2_10)*t2
-X11 | c(t1_11, t1_11)*t1
-X1  ~ c(0, 0)*1
-X2  ~ c(0, 0)*1
-X3  ~ c(0, 0)*1
-X4  ~ c(0, 0)*1
-X5  ~ c(0, 0)*1
-X6  ~ c(0, 0)*1
-X7  ~ c(0, 0)*1
-X8  ~ c(0, 0)*1
-X9  ~ c(0, 0)*1
-X10  ~ c(0, 0)*1
-X11  ~ c(0, 0)*1
-X1 ~*~ c(1,NA)*X1
-X2 ~*~ c(1,NA)*X2
-X3 ~*~ c(1,NA)*X3
-X4 ~*~ c(1,NA)*X4
-X5 ~*~ c(1,1)*X5
-X6 ~*~ c(1,1)*X6
-X7 ~*~ c(1,NA)*X7
-X8 ~*~ c(1,NA)*X8
-X9 ~*~ c(1,NA)*X9
-X10 ~*~ c(1,NA)*X10
-X11 ~*~ c(1,1)*X11
-EXT ~~ c(1,1)*EXT
-INT ~~ c(1,1)*INT
-EXT ~~ NA*INT
-EXT ~ c(NA, NA)*1
-INT ~ c(NA, NA)*1
-"
+thr.int.we.d <- collapse(readLines(paste0(dir_syntax, "thr_int_we_d.lav")), sep=" \n  ")
 
 
 # WE THRESHOLD+LOADINGS+INTERCEPT invariance, theta par (Condition 27)
@@ -315,118 +60,96 @@ INT ~ c(NA, NA)*1
 # lv variances free in group 2
 # unique variances free in group 2 (except binary items)
 # intercepts constrained to zero for both groups
-thr.load.int.we.th <- "
-EXT =~ c(NA, NA)*X2 + X1 + X3 + X4 + X5 + X6
-INT =~ c(NA, NA)*X8 + X7 + X9 + X10 + X11
-X1 ~ age + sex
-X2 ~ age + sex
-X3 ~ age + sex
-X4 ~ age + sex
-X5 ~ age + sex
-X6 ~ age + sex
-X7 ~ age + sex
-X8 ~ age + sex
-X9 ~ age + sex
-X10 ~ age + sex
-X11 ~ age + sex
-X2 | c(t1_2, t1_2)*t1 + c(t2_2, t2_2)*t2
-X1 | c(t1_1, t1_1)*t1 + c(t2_1, t2_1)*t2
-X3 | c(t1_3, t1_3)*t1 + c(t2_3, t2_3)*t2
-X4 | c(t1_4, t1_4)*t1 + c(t2_4, t2_4)*t2
-X5 | c(t1_5, t1_5)*t1
-X6 | c(t1_6, t1_6)*t1
-X8 | c(t1_8, t1_8)*t1 + c(t2_8, t2_8)*t2
-X7 | c(t1_7, t1_7)*t1 + c(t2_7, t2_7)*t2
-X9 | c(t1_9, t1_9)*t1 + c(t2_9, t2_9)*t2
-X10 | c(t1_10, t1_10)*t1 + c(t2_10, t2_10)*t2
-X11 | c(t1_11, t1_11)*t1
-X1  ~ c(0, 0)*1
-X2  ~ c(0, 0)*1
-X3  ~ c(0, 0)*1
-X4  ~ c(0, 0)*1
-X5  ~ c(0, 0)*1
-X6  ~ c(0, 0)*1
-X7  ~ c(0, 0)*1
-X8  ~ c(0, 0)*1
-X9  ~ c(0, 0)*1
-X10  ~ c(0, 0)*1
-X11  ~ c(0, 0)*1
-X1 ~~ c(1,NA)*X1
-X2 ~~ c(1,NA)*X2
-X3 ~~ c(1,NA)*X3
-X4 ~~ c(1,NA)*X4
-X5 ~~ c(1,1)*X5
-X6 ~~ c(1,1)*X6
-X7 ~~ c(1,NA)*X7
-X8 ~~ c(1,NA)*X8
-X9 ~~ c(1,NA)*X9
-X10 ~~ c(1,NA)*X10
-X11 ~~ c(1,1)*X11
-EXT ~~ c(1,NA)*EXT
-INT ~~ c(1,NA)*INT
-EXT ~~ NA*INT
-EXT ~ c(0, NA)*1
-INT ~ c(0, NA)*1
-"
+thr.load.int.we.th <- collapse(readLines(paste0(dir_syntax, "thr_load_int_we_th.lav")), sep=" \n  ")
+thr.load.int.we.thb <- collapse(readLines(paste0(dir_syntax, "thr_load_int_we_thb.lav")), sep=" \n  ")
 
+# MODELS -------------------------------------------------------
 # equivalent models (MT does not converge!)
 # fa.config.mt.th <- cfa(config.mt.th, data = items.c, group = "cohort", estimator="wlsmv", parameterization="theta")
 # printfit(fa.config.mt.th)
 # fa.config.mt.d<- cfa(config.mt.d, data = items.c, group = "cohort", estimator="wlsmv", parameterization="delta")
 # printfit(fa.config.mt.d)
-
-fa.config.we.th <- cfa(config.we.th, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="theta")
-printfit(fa.config.we.th)
-fa.config.we.d <- cfa(config.we.d, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="delta")
-printfit(fa.config.we.d)
-fa.thr.we.th <- cfa(thr.we.th, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="theta")
-printfit(fa.thr.we.th)
-
-# first restrictive model: THRESHOLDS + LOADINGS
-fa.thr.load.we.th <- cfa(thr.load.we.th, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
-printfit(fa.thr.load.we.th)
-
+# fa.config.we.d <- cfa(config.we.d, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="delta")
+# printfit(fa.config.we.d)
 # # THRESHOLDS + INTERCEPTS (does not converge)
 # fa.thr.int.we.d <- cfa(thr.int.we.d, data = items.c, group = "cohort", estimator="wlsmv", parameterization="delta")
 # printfit(fa.thr.int.we.d)
 
+# WHOLE SAMPLE
+fa.c.a <- cfa(config.we.th, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="theta")
+printfit(fa.c.a)
+fa.t.a <- cfa(thr.we.th, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="theta")
+printfit(fa.t.a)
+# first restrictive model: THRESHOLDS + LOADINGS
+fa.tl.a <- cfa(thr.load.we.th, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+printfit(fa.tl.a)
 # second restrictive model: THRESHOLDS + LOADINGS + INTERCEPTS
-fa.thr.load.int.we.th <- cfa(thr.load.int.we.th, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
-printfit(fa.thr.load.int.we.th)
+fa.tli.a <- cfa(thr.load.int.we.th, data = items.cb, group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+printfit(fa.tli.a)
+
+
+# MALES
+fa.c.m   <- cfa(config.we.th,        data = subset(items.cb, sex=="M"), group = "cohort", estimator="wlsmv", parameterization="theta")
+fa.t.m   <- cfa(thr.we.th,           data = subset(items.cb, sex=="M"), group = "cohort", estimator="wlsmv", parameterization="theta")
+fa.tl.m  <- cfa(thr.load.we.th,      data = subset(items.cb, sex=="M"), group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli.m <- cfa(thr.load.int.we.th,  data = subset(items.cb, sex=="M"), group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+
+# FEMALES
+fa.c.f   <- cfa(config.we.th,        data = subset(items.cb, sex=="F"), group = "cohort", estimator="wlsmv", parameterization="theta")
+fa.t.f   <- cfa(thr.we.th,           data = subset(items.cb, sex=="F"), group = "cohort", estimator="wlsmv", parameterization="theta")
+fa.tl.f  <- cfa(thr.load.we.th,      data = subset(items.cb, sex=="F"), group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli.f <- cfa(thr.load.int.we.th,  data = subset(items.cb, sex=="F"), group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+
+# JOINT
+fa.c.b   <- cfa(config.we.thb,        data = items.cc, group = "cohortsex", estimator="wlsmv", parameterization="theta")
+fa.t.b   <- cfa(thr.we.thb,           data = items.cc, group = "cohortsex", estimator="wlsmv", parameterization="theta")
+fa.tl.b  <- cfa(thr.load.we.thb,      data = items.cc, group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli.b <- cfa(thr.load.int.we.thb,  data = items.cc, group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+
+# collect models
+fa.c <- list(fa.c.a, fa.c.m, fa.c.f, fa.c.b)
+fa.t <- list(fa.t.a, fa.t.m, fa.t.f, fa.t.b)
+fa.tl <- list(fa.tl.a, fa.tl.m, fa.tl.f, fa.tl.b)
+fa.tli <- list(fa.tli.a, fa.tli.m, fa.tli.f, fa.tli.b)
 
 
 ## ---- FA_FIT
 # assemble AFIs indices for table
 indsel <- c("npar", "chisq", "rmsea", "mfi", "cfi.scaled")
-
-# start from configural and full scalar
-afitab <- data.frame(rbind(
-  round(c( fitMeasures(fa.config.we.d, indsel), moreFitIndices(fa.config.we.d)["gammaHat"] ),5),
-  round(c( fitMeasures(fa.thr.we.th, indsel), moreFitIndices(fa.thr.we.th)["gammaHat"] ),5),
-  round(c( fitMeasures(fa.thr.load.we.th, indsel), moreFitIndices(fa.thr.load.we.th)["gammaHat"] ),5),
-  # round(c( fitMeasures(fa.thr.int.we.th, indsel), moreFitIndices(fa.thr.int.we.th)["gammaHat"] ),5),
-  round(c( fitMeasures(fa.thr.load.int.we.th, indsel), moreFitIndices(fa.thr.load.int.we.th)["gammaHat"] ),5)
-))
 mnames <- c("Configural", "Threshold Invariance", "Threshold + Loading Invariance", "Threshold, Loading, + Intercept Invariance")
 
-afitab$npar  <- as.character(afitab$npar)
-afitab$chisq <- as.character(round(afitab$chisq,1))
-
-# add deltas
-dmfi <- NA
-dcfi <- NA
-dgam <- NA
-for (r in 2:nrow(afitab)) {
-  dmfi <- c(dmfi, afitab[r,"mfi"] -  afitab[1,"mfi"])
-  dcfi <- c(dcfi, afitab[r,"cfi.scaled"] -  afitab[1,"cfi.scaled"])
-  dgam <- c(dgam, afitab[r,"gammaHat"] -  afitab[1,"gammaHat"])
+afitab <- list()
+for (i in 1:4) {
+  afitab[[i]] <- data.frame(rbind(
+    round(c( fitMeasures(fa.c[[i]], indsel), moreFitIndices(fa.c[[i]])["gammaHat"] ),5),
+    round(c( fitMeasures(fa.t[[i]], indsel), moreFitIndices(fa.t[[i]])["gammaHat"] ),5),
+    round(c( fitMeasures(fa.tl[[i]], indsel), moreFitIndices(fa.tl[[i]])["gammaHat"] ),5),
+    round(c( fitMeasures(fa.tli[[i]], indsel), moreFitIndices(fa.tli[[i]])["gammaHat"] ),5)
+  ))
+  afitab[[i]]$npar  <- as.character(afitab[[i]]$npar)
+  afitab[[i]]$chisq <- as.character(round(afitab[[i]]$chisq,1))
+  
+  # add deltas
+  dmfi <- NA
+  dcfi <- NA
+  dgam <- NA
+  for (r in 2:nrow(afitab[[i]])) {
+    dmfi <- c(dmfi, afitab[[i]][r,"mfi"] -  afitab[[i]][1,"mfi"])
+    dcfi <- c(dcfi, afitab[[i]][r,"cfi.scaled"] -  afitab[[i]][1,"cfi.scaled"])
+    dgam <- c(dgam, afitab[[i]][r,"gammaHat"] -  afitab[[i]][1,"gammaHat"])
+  }
+  afitab[[i]]$dmfi <- as.matrix(dmfi)
+  afitab[[i]]$dcfi <- as.matrix(dcfi)
+  afitab[[i]]$dgam <- as.matrix(dgam)
+  
+  # add names
+  afitab[[i]] <- data.frame(cbind(mnames = as.matrix(mnames), afitab[[i]]))
 }
-afitab$dmfi <- as.matrix(dmfi)
-afitab$dcfi <- as.matrix(dcfi)
-afitab$dgam <- as.matrix(dgam)
 
-# add names
-afitab <- data.frame(cbind(mnames = as.matrix(mnames), afitab))
+
+
+
+
 
 
 

@@ -21,9 +21,11 @@ library(xtable)
 library(cowplot)
 library(tikzDevice)
 library(gtools)
+library(glue)
 
 
 dir_data  <- c("/Users/giacomomason/Documents/Projects/CohortStudies/rdata/")
+dir_syntax  <- c("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/syntax/")
 
 # define printfit function
 printfit <- function(m) {
@@ -150,10 +152,10 @@ for (i in 1:ncol(items.c)) items[,i] <- as.numeric(items.c[,i]) - 1
 items.cb <- X[,c(grep("X", names(X), value=T), "cohort", "ageint5","sex")]
 colnames(items.cb)[colnames(items.cb) == "ageint5"] <- "age"
 items.cb$sex <- factor(items.cb$sex)
+levels(items.cb$sex) = c("M", "F")
 
 # with age, cohort+sex group
-items.cc <- X[,c(grep("X", names(X), value=T), "cohort", "ageint5", "sex")]
-colnames(items.cc)[colnames(items.cc) == "ageint5"] <- "age"
+items.cc <- items.cb
 items.cc$cohortsex <- interaction(items.cc[c("cohort","sex")]) # generate interaction
 items.cc$cohortsex <- factor(items.cc$cohortsex,levels(items.cc$cohortsex)[c(1,3,2,4)]) # reorder
 levels(items.cc$cohortsex) <- c("BCS.M", "BCS.F", "MCS.M", "MCS.F")

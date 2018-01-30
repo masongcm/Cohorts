@@ -122,7 +122,7 @@ for (i in 1:5) {
 rm(
    lambdas, means, pta, tau1, tau2, eps,
    Xtemp.bcs, Xtemp.mcs, bcs5_rutb419, bcs5_rutbAB, bcs5_rutc419,
-   cohort, dmfi, dcfi, dgam, indsel, mcskeepb, mnames, ncats, ncomm, nn,
+   dmfi, dcfi, dgam, indsel, mcskeepb, mnames, ncats, ncomm, nn,
    t, t2)
 
 

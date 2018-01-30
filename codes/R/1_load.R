@@ -78,7 +78,7 @@ bcs5aux <- cbind(bcs5data[,c("bcsid", "faminc", "incq", "ysch_moth", "ysch_fath"
                 cog2 = bcs5data$hfd_z,
                 cog3 = bcs5data$copy_z
                 )
-
+names(bcs5aux)[names(bcs5aux)=="bcsid"] <- "id"
 
 # MCS -------------------------------------------
 mcs5data <- read.dta(paste(dir_data, "mcs5yeng_rwt.dta", sep=""), convert.factors = F) # all MCS data
@@ -121,6 +121,8 @@ mcs5aux <- cbind(mcs5data[,c("mcsid", "faminc", "incq", "ysch_moth", "ysch_fath"
                 cog2 = mcs5data$psim_bastz,
                 cog3 = mcs5data$patc_bastz
 )
+names(mcs5aux)[names(mcs5aux)=="mcsid"] <- "id"
+
 
 
 # common items
@@ -143,24 +145,27 @@ colnames(Xtemp.mcs) <- nn
 X <- data.frame(rbind(Xtemp.bcs, Xtemp.mcs))
 
 # assemble final data
-cohort <- X[,"cohort"]
-items.c <- X[,c(grep("X", names(X), value=T), "cohort")]   # noncog items only
-items  <- items.c                              # numeric version of noncog items only
-for (i in 1:ncol(items.c)) items[,i] <- as.numeric(items.c[,i]) - 1
+items.c <- X[,c(grep("X", names(X), value=T), "ID", "cohort", "ageint5", "sex", "incq", "faminc")]
+colnames(items.c)[colnames(items.c) == "ageint5"] <- "age"
+items.c$sex <- factor(items.c$sex)
+levels(items.c$sex) = c("M", "F")
+items.c$cohortsex <- interaction(items.c[c("cohort","sex")]) # generate interaction
+items.c$cohortsex <- factor(items.c$cohortsex,levels(items.c$cohortsex)[c(1,3,2,4)]) # reorder
+levels(items.c$cohortsex) <- c("BCS.M", "BCS.F", "MCS.M", "MCS.F")
+items.c <- items.c[!is.na(items.c$cohortsex),] # drop missings
 
-# with age and sex
-items.cb <- X[,c(grep("X", names(X), value=T), "cohort", "ageint5","sex")]
-colnames(items.cb)[colnames(items.cb) == "ageint5"] <- "age"
-items.cb$sex <- factor(items.cb$sex)
-levels(items.cb$sex) = c("M", "F")
+# keep only complete cases in X
+items.c <- items.c[complete.cases(items.c[,c(grep("X", names(X), value=T),"age","sex")]),]
 
-# with age, cohort+sex group
-items.cc <- items.cb
-items.cc$cohortsex <- interaction(items.cc[c("cohort","sex")]) # generate interaction
-items.cc$cohortsex <- factor(items.cc$cohortsex,levels(items.cc$cohortsex)[c(1,3,2,4)]) # reorder
-levels(items.cc$cohortsex) <- c("BCS.M", "BCS.F", "MCS.M", "MCS.F")
-items.cc <- items.cc[ , !(names(items.cc) %in% c("cohort","sex"))] # drop cohort and sex
-items.cc <- items.cc[!is.na(items.cc$cohortsex),] # drop missings
+# list of items for different models
+items <- list()
+items[[1]] <- items.c                      # no gender split
+items[[2]] <- subset(items.c, sex=="M")   # males only
+items[[3]] <- subset(items.c, sex=="F")   # females only
+items[[4]] <- items.c                      # cohort+sex split
+
+# order
+for (i in 1:4) items[[i]] <- items[[i]][order(items[[i]][,"cohortsex"]) , ]
 
 ## ---- MEANTABLE
 # table of mean values of items

@@ -452,7 +452,7 @@ Following the ordering in \cite{Wu2016}, I estimate the following increasingly r
 <<FA_FIT_RES, dependson="FA_FIT", results='asis'>>=
 require(xtable)
 
-table <- afitab
+table <- rbind(afitab[[1]],afitab[[2]],afitab[[3]],afitab[[4]])
 
 print(xtable(table,
                     align="L{0cm}L{.18\\textwidth}C{.05\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
@@ -462,13 +462,14 @@ print(xtable(table,
              include.rownames=F,
              include.colnames=F,
              booktabs = T,
-             add.to.row = list(pos = c(list(0)),
+             add.to.row = list(pos = c(list(0,4,8,12)),
                               command = c(
                               # header
-                                    paste("
-                                            Model & Num. params & $\\chi^2$ & RMSEA & MFI & CFI & G-hat & \\textDelta MFI & \\textDelta CFI & \\textDelta G-hat \\\\
-                                          "
-                                            , sep="")
+            "Model & Num. params & $\\chi^2$ & RMSEA & MFI & CFI & G-hat & \\textDelta MFI & \\textDelta CFI & \\textDelta G-hat \\\\ \\midrule
+                      \\newline \\textbf{No gender split} \\\\",
+                      "\\newline \\textbf{Males only} \\\\ \\midrule ",
+                      "\\newline \\textbf{Females only} \\\\ \\midrule ",
+                      "\\newline \\textbf{Joint (4 groups)} \\\\ \\midrule "
                                     )),
              sanitize.text.function = function(x){x},
              sanitize.rownames.function = function(x){""}, # to not print row numbers
@@ -479,13 +480,12 @@ print(xtable(table,
 @
 \end{table}
 
-I estimate each of the models listed above by Weighted Least Squares.\footnote{All estimates are computed using the \texttt{lavaan} package in \textbf{\textsf{R}} \citep{Rosseel2012}. Parameters of the model are estimated by mean- and variance adjusted weighted least squares (WLSMV), due to \cite{Mplus2017}. Point estimated for model parameters are obtained starting from the polychoric correlations, using diagonally weighted least squares (DWLS), and the full weight matrix is used to compute robust standard errors and test statistics. Robust WLS has proved in simulation studies to be moderately robust to small violations of the normality assumption in the latent underlying measures \citep{Flora2011}, and generally outperforms maximum likelihood in large samples \citep{Beauducel2009,Li2016}.} The fit of the increasingly restrictive models presented above is compared in \autoref{tab:fit}. For all models, a chi-squared difference would point to a lack of measurement invariance. However, this test is know to overestimate invariance in large samples. Alternative fit indices should thus be used when comparing nested models. \cite{Cheung2002} suggest relying on Comparative Fit Index (CFI, \citealp{Bentler1990}), McDonald Non-Centrality Index (MFI, \citealp{McDonald1989}), and Gamma Hat index \citep{Steiger1989} for the case of ordered measures. Commonly accepted thresholds for rejecting the restricted model are $\Delta CFI < - 0.01$, $\Delta MFI < - 0.02$, and $\Delta Gamma hat < - 0.001$. 
+I estimate each of the models listed above by Weighted Least Squares.\footnote{All estimates are computed using the \texttt{lavaan} package in \textbf{\textsf{R}} \citep{Rosseel2012}. Parameters of the model are estimated by mean- and variance adjusted weighted least squares (WLSMV), due to \cite{Mplus2017}. Point estimates for model parameters are obtained starting from the polychoric correlations, using diagonally weighted least squares (DWLS), and the full weight matrix is used to compute robust standard errors and test statistics. Robust WLS has proved in simulation studies to be moderately robust to small violations of the normality assumption in the latent underlying measures \citep{Flora2011}, and generally outperforms maximum likelihood in large samples \citep{Beauducel2009,Li2016}.} The fit of the increasingly restrictive models presented above is compared in \autoref{tab:fit}. For all models, a chi-squared difference would point to a lack of measurement invariance. However, this test is know to overestimate invariance in large samples. Alternative fit indices should thus be used when comparing nested models. \cite{Cheung2002} suggest relying on Comparative Fit Index (CFI, \citealp{Bentler1990}), McDonald Non-Centrality Index (MFI, \citealp{McDonald1989}), and Gamma Hat index \citep{Steiger1989} for the case of ordered measures. Commonly accepted thresholds for rejecting the restricted model are $\Delta CFI < - 0.01$, $\Delta MFI < - 0.02$, and $\Delta Gamma hat < - 0.001$. 
 
-The overall fit of the configural model is satisfactory according to widely accepted rules of thumb \citep{Maccallum1996}.\footnote{{\color{red} BETTER CITATIONS FOR OVERALL FIT}.} As discussed above, when items have less than four categories, the model with restricted thresholds is statistically equivalent to the configural model. Restricting thresholds and loadings seems to provide a satisfying fit compared to the configural model.\footnote{\cite{Meade2008}, using the results from a simulation study, suggests stricter thresholds that should apply in a variety of conditions. For CFI, a single cutoff values of $.002$ is proposed, while cutoffs for MFI depend on the problem's characteristics; in our case (2 factors, 11 items), they suggest $.0066$. \cite{Sass2014} however cast some doubts of the generalisability of these cutoffs to WLSMV estimators.} However, the model that additionally restricts intercepts -- thus allowing for latent mean comparison -- has a substantially worse fit. 
+The overall fit of the configural model is satisfactory according to widely accepted rules of thumb \citep{Maccallum1996}.\footnote{{\color{red} BETTER CITATIONS FOR OVERALL FIT}.} As discussed above, when items have less than four categories, the model with restricted thresholds is statistically equivalent to the configural model. Restricting thresholds, loadings, and intercepts at the same time seems to provide a satisfying fit compared to the configural model.\footnote{\cite{Meade2008}, using the results from a simulation study, suggests stricter thresholds that should apply in a variety of conditions. For CFI, a single cutoff values of $.002$ is proposed, while cutoffs for MFI depend on the problem's characteristics; in our case (2 factors, 11 items), they suggest $.0066$. \cite{Sass2014} however cast some doubts of the generalisability of these cutoffs to WLSMV estimators.}
 
 
-
-<<FA_FINAL, dependson='FA_PARTINV'>>=
+<<FA_FINAL, dependson='FA_INVARIANCE'>>=
 @
 
 <<FA_FINAL_PARS, dependson='FA_FINAL'>>=
@@ -498,7 +498,7 @@ The overall fit of the configural model is satisfactory according to widely acce
 <<RES_FA_PAR, dependson="FA_FINAL_PARS", results='asis'>>=
 require(xtable)
 
-table <- allpar
+table <- rbind(allpar[[1]],allpar[[2]],allpar[[3]])
 
 # sequences to add rows
 rws <- seq(2, (nrow(table)-1), by = 1) # start from row 2 (exclude model titles)
@@ -506,31 +506,36 @@ rwsl <- as.list(rws)
 
 print.xtable(xtable(table,
                     # align = "ll|cccc|cccc"
-                    align="L{0cm}L{2cm}C{2.5cm}C{2.5cm}C{2.5cm}C{2.5cm}C{1.5cm}",
+                    align="L{0cm}L{2.5cm}C{2.5cm}C{2.5cm}C{2.5cm}C{2.5cm}C{1cm}",
                     digits = 3
                     ),
              size="\\small",
              include.rownames=F,
              include.colnames=F,
              booktabs = T,
-             add.to.row = list(pos = c(list(0)),
+             add.to.row = list(pos = c(list(0,11,22)),
                               command = c(
                               # header
-                                    paste(" & Loadings
+                                          " & \\textbf{Loadings}
                                             & \\multicolumn{2}{c}{\\textbf{Thresholds}}
-                                            & Intercepts
-                                            & \\\\ \\cmidrule(lr){3-4}
+                                            & \\textbf{Variances}
+                                            & \\\\ \\cmidrule(lr){2-2} \\cmidrule(lr){3-4} \\cmidrule(lr){5-5}
 
                                             & $\\bm{\\lambda}$
                                             & $\\bm{\\tau}_1$
                                             & $\\bm{\\tau}_2$
-                                            & $\\bm{\\varepsilon}$ \\\\
+                                            & $\\bm{\\Var(\\varepsilon)}$ \\\\
                                             Measure & BCS = MCS
                                             & BCS = MCS
                                             & BCS = MCS
                                             & MCS (BCS=1)
                                             & Factor
-                                            \\\\", sep=""))),
+                                            \\\\ \\midrule
+                      \\newline \\textbf{No gender split} \\\\",
+                      # additional separators
+                      "\\newline \\textbf{Males only} \\\\ \\midrule ",
+                      "\\newline \\textbf{Females only} \\\\ \\midrule " 
+                      )),
              sanitize.text.function = function(x){x},
              sanitize.rownames.function = function(x){""}, # to not print row numbers
              tabular.environment = "tabularx", width = "\\textwidth",
@@ -541,17 +546,21 @@ print.xtable(xtable(table,
 }
 \end{table}
 
-
 \begin{table}[ht]
-\caption{Estimated latent variable means and covariances} \label{tab:lvpars}
-\centering
-<<RES_FA_LV, dependson="FA_FINAL_PARS", results='asis'>>=
+\caption{Estimated loadings and thresholds -- 4-group model} \label{tab:allpars2}
+\resizebox{\textwidth}{!}{
+<<RES_FA_PAR2, dependson="FA_FINAL_PARS", results='asis'>>=
 require(xtable)
 
-table <- lvpars
+table <- allpar[[4]]
+
+# sequences to add rows
+rws <- seq(2, (nrow(table)-1), by = 1) # start from row 2 (exclude model titles)
+rwsl <- as.list(rws)
 
 print.xtable(xtable(table,
-                    align="L{0cm}L{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}",
+                    # align = "ll|cccc|cccc"
+                    align="L{0cm}L{1.5cm}C{2cm}C{1.5cm}C{1.5cm}C{1.8cm}C{1.8cm}C{1.8cm}C{1cm}",
                     digits = 3
                     ),
              size="\\small",
@@ -561,14 +570,72 @@ print.xtable(xtable(table,
              add.to.row = list(pos = c(list(0)),
                               command = c(
                               # header
-                                    paste(" & \\multicolumn{4}{c}{\\textbf{BCS}}
-                                            & \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){2-5} \\cmidrule(lr){6-9}
-                                            & Mean & \\multicolumn{2}{c}{Covariance} & Corr. & Mean & \\multicolumn{2}{c}{Covariance} & Corr. \\\\
-                                            ", sep="")
-                                    )),
+                                          " & \\textbf{Loadings}
+                                            & \\multicolumn{2}{c}{\\textbf{Thresholds}}
+                                            & \\multicolumn{3}{c}{\\textbf{Variances}}
+                                            & \\\\ \\cmidrule(lr){2-2} \\cmidrule(lr){3-4} \\cmidrule(lr){5-7}
+
+                                            & $\\lambda$
+                                            & $\\tau_1$
+                                            & $\\tau_2$
+                                            & \\multicolumn{3}{c}{$\\text{diag}(\\Psi)$} \\\\
+
+                                            Measure 
+                                            & All groups
+                                            & All groups
+                                            & All groups
+                                            & BCS Males
+                                            & MCS Females
+                                            & MCS Males
+                                            & Factor
+                                            \\\\"
+                      )),
              sanitize.text.function = function(x){x},
              sanitize.rownames.function = function(x){""}, # to not print row numbers
-             tabular.environment = "tabularx", width = ".85\\textwidth",
+             tabular.environment = "tabularx", width = "\\textwidth",
+             floating = FALSE
+)
+
+@
+}
+\end{table}
+
+\begin{table}[ht]
+\caption{Estimated latent variable means and covariances} \label{tab:lvpars}
+\centering
+<<RES_FA_LV, dependson="FA_FINAL_PARS", results='asis'>>=
+require(xtable)
+
+table <- rbind(lvpars[[1]],lvpars[[2]],lvpars[[3]],lvpars[[4]],lvpars[[5]])
+
+
+print.xtable(xtable(table,
+                    align="L{0cm}L{2.2cm}C{1.3cm}C{1.3cm}C{1.3cm}C{1.3cm}C{1.3cm}C{1.3cm}C{1.3cm}C{1.3cm}",
+                    digits = 3
+                    ),
+             size="\\small",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0,2,4,6,8,10)),
+                              command = c(
+                              # header
+                                   "\\toprule
+                                    & \\multicolumn{4}{c}{\\textbf{BCS}}
+                                    & \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){2-5} \\cmidrule(lr){6-9}
+                                    & Mean & \\multicolumn{2}{c}{Covariance} & Corr. & Mean & \\multicolumn{2}{c}{Covariance} & Corr. \\\\ \\midrule
+                      \\textbf{No gender split} \\\\",
+                      # additional separators
+                      "\\newline \\textbf{Males only} \\\\ ",
+                      "\\newline \\textbf{Females only} \\\\ ",
+                      "\\midrule \\newline \\textbf{Males (joint)} \\\\ ",
+                      "\\newline \\textbf{Females (joint)} \\\\ ",
+                      "\\bottomrule"
+                                    )),
+             hline.after = NULL,  # remove default booktabs lines
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabularx", width = "\\textwidth",
              floating = FALSE
 )
 
@@ -583,62 +650,88 @@ print.xtable(xtable(table,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
 \subsection{Inequality in noncognitive ability}
-Although the results of our measurement invariance analysis imply that comparison of latent means is not justified, the model with restricted loadings and thresholds can nevertheless be used to investigate how inequality of noncognitive skills has changed between the two cohorts. The variances of the $EXT$ and $INT$ factors are estimated to be larger in the MCS children by \Sexpr{round(lv.covs$MCS[1,1]-1,2)} and \Sexpr{round(lv.covs$MCS[2,2]-1,2)} of a standard deviation, respectively, indicating larger dispersion.
+The model can be used to investigate how inequality of noncognitive skills has changed between the two cohorts. The variances of the $EXT$ and $INT$ factors are estimated to be larger in the MCS children by \Sexpr{round(lv.covs$MCS[1,1]-1,2)} and \Sexpr{round(lv.covs$MCS[2,2]-1,2)} of a standard deviation, respectively, indicating larger dispersion.
 
 <<FA_SCORES, dependson='FA_FINAL'>>=
 @
 
 <<FA_REGS, dependson='FA_SCORES'>>=
 
-reg.bcs.ext <- lm(EXT~as.factor(incq) + age, data=subset(items.scored, cohort=="BCS"))
-bcs.51.ext <- round(reg.bcs.ext$coefficients["as.factor(incq)5"],2)
-reg.bcs.int <- lm(INT~as.factor(incq) + age, data=subset(items.scored, cohort=="BCS"))
-bcs.51.int <- round(reg.bcs.int$coefficients["as.factor(incq)5"],2)
+# combinations of regressions
+regcoeffs <- matrix( 
+  c(rep("BCS", 2), rep("MCS", 2), rep(c("M","F"), 2), rep(NA, 8)), # the data elements 
+  nrow=4,              # number of rows 
+  ncol=4,              # number of columns 
+  byrow = F)        # fill matrix by columns 
+colnames(regcoeffs) <- c("cohort", "sex", "EXTd", "INTd")
 
-reg.mcs.ext <- lm(EXT~as.factor(incq) + age, data=subset(items.scored, cohort=="MCS"))
-mcs.51.ext <- round(reg.mcs.ext$coefficients["as.factor(incq)5"],2)
-reg.mcs.int <- lm(INT~as.factor(incq) + age, data=subset(items.scored, cohort=="MCS"))
-mcs.51.int <- round(reg.mcs.int$coefficients["as.factor(incq)5"],2)
+# fill in differences
+regs.ext <- list()
+regs.int <- list()
+for (r in 1:nrow(regcoeffs)) {
+  regs.ext[[r]] <- lm(EXT ~ as.factor(incq) + age, data=subset(items.scored[[4]], cohort==regcoeffs[r,1] & sex==regcoeffs[r,2]))
+  regcoeffs[r,3] <- round(regs.ext[[r]]$coefficients["as.factor(incq)5"],2)
+  regs.int[[r]] <- lm(INT ~ as.factor(incq) + age, data=subset(items.scored[[4]], cohort==regcoeffs[r,1] & sex==regcoeffs[r,2]))
+  regcoeffs[r,4] <- round(regs.int[[r]]$coefficients["as.factor(incq)5"],2)
+}
 
 @
 
-We can derive scores for $\theta^{EXT}$ and $\theta^{INT}$ directly, and plot them against socioeconomic measures observed in the data. Our main socioeconomic indicator is a measure of weekly total family net income in the prices of the interview year.\footnote{This measure is harmonised across cohorts and derived as part of CLOSER, which is funded by the ESRC.} Using the estimated parameters for the model with invariant thresholds and loadings (but non-invariant intercepts), I compute the scores for each individual in the sample (using the Empirical Bayes modal approach). In \autoref{fig:boxscores}, we can see that the gradient in noncognitive skills along family income quintiles is more pronounced in the MCS cohort. In particular, a five-year old at the top quintile of the income distribution in 1975 has a better score by \Sexpr{bcs.51.ext} in the externalising dimension and \Sexpr{bcs.51.int} in the internalising dimension, compared to a child at the bottom quintile. In 2005, the differences amount to \Sexpr{mcs.51.ext} and \Sexpr{mcs.51.int}, respectively.
+We can derive scores for $\theta^{EXT}$ and $\theta^{INT}$ directly, and plot them against socioeconomic measures observed in the data. Our main socioeconomic indicator is a measure of weekly total family net income in the prices of the interview year.\footnote{This measure is harmonised across cohorts and derived as part of CLOSER, which is funded by the ESRC.} Using the estimated parameters for the model with invariant thresholds and loadings (but non-invariant intercepts), I compute the scores for each individual in the sample (using the Empirical Bayes modal approach). In \autoref{fig:boxscores}, we can see that the gradient in noncognitive skills along family income quintiles is more pronounced in the MCS cohort. In particular, a male five-year old at the top quintile of the income distribution in 1975 has a better score by \Sexpr{regcoeffs[1,3]} in the externalising dimension and \Sexpr{regcoeffs[1,4]} in the internalising dimension, compared to a child at the bottom quintile. In 2005, the differences amount to \Sexpr{regcoeffs[3,3]} and \Sexpr{regcoeffs[3,4]}, respectively.
 
 
 \clearpage
 \begin{figure}
-<<FACDENS, dev='tikz', fig.height=5, fig.width=10, out.width='1\\linewidth'>>=
+\begin{center}
+<<AGEHIST, dev='tikz', fig.height=6, fig.width=6, out.width='.6\\linewidth'>>=
+@
+\end{center}
+\caption{Distribution of age in the BCS and MCS sample}
+{\scriptsize \emph{Notes}: The figure shows the density of observations at each month of age for each of the two cohorts.  \par}
+\end{figure}
+
+\clearpage
+\begin{figure}
+<<FACDENS, dev='tikz', fig.height=10, fig.width=10, out.width='1\\linewidth'>>=
 @
 \caption{Density of Scored Factors}
-{\scriptsize \emph{Notes}: The figure shows estimated kernel densities of the scored factors from model \eqref{eq:finalmod}, separately by cohort.  \par}
+{\scriptsize \emph{Notes}: The figure shows estimated kernel densities of the scored factors separately by cohort.  \par}
 \end{figure}
+
+\begin{figure}
+<<FACLOESS_AGE, dev='tikz', fig.height=10, fig.width=10, out.width='1\\linewidth'>>=
+@
+\caption{Scores and child age}
+{\scriptsize \emph{Notes}: The figure plots LOESS of the scored factors against child age. \par}
+\end{figure}
+
 
 \begin{figure}
 <<FACRAW, dev='tikz', fig.height=10, fig.width=10, out.width='1\\linewidth'>>=
 @
 \caption{Raw vs Scored Factors}
-{\scriptsize \emph{Notes}: The figure plots the scored factors from model \eqref{eq:finalmod} on the vertical axis against the ``raw" scores on the horizontal axis, i.e. scores obtained by simply summing the number of positive answers to each of the items. \par}
+{\scriptsize \emph{Notes}: The figure plots the scored factors on the vertical axis against the ``raw" scores on the horizontal axis, i.e. scores obtained by simply summing the number of positive answers to each of the items. \par}
 \end{figure}
 
 \begin{figure}
-<<FACSCAT, dev='tikz', fig.height=5, fig.width=10, out.width='1\\linewidth'>>=
+<<FACSCAT, dev='tikz', fig.height=10, fig.width=10, out.width='1\\linewidth'>>=
 @
 \caption{Scatterplots of factor scores by cohort}
-{\scriptsize \emph{Notes}: The figure plots the scored factors from model \eqref{eq:finalmod} separately by cohort. The externalising and internalising scores are plotted against one another. \par}
+{\scriptsize \emph{Notes}: The figure plots the scored factors separately by cohort. The externalising and internalising scores are plotted against one another. \par}
 \end{figure}
 
 \begin{figure}
 <<FACINEQ, dev='tikz', fig.height=12, fig.width=10, out.width='1\\linewidth'>>=
 @
 \caption{Distribution of scores across income quintiles}\label{fig:boxscores}
-{\scriptsize \emph{Notes}: The figure plots the distribution of the scored factors from model \eqref{eq:finalmod} across the quintiles in the income distribution. \par}
+{\scriptsize \emph{Notes}: The figure plots the distribution of the scored factors across the quintiles in the income distribution. \par}
 \end{figure}
 
 \begin{figure}
-<<FACLOESS, dev='tikz', fig.height=5, fig.width=10, out.width='1\\linewidth'>>=
+<<FACLOESS_INC, dev='tikz', fig.height=5, fig.width=10, out.width='1\\linewidth'>>=
 @
 \caption{Scores and family income}
-{\scriptsize \emph{Notes}: The figure plots LOESS of the scored factors from model \eqref{eq:finalmod} against family income. \par}
+{\scriptsize \emph{Notes}: The figure plots LOESS of the scored factors against family income. \par}
 \end{figure}
 
 

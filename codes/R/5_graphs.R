@@ -106,12 +106,30 @@ legend_b <- get_legend(ineqlist[[1]] + theme(legend.position="bottom"))
 p <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
 p
 
-
 ## ---- FACLOESS_INC
+
 # loess plot of scores on income
-loess.ext <- ggplot(data=scores2plot, aes(x=faminc, y=EXTr, group=cohort, fill=cohort, colour=cohort) ) + geom_smooth(method = "loess") + xlab("Weekly Family Income at 10 (,000£ 2015)") + ylab("EXT")
-loess.int <- ggplot(data=scores2plot, aes(x=faminc, y=INTr, group=cohort, fill=cohort, colour=cohort) ) + geom_smooth(method = "loess") + xlab("Weekly Family Income at 10 (,000£ 2015)") + ylab("INT")
-plot_grid(loess.ext, loess.int, ncol=2, align="h")
+l.inc.ext.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Males Externalising")
+l.inc.ext.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Females Externalising")
+l.inc.int.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Males Internalising")
+l.inc.int.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Females Internalising")
+l.inc <- list(l.inc.ext.m, l.inc.ext.f, l.inc.int.m, l.inc.int.f)
+l.inc <- lapply(l.inc, 
+                 function(x) x + theme(legend.position="none") +
+                   geom_smooth(method = "loess") + 
+                   xlab("Weekly Family Income at 10 (,000£ 2015)")
+                 ) # apply options to all graphs 
+
+pcol <- plot_grid( l.inc[[1]], l.inc[[2]], l.inc[[3]], l.inc[[4]],
+                   align = 'vh',
+                   hjust = -1,
+                   nrow = 2
+)
+legend_b <- get_legend(l.inc[[1]] + theme(legend.position="bottom"))
+p <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
+
+
+pcol
 
 ## ---- FACNPREG
 # npreg plot of scores on income

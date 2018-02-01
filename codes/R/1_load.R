@@ -163,9 +163,11 @@ items[[1]] <- items.c                      # no gender split
 items[[2]] <- subset(items.c, sex=="M")   # males only
 items[[3]] <- subset(items.c, sex=="F")   # females only
 items[[4]] <- items.c                      # cohort+sex split
+items[[5]] <- subset(items.c, age>=59 & age<=62)  # overlapping ages
 
-# order
+# order to merge correctly with scores
 for (i in 1:4) items[[i]] <- items[[i]][order(items[[i]][,"cohortsex"]) , ]
+
 
 ## ---- MEANTABLE
 # table of mean values of items

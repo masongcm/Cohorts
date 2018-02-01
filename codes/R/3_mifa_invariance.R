@@ -106,11 +106,17 @@ fa.t.b   <- cfa(thr.we.thb,           data = items[[4]], group = "cohortsex", es
 fa.tl.b  <- cfa(thr.load.we.thb,      data = items[[4]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
 fa.tli.b <- cfa(thr.load.int.we.thb,  data = items[[4]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
 
+# JOINT, overlapping ages only
+fa.c.ol   <- cfa(config.we.thb,        data = items[[5]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
+fa.t.ol   <- cfa(thr.we.thb,           data = items[[5]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
+fa.tl.ol  <- cfa(thr.load.we.thb,      data = items[[5]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli.ol <- cfa(thr.load.int.we.thb,  data = items[[5]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+
 # collect models
-fa.c <- list(fa.c.a, fa.c.m, fa.c.f, fa.c.b)
-fa.t <- list(fa.t.a, fa.t.m, fa.t.f, fa.t.b)
-fa.tl <- list(fa.tl.a, fa.tl.m, fa.tl.f, fa.tl.b)
-fa.tli <- list(fa.tli.a, fa.tli.m, fa.tli.f, fa.tli.b)
+fa.c <- list(fa.c.a, fa.c.m, fa.c.f, fa.c.b, fa.c.ol)
+fa.t <- list(fa.t.a, fa.t.m, fa.t.f, fa.t.b, fa.t.ol)
+fa.tl <- list(fa.tl.a, fa.tl.m, fa.tl.f, fa.tl.b, fa.tl.ol)
+fa.tli <- list(fa.tli.a, fa.tli.m, fa.tli.f, fa.tli.b, fa.tli.ol)
 
 
 ## ---- FA_FIT
@@ -119,7 +125,7 @@ indsel <- c("npar", "chisq", "rmsea", "mfi", "cfi.scaled")
 mnames <- c("Configural", "Threshold Invariance", "Threshold + Loading Invariance", "Threshold, Loading, + Intercept Invariance")
 
 afitab <- list()
-for (i in 1:4) {
+for (i in 1:5) {
   afitab[[i]] <- data.frame(rbind(
     round(c( fitMeasures(fa.c[[i]], indsel), moreFitIndices(fa.c[[i]])["gammaHat"] ),5),
     round(c( fitMeasures(fa.t[[i]], indsel), moreFitIndices(fa.t[[i]])["gammaHat"] ),5),

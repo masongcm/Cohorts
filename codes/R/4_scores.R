@@ -5,7 +5,7 @@
 scores <- list()
 scoresdf <- list()
 items.scored <- list()
-for (i in 4:4) { # only specification with separate gender groups
+for (i in 4:5) { # only specifications with separate gender groups
 
   scores[[i]] <- predict(finalmod[[i]], newdata = items[[i]])
   scoresdf[[i]] <- do.call(rbind, scores[[i]])

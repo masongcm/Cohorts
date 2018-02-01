@@ -2,14 +2,14 @@
 ## ---- FA_FINAL
 
 # select final model
-finalmod <- list(fa.tli.a, fa.tli.m, fa.tli.f, fa.tli.b)
+finalmod <- list(fa.tli.a, fa.tli.m, fa.tli.f, fa.tli.b, fa.tli.ol)
 
 ##################################################################################
 ## ---- FA_FINAL_PARS
 # extract parameters and make table for final model estimates
 
 allpar <- list()
-for (i in 1:4) {
+for (i in 1:5) {
   pta <- partable(finalmod[[i]])
 
   # item parameters ----------------------------------------------------------
@@ -51,20 +51,21 @@ for (i in 1:4) {
   allpar[[i]]$factor <- as.matrix(c(rep("EXT",6), rep("INT",5)))
 }
 
-# additional variances for 4-group model
-pta <- partable(finalmod[[4]])
-eps3 <- pta[(pta$op == "~~" & substr(pta$rhs,1,1) == "X" & pta$group == 3),c("lhs", "rhs","est")]
-eps3$measure <- eps3$lhs
-eps3 <- eps3[ , -which(names(eps3) %in% c("rhs","lhs"))] # drop useless columns
-eps4 <- pta[(pta$op == "~~" & substr(pta$rhs,1,1) == "X" & pta$group == 4),c("lhs", "rhs","est")]
-eps4$measure <- eps4$lhs
-eps4 <- eps4[ , -which(names(eps4) %in% c("rhs","lhs"))] # drop useless columns
-allpar[[4]] <- merge(allpar[[i]],eps3,by="measure", all.x = T)
-allpar[[4]] <- merge(allpar[[i]],eps4,by="measure", all.x = T)
-colnames(allpar[[i]]) <- c("measure", "lambda", "tau1", "tau2$", "eps2", "factor", "eps3", "eps4")
-allpar[[4]] <- allpar[[4]][, c(setdiff(names(allpar[[4]]), "factor"), "factor")]
-allpar[[4]] <- allpar[[4]][mixedorder(allpar[[4]]$measure),]
-
+# additional variances for 4-group models
+for (i in 4:5) {
+  pta <- partable(finalmod[[i]])
+  eps3 <- pta[(pta$op == "~~" & substr(pta$rhs,1,1) == "X" & pta$group == 3),c("lhs", "rhs","est")]
+  eps3$measure <- eps3$lhs
+  eps3 <- eps3[ , -which(names(eps3) %in% c("rhs","lhs"))] # drop useless columns
+  eps4 <- pta[(pta$op == "~~" & substr(pta$rhs,1,1) == "X" & pta$group == 4),c("lhs", "rhs","est")]
+  eps4$measure <- eps4$lhs
+  eps4 <- eps4[ , -which(names(eps4) %in% c("rhs","lhs"))] # drop useless columns
+  allpar[[i]] <- merge(allpar[[i]],eps3,by="measure", all.x = T)
+  allpar[[i]] <- merge(allpar[[i]],eps4,by="measure", all.x = T)
+  colnames(allpar[[i]]) <- c("measure", "lambda", "tau1", "tau2$", "eps2", "factor", "eps3", "eps4")
+  allpar[[i]] <- allpar[[i]][, c(setdiff(names(allpar[[i]]), "factor"), "factor")]
+  allpar[[i]] <- allpar[[i]][mixedorder(allpar[[i]]$measure),]
+}
 
 
 # latent variable parameters ----------------------------------------------------------

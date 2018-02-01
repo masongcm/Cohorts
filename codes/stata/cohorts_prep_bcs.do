@@ -108,8 +108,10 @@ save `bcsall10y'
 *INCOME	 ******************************************************************
 use "$data/SEPdata/create37_BCS1980.dta", clear // income
 rename q_bu_net_total_p incq
-gen faminc 			= bu_net_total_p
-replace faminc 		= faminc/adjBCS/1000
+gen faminc_real 	= bu_net_total_p
+replace faminc_real = faminc_real/adjBCS/1000
+gen faminc_infl 	= bu_net_total_p
+replace faminc_infl = faminc_infl/inflBCS/1000
 tempfile bcsinc10y
 save `bcsinc10y'
 
@@ -248,7 +250,7 @@ preserve
 egen ncmiss=rowmiss(bcs10_rut*)
 drop if ncmiss >22
 
-keep bcsid bcs_country sex bcs_region age*10 incq faminc ysch_moth ysch_fath bcs10_rut* bcs10_ws*
+keep bcsid bcs_country sex bcs_region age*10 incq faminc* ysch_moth ysch_fath bcs10_rut* bcs10_ws*
 saveold "$rdata/bcs10y.dta", replace version(12)
 
 // england only
@@ -265,7 +267,7 @@ preserve
 egen ncmiss=rowmiss(bcs5_rut*)
 drop if ncmiss >22
 
-keep bcsid bcs_country sex bcs_region age*5 incq faminc ysch_moth ysch_fath epvt_z copy_z hfd_z bcs5_rut*
+keep bcsid bcs_country sex bcs_region age*5 incq faminc* ysch_moth ysch_fath epvt_z copy_z hfd_z bcs5_rut*
 saveold "$rdata/bcs5y.dta", replace version(12)
 
 // england only

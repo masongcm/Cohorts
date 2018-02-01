@@ -110,7 +110,9 @@ di "Real GDP 2010: " rgdp2010
 
 /* select which */
 scalar adjBCS = ifs1980*rgdp1980
+scalar inflBCS = ifs1980
 scalar adjMCS = ifs2010*rgdp2010
+scalar inflMCS = ifs2010
 di "FINAL 1980: " adjBCS
 di "FINAL 2010: " adjMCS
 

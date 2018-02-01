@@ -73,7 +73,7 @@ for (i in 1:ncol(bcs5rutc)) bcs5rutcf[,i] <- as.ordered(bcs5rutc[,i])
 
 
 # auxiliary variables
-bcs5aux <- cbind(bcs5data[,c("bcsid", "faminc", "incq", "ysch_moth", "ysch_fath", "ageint5", "sex")],
+bcs5aux <- cbind(bcs5data[,c("bcsid", "faminc_real", "faminc_infl", "incq", "ysch_moth", "ysch_fath", "ageint5", "sex")],
                 cog1 = bcs5data$epvt_z,
                 cog2 = bcs5data$hfd_z,
                 cog3 = bcs5data$copy_z
@@ -116,7 +116,7 @@ mcs5sdqcf <- mcs5sdqc
 for (i in 1:ncol(mcs5sdqc)) mcs5sdqcf[,i] <- as.ordered(mcs5sdqc[,i])                    
 
 # add SES and cognitive data
-mcs5aux <- cbind(mcs5data[,c("mcsid", "faminc", "incq", "ysch_moth", "ysch_fath", "ageint5","sex")],
+mcs5aux <- cbind(mcs5data[,c("mcsid", "faminc_real", "faminc_infl", "incq", "ysch_moth", "ysch_fath", "ageint5","sex")],
                 cog1 = mcs5data$nvoc_bastz,
                 cog2 = mcs5data$psim_bastz,
                 cog3 = mcs5data$patc_bastz
@@ -145,7 +145,7 @@ colnames(Xtemp.mcs) <- nn
 X <- data.frame(rbind(Xtemp.bcs, Xtemp.mcs))
 
 # assemble final data
-items.c <- X[,c(grep("X", names(X), value=T), "ID", "cohort", "ageint5", "sex", "incq", "faminc")]
+items.c <- X[,c(grep("X", names(X), value=T), "ID", "cohort", "ageint5", "sex", "incq", "faminc_real", "faminc_infl")]
 colnames(items.c)[colnames(items.c) == "ageint5"] <- "age"
 items.c$sex <- factor(items.c$sex)
 levels(items.c$sex) = c("M", "F")

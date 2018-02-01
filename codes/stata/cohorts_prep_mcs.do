@@ -129,8 +129,10 @@ save `mcssdq11y'
 *INCOME	 ******************************************************************
 use "$data/SEPdata/create37_MCS2012.dta", clear
 rename q_bu_net_total_p incq
-gen faminc 			= bu_net_total_p
-replace faminc 		= faminc/adjMCS/1000
+gen faminc_real 	= bu_net_total_p
+replace faminc_real = faminc_real/adjMCS/1000
+gen faminc_infl 	= bu_net_total_p
+replace faminc_infl = faminc_infl/inflMCS/1000
 tempfile mcsinc11y
 save `mcsinc11y'	
 
@@ -398,7 +400,7 @@ egen ncmiss=rowmiss(mcs5_sdq*)
 drop if ncmiss >21
 
 /* SAVE OUTPUT */
-keep mcsid sentry sex country pttype2 incq faminc ysch_* mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5
+keep mcsid sentry sex country pttype2 incq faminc* ysch_* mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5
 saveold "$rdata/mcs5yeng_rwt.dta", replace version(12)
 
 restore
@@ -413,7 +415,7 @@ egen ncmiss=rowmiss(mcs11_sdq*)
 drop if ncmiss >21
 
 /* SAVE OUTPUT */
-keep mcsid sentry sex country pttype2 incq faminc ysch_* mcs11_sdq* mcs11_ws* age*11
+keep mcsid sentry sex country pttype2 incq faminc* ysch_* mcs11_sdq* mcs11_ws* age*11
 saveold "$rdata/mcs11yeng_rwt.dta", replace version(12)
 
 restore

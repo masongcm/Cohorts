@@ -109,10 +109,10 @@ p
 ## ---- FACLOESS_INC
 
 # loess plot of scores on income
-l.inc.ext.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Males Externalising")
-l.inc.ext.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Females Externalising")
-l.inc.int.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Males Internalising")
-l.inc.int.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Females Internalising")
+l.inc.ext.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc_real, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Males Externalising")
+l.inc.ext.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc_real, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Females Externalising")
+l.inc.int.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc_real, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Males Internalising")
+l.inc.int.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc_real, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Females Internalising")
 l.inc <- list(l.inc.ext.m, l.inc.ext.f, l.inc.int.m, l.inc.int.f)
 l.inc <- lapply(l.inc, 
                  function(x) x + theme(legend.position="none") +

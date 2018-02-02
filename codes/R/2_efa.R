@@ -6,7 +6,7 @@
 rotation <- "oblimin"
 
 # EFA with 11 item scale
-items.bcs <- items.c[items.c$cohort=="BCS",c(grep("X", names(X), value=T))]
+items.bcs <- items.c[items.c$cohort=="BCS",c(grep("X", names(items.c), value=T))]
 nbcs <- dim(items.bcs)[1]
 bcscor <- hetcor(items.bcs, ML=TRUE, std.err = F)$correlations
 bcsfa <- fa(r=bcscor, nfactors=2, rotate = rotation, fm="wls")
@@ -23,7 +23,7 @@ bcsfa$loadings
 ## ---- MCSEFA
 
 # EFA with 11 item scale
-items.mcs <- items.c[items.c$cohort=="MCS",c(grep("X", names(X), value=T))]
+items.mcs <- items.c[items.c$cohort=="MCS",c(grep("X", names(items.c), value=T))]
 nmcs <- dim(items.mcs)[1]
 mcscor <- hetcor(items.mcs, ML=TRUE, std.err = F)$correlations
 mcsfa <- fa(r=mcscor, nfactors=2, rotate = rotation, fm="wls")

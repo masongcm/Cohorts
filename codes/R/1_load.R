@@ -21,7 +21,6 @@ library(xtable)
 library(cowplot)
 library(tikzDevice)
 library(gtools)
-library(glue)
 
 
 dir_data  <- c("/Users/giacomomason/Documents/Projects/CohortStudies/rdata/")
@@ -73,7 +72,7 @@ for (i in 1:ncol(bcs5rutc)) bcs5rutcf[,i] <- as.ordered(bcs5rutc[,i])
 
 
 # auxiliary variables
-bcs5aux <- cbind(bcs5data[,c("bcsid", "faminc_real", "faminc_infl", "incq", "ysch_moth", "ysch_fath", "ageint5", "sex")],
+bcs5aux <- cbind(bcs5data[,c("bcsid", "faminc_real", "faminc_infl", "incq", "ysch_moth", "ysch_fath", "ageint5", "sex", "hinvq00")],
                 cog1 = bcs5data$epvt_z,
                 cog2 = bcs5data$hfd_z,
                 cog3 = bcs5data$copy_z
@@ -116,14 +115,16 @@ mcs5sdqcf <- mcs5sdqc
 for (i in 1:ncol(mcs5sdqc)) mcs5sdqcf[,i] <- as.ordered(mcs5sdqc[,i])                    
 
 # add SES and cognitive data
-mcs5aux <- cbind(mcs5data[,c("mcsid", "faminc_real", "faminc_infl", "incq", "ysch_moth", "ysch_fath", "ageint5","sex")],
+mcs5aux <- cbind(mcs5data[,c("mcsid", "faminc_real", "faminc_infl", "incq", "ysch_moth", "ysch_fath", "ageint5", "sex")],
                 cog1 = mcs5data$nvoc_bastz,
                 cog2 = mcs5data$psim_bastz,
                 cog3 = mcs5data$patc_bastz
 )
 names(mcs5aux)[names(mcs5aux)=="mcsid"] <- "id"
+# add empty column with hinvq00 to match BCS
+mcs5aux$hinvq00 <- NA
 
-
+# MERGE -------------------------------------------
 
 # common items
 Xtemp.bcs <- cbind( bcs5aux,      # additional variables
@@ -138,14 +139,16 @@ Xtemp.mcs <- cbind( mcs5aux,      # additional variables
 )
 
 # append BCS and MCS
-nn <- c(colnames(bcs5aux), "cohort", "X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10", "X11")
-nn[1] <- "ID"
-colnames(Xtemp.bcs) <- nn
-colnames(Xtemp.mcs) <- nn
-X <- data.frame(rbind(Xtemp.bcs, Xtemp.mcs))
+colnames(Xtemp.bcs) <- c(colnames(bcs5aux), "cohort", "X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10", "X11")
+colnames(Xtemp.mcs) <- c(colnames(mcs5aux), "cohort", "X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10", "X11")
+X.all <- data.frame(rbind(Xtemp.bcs, Xtemp.mcs))
 
 # assemble final data
-items.c <- X[,c(grep("X", names(X), value=T), "ID", "cohort", "ageint5", "sex", "incq", "faminc_real", "faminc_infl")]
+items.c <- X.all[,c(grep("X", names(X.all), value=T), 
+                "id", "cohort", "ageint5", "sex", 
+                "cog1", "cog2", "cog3",
+                "incq", "faminc_real", "faminc_infl", "ysch_moth", "ysch_fath",
+                "hinvq00")]
 colnames(items.c)[colnames(items.c) == "ageint5"] <- "age"
 items.c$sex <- factor(items.c$sex)
 levels(items.c$sex) = c("M", "F")
@@ -155,7 +158,7 @@ levels(items.c$cohortsex) <- c("BCS.M", "BCS.F", "MCS.M", "MCS.F")
 items.c <- items.c[!is.na(items.c$cohortsex),] # drop missings
 
 # keep only complete cases in X
-items.c <- items.c[complete.cases(items.c[,c(grep("X", names(X), value=T),"age","sex")]),]
+items.c <- items.c[complete.cases(items.c[,c(grep("X", names(X.all), value=T),"age","sex")]),]
 
 # list of items for different models
 items <- list()
@@ -180,7 +183,7 @@ colnames(means) <- c("num", "BCS_ca", "BCS_sa", "BCS_a", "MCS_ca", "MCS_sa", "MC
 
 for (i in 1:ncomm) {
   means[i,1] <- i
-  t <- table(X$cohort,X[,grep("X", names(X))][,i]) # ith column of item-only matrix
+  t <- table(X.all$cohort, X.all[,grep("X", names(X.all))][,i]) # ith column of item-only matrix
   t2 <- 100*prop.table(t, 1)                           # convert to row percentages
   
   if (ncats[i] == 3) { # 3-category items

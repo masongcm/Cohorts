@@ -9,8 +9,8 @@
 # lv variances = 1
 # intercepts = 0
 # unique variances = 1
-config.we.th <- collapse(readLines(paste0(dir_syntax, "config_we_th.lav")), sep=" \n  ")
-config.we.thb <- collapse(readLines(paste0(dir_syntax, "config_we_thb.lav")), sep=" \n  ")
+config.we.th <- glue::collapse(readLines(paste0(dir_syntax, "config_we_th.lav")), sep=" \n  ")
+config.we.thb <- glue::collapse(readLines(paste0(dir_syntax, "config_we_thb.lav")), sep=" \n  ")
 
 # WE CONFIGURAL - DELTA PARAMETERISATION (Condition 7)
 # free loadings and thresholds
@@ -18,7 +18,7 @@ config.we.thb <- collapse(readLines(paste0(dir_syntax, "config_we_thb.lav")), se
 # lv variances = 1
 # intercepts = 0
 # scales = 1
-config.we.d <- collapse(readLines(paste0(dir_syntax, "config_we_d.lav")), sep=" \n  ")
+config.we.d <- glue::collapse(readLines(paste0(dir_syntax, "config_we_d.lav")), sep=" \n  ")
 
 
 # WE THRESHOLD invariance, theta par (Condition 15)
@@ -28,8 +28,8 @@ config.we.d <- collapse(readLines(paste0(dir_syntax, "config_we_d.lav")), sep=" 
 # lv variances = 1
 # unique variances free in group 2 (except binary items)
 # intercepts free in group 2
-thr.we.th <- collapse(readLines(paste0(dir_syntax, "thr_we_th.lav")), sep=" \n  ")
-thr.we.thb <- collapse(readLines(paste0(dir_syntax, "thr_we_thb.lav")), sep=" \n  ")
+thr.we.th <- glue::collapse(readLines(paste0(dir_syntax, "thr_we_th.lav")), sep=" \n  ")
+thr.we.thb <- glue::collapse(readLines(paste0(dir_syntax, "thr_we_thb.lav")), sep=" \n  ")
 
 
 # WE THRESHOLD+LOADINGS invariance, theta par (Condition 19)
@@ -39,8 +39,8 @@ thr.we.thb <- collapse(readLines(paste0(dir_syntax, "thr_we_thb.lav")), sep=" \n
 # lv variances free in group 2
 # unique variances free in group 2 (except binary items)
 # intercepts free in group 2
-thr.load.we.th <- collapse(readLines(paste0(dir_syntax, "thr_load_we_th.lav")), sep=" \n  ")
-thr.load.we.thb <- collapse(readLines(paste0(dir_syntax, "thr_load_we_thb.lav")), sep=" \n  ")
+thr.load.we.th <- glue::collapse(readLines(paste0(dir_syntax, "thr_load_we_th.lav")), sep=" \n  ")
+thr.load.we.thb <- glue::collapse(readLines(paste0(dir_syntax, "thr_load_we_thb.lav")), sep=" \n  ")
 
 
 # WE THRESHOLD+INTERCEPT invariance, delta par (Condition 21)
@@ -50,7 +50,7 @@ thr.load.we.thb <- collapse(readLines(paste0(dir_syntax, "thr_load_we_thb.lav"))
 # lv variances constrained to 1
 # unique variances free in group 2 (except binary items)
 # intercepts free in group 2
-thr.int.we.d <- collapse(readLines(paste0(dir_syntax, "thr_int_we_d.lav")), sep=" \n  ")
+thr.int.we.d <- glue::collapse(readLines(paste0(dir_syntax, "thr_int_we_d.lav")), sep=" \n  ")
 
 
 # WE THRESHOLD+LOADINGS+INTERCEPT invariance, theta par (Condition 27)
@@ -60,8 +60,8 @@ thr.int.we.d <- collapse(readLines(paste0(dir_syntax, "thr_int_we_d.lav")), sep=
 # lv variances free in group 2
 # unique variances free in group 2 (except binary items)
 # intercepts constrained to zero for both groups
-thr.load.int.we.th <- collapse(readLines(paste0(dir_syntax, "thr_load_int_we_th.lav")), sep=" \n  ")
-thr.load.int.we.thb <- collapse(readLines(paste0(dir_syntax, "thr_load_int_we_thb.lav")), sep=" \n  ")
+thr.load.int.we.th <- glue::collapse(readLines(paste0(dir_syntax, "thr_load_int_we_th.lav")), sep=" \n  ")
+thr.load.int.we.thb <- glue::collapse(readLines(paste0(dir_syntax, "thr_load_int_we_thb.lav")), sep=" \n  ")
 
 # MODELS -------------------------------------------------------
 # equivalent models (MT does not converge!)

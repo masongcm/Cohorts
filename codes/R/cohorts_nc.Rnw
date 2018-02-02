@@ -679,7 +679,7 @@ for (r in 1:nrow(regcoeffs)) {
 @
 
 \begin{table}[ht]
-\caption{Estimated latent variable means and covariances} \label{tab:lvpars}
+\caption{Estimated means and covariances of scores} \label{tab:scoremeans}
 \centering
 <<FA_COMP, dependson='FA_SCORES', results='asis'>>=
 # compare mean factor scores by gender and cohort
@@ -723,13 +723,170 @@ print.xtable(xtable(sctable,
 @
 \end{table}
 
+\begin{table}[ht]
+\caption{Regression of scores on income} \label{tab:regs}
+\centering
+\resizebox{\linewidth}{!}{%
+<<FA_REGS2, dependson='FA_SCORES', results='asis'>>=
+# regress scores on income
+library(dplyr)
+library(stargazer)
+
+scores2plot$incq_infl <- factor(ntile(scores2plot$faminc_infl, 5))
+
+r.ext.f.c <- lm(EXT ~ faminc_infl*cohort, data=subset(scores2plot, sex=="F"))
+r.ext.f.q <- lm(EXT ~ incq_infl*cohort, data=subset(scores2plot, sex=="F"))
+r.int.f.c <- lm(INT ~ faminc_infl*cohort, data=subset(scores2plot, sex=="F"))
+r.int.f.q <- lm(INT ~ incq_infl*cohort, data=subset(scores2plot, sex=="F"))
+
+r.ext.m.c <- lm(EXT ~ faminc_infl*cohort, data=subset(scores2plot, sex=="M"))
+r.ext.m.q <- lm(EXT ~ incq_infl*cohort, data=subset(scores2plot, sex=="M"))
+r.int.m.c <- lm(INT ~ faminc_infl*cohort, data=subset(scores2plot, sex=="M"))
+r.int.m.q <- lm(INT ~ incq_infl*cohort, data=subset(scores2plot, sex=="M"))
+
+stargazer(r.ext.f.c, r.ext.f.q, r.int.f.c, r.int.f.q, r.ext.m.c, r.ext.m.q, r.int.m.c, r.int.m.q,
+          column.labels=c("Females","Males"), column.separate=c(4,4),
+          dep.var.caption = "", multicolumn = FALSE,
+          omit=c("Constant"),
+          covariate.labels=c("Family income (2015 CPI £)",
+                             "Family income Q2 (2015 CPI £)",
+                             "Family income Q3 (2015 CPI £)",
+                             "Family income Q4 (2015 CPI £)",
+                             "Family income Q5 (2015 CPI £)",
+                             "MCS dummy",
+                             "Family income (2015 CPI £) x MCS",
+                             "Family income Q2 (2015 CPI £) x MCS",
+                             "Family income Q3 (2015 CPI £) x MCS",
+                             "Family income Q4 (2015 CPI £) x MCS",
+                             "Family income Q5 (2015 CPI £) x MCS"
+                             ),
+          no.space=TRUE, 
+          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{table}
+
+
+
+\begin{table}[ht]
+\caption{Returns to EXT/INT in BCS} \label{tab:returns}
+\centering
+\resizebox{\linewidth}{!}{%
+<<FA_RETURNS, dependson='FA_SCORES', results='asis'>>=
+# regress scores on income
+library(dplyr)
+library(stargazer)
+
+# get BCS data and make dummy for higher education
+scoresBCS <- scores2plot[scores2plot$cohort=="BCS",]
+scoresBCS$highered <- as.numeric(scoresBCS$hinvq00>3)
+scoresBCS[is.na(scoresBCS$hinvq00), "highered"] <- NA
+
+# females
+r.nvq.f <- list()
+r.nvq.f[[1]] <- lm(highered ~ EXT + INT, data=subset(scoresBCS, sex=="F"))
+r.nvq.f[[2]] <- lm(highered ~ EXT + INT + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="F"))
+r.nvq.f[[3]] <- lm(highered ~ EXT + INT + factor(incq), data=subset(scoresBCS, sex=="F"))
+r.nvq.f[[4]] <- lm(highered ~ EXT + INT + ysch_moth + ysch_fath, data=subset(scoresBCS, sex=="F"))
+r.nvq.f[[5]] <- lm(highered ~ EXT + INT + factor(incq) + ysch_moth + ysch_fath + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="F"))
+
+# females
+r.nvq.m <- list()
+r.nvq.m[[1]] <- lm(highered ~ EXT + INT, data=subset(scoresBCS, sex=="M"))
+r.nvq.m[[2]] <- lm(highered ~ EXT + INT + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="M"))
+r.nvq.m[[3]] <- lm(highered ~ EXT + INT + factor(incq), data=subset(scoresBCS, sex=="M"))
+r.nvq.m[[4]] <- lm(highered ~ EXT + INT + ysch_moth + ysch_fath, data=subset(scoresBCS, sex=="M"))
+r.nvq.m[[5]] <- lm(highered ~ EXT + INT + factor(incq) + ysch_moth + ysch_fath + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="M"))
+
+stargazer(r.nvq.f[[1]], r.nvq.f[[2]], r.nvq.f[[3]], r.nvq.f[[4]], r.nvq.f[[5]],
+          r.nvq.m[[1]], r.nvq.m[[2]], r.nvq.m[[3]], r.nvq.m[[4]], r.nvq.m[[5]],
+          dep.var.caption = "Completed Higher Ed. at 30",
+          column.labels=c("Females","Males"), column.separate=c(5,5),
+          omit=c("Constant"),
+          covariate.labels=c("Externalising skill at 5",
+                             "Internalising skill at 5",
+                             "EPVT Z at 5",
+                             "Human figure drawing Z at 5",
+                             "Copy design Z at 5",
+                             "Family inc. at 10 Q2",
+                             "Family inc. at 10 Q3",
+                             "Family inc. at 10 Q4",
+                             "Family inc. at 10 Q5",
+                             "Mother's years of schooling",
+                             "Father's years of schooling"
+                             ),
+          no.space=TRUE, 
+          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{table}
+
+\begin{table}[ht]
+\caption{Returns to EXT/INT in BCS -- raw scores} \label{tab:returns_raw}
+\centering
+\resizebox{\linewidth}{!}{%
+<<FA_RETURNS_RAW, dependson='FA_SCORES', results='asis'>>=
+# regress scores on income
+library(dplyr)
+library(stargazer)
+
+# get BCS data and make dummy for higher education
+scoresBCS <- scores2plot[scores2plot$cohort=="BCS",]
+scoresBCS$highered <- as.numeric(scoresBCS$hinvq00>3)
+scoresBCS[is.na(scoresBCS$hinvq00), "highered"] <- NA
+
+# females
+r.nvq.f <- list()
+r.nvq.f[[1]] <- lm(highered ~ EXT.RAW + INT.RAW, data=subset(scoresBCS, sex=="F"))
+r.nvq.f[[2]] <- lm(highered ~ EXT.RAW + INT.RAW + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="F"))
+r.nvq.f[[3]] <- lm(highered ~ EXT.RAW + INT.RAW + factor(incq), data=subset(scoresBCS, sex=="F"))
+r.nvq.f[[4]] <- lm(highered ~ EXT.RAW + INT.RAW + ysch_moth + ysch_fath, data=subset(scoresBCS, sex=="F"))
+r.nvq.f[[5]] <- lm(highered ~ EXT.RAW + INT.RAW + factor(incq) + ysch_moth + ysch_fath + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="F"))
+
+# females
+r.nvq.m <- list()
+r.nvq.m[[1]] <- lm(highered ~ EXT.RAW + INT.RAW, data=subset(scoresBCS, sex=="M"))
+r.nvq.m[[2]] <- lm(highered ~ EXT.RAW + INT.RAW + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="M"))
+r.nvq.m[[3]] <- lm(highered ~ EXT.RAW + INT.RAW + factor(incq), data=subset(scoresBCS, sex=="M"))
+r.nvq.m[[4]] <- lm(highered ~ EXT.RAW + INT.RAW + ysch_moth + ysch_fath, data=subset(scoresBCS, sex=="M"))
+r.nvq.m[[5]] <- lm(highered ~ EXT.RAW + INT.RAW + factor(incq) + ysch_moth + ysch_fath + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="M"))
+
+stargazer(r.nvq.f[[1]], r.nvq.f[[2]], r.nvq.f[[3]], r.nvq.f[[4]], r.nvq.f[[5]],
+          r.nvq.m[[1]], r.nvq.m[[2]], r.nvq.m[[3]], r.nvq.m[[4]], r.nvq.m[[5]],
+          dep.var.caption = "Completed Higher Ed. at 30",
+          column.labels=c("Females","Males"), column.separate=c(5,5),
+          omit=c("Constant"),
+          covariate.labels=c("Externalising skill at 5 (raw score)",
+                             "Internalising skill at 5 (raw score)",
+                             "EPVT Z at 5",
+                             "Human figure drawing Z at 5",
+                             "Copy design Z at 5",
+                             "Family inc. at 10 Q2",
+                             "Family inc. at 10 Q3",
+                             "Family inc. at 10 Q4",
+                             "Family inc. at 10 Q5",
+                             "Mother's years of schooling",
+                             "Father's years of schooling"
+                             ),
+          no.space=TRUE, 
+          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{table}
+
 We can derive scores for $\theta^{EXT}$ and $\theta^{INT}$ directly, and plot them against socioeconomic measures observed in the data. Our main socioeconomic indicator is a measure of weekly total family net income in the prices of the interview year.\footnote{This measure is harmonised across cohorts and derived as part of CLOSER, which is funded by the ESRC.} Using the estimated parameters for the model with invariant thresholds and loadings (but non-invariant intercepts), I compute the scores for each individual in the sample (using the Empirical Bayes modal approach). In \autoref{fig:boxscores}, we can see that the gradient in noncognitive skills along family income quintiles is more pronounced in the MCS cohort. In particular, a male five-year old at the top quintile of the income distribution in 1975 has a better score by \Sexpr{regcoeffs[1,3]} in the externalising dimension and \Sexpr{regcoeffs[1,4]} in the internalising dimension, compared to a child at the bottom quintile. In 2005, the differences amount to \Sexpr{regcoeffs[3,3]} and \Sexpr{regcoeffs[3,4]}, respectively.
 
 
 \clearpage
 \begin{figure}
 \begin{center}
-<<AGEHIST, dev='tikz', fig.height=6, fig.width=6, out.width='.6\\linewidth'>>=
+<<AGEHIST, dev='tikz', fig.height=6, fig.width=6, out.width='.6\\linewidth', cache=TRUE>>=
 @
 \end{center}
 \caption{Distribution of age in the BCS and MCS sample}

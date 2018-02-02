@@ -1,3 +1,4 @@
+
 ********************************************************************************
 ***** PREP BCS 70 DATA		                ************************************
 ********************************************************************************
@@ -26,6 +27,10 @@ save `bcsdem2'
 use "$bcsraw/1975/f699b.dta", clear
 rename e245 bcs_ethn
 
+rename e189a	educ_moth
+rename e189b	educ_fath
+recode educ_moth educ_fath (-3 -2 -1 8 =.)
+
 rename e195		ysch_moth
 rename e196		ysch_fath
 recode ysch_moth ysch_fath (-3 -2 -1 =.)
@@ -36,15 +41,15 @@ tostring e271, gen(datestr)
 gen year = 1900 + real((substr(datestr,1,2)))
 gen month = real((substr(datestr,3,2)))
 gen dateint5 = ym(year,month)
-format dateint %tm
+format dateint5 %tm
 
 gen dateb = tm(1970-04)
 format dateb %tm
 
-gen ageint5 = dateint - dateb
+gen ageint5 = dateint5 - dateb
 lab var ageint5		"Age at 5y interview (months)"
 
-keep bcsid bcs_ethn ageint5 ysch_*
+keep bcsid bcs_ethn ageint5 *_moth *_fath
 tempfile bcsdem3
 save `bcsdem3'
 
@@ -104,6 +109,16 @@ keep bcsid agemint10 agetest10 ///
 tempfile bcsall10y
 save `bcsall10y'
 
+*QUALIFICATIONS AT 30	 *******************************************************
+
+* 10 Year Survey
+use "$bcsraw/2000/bcs6derived.dta", clear
+rename _all, lower
+keep bcsid hinvq00
+recode hinvq00 (-9=.)
+tempfile bcsnvq30y
+save `bcsnvq30y'
+
 
 *INCOME	 ******************************************************************
 use "$data/SEPdata/create37_BCS1980.dta", clear // income
@@ -128,6 +143,7 @@ merge 1:1 bcsid using `bcsrutter5y', gen(bcs_merge_rut5y)
 merge 1:1 bcsid using `bcscog5y', gen(bcs_merge_cog5y)
 merge 1:1 bcsid using `bcsinc10y', gen(bcs_merge_inc10y)
 merge 1:1 bcsid using `bcsall10y', gen(bcs_merge_all10y)
+merge 1:1 bcsid using `bcsnvq30y', gen(bcs_merge_nvq30y)
 
 drop if sex<1		/* missing observations */
 
@@ -250,7 +266,7 @@ preserve
 egen ncmiss=rowmiss(bcs10_rut*)
 drop if ncmiss >22
 
-keep bcsid bcs_country sex bcs_region age*10 incq faminc* ysch_moth ysch_fath bcs10_rut* bcs10_ws*
+keep bcsid bcs_country sex bcs_region age*10 incq faminc* *_moth *_fath bcs10_rut* bcs10_ws* hinvq00
 saveold "$rdata/bcs10y.dta", replace version(12)
 
 // england only
@@ -267,7 +283,7 @@ preserve
 egen ncmiss=rowmiss(bcs5_rut*)
 drop if ncmiss >22
 
-keep bcsid bcs_country sex bcs_region age*5 incq faminc* ysch_moth ysch_fath epvt_z copy_z hfd_z bcs5_rut*
+keep bcsid bcs_country sex bcs_region age*5 incq faminc* *_moth *_fath epvt_z copy_z hfd_z bcs5_rut* hinvq00
 saveold "$rdata/bcs5y.dta", replace version(12)
 
 // england only

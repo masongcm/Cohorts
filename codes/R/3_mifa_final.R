@@ -1,15 +1,15 @@
 # ############################################################################################
 ## ---- FA_FINAL
 
-# select final model
-finalmod <- list(fa.tli.a, fa.tli.m, fa.tli.f, fa.tli.b, fa.tli.ol)
+# select final model set
+finalmod <- fa.tli
 
 ##################################################################################
 ## ---- FA_FINAL_PARS
 # extract parameters and make table for final model estimates
 
 allpar <- list()
-for (i in 1:5) {
+for (i in 1:length(finalmod)) {
   pta <- partable(finalmod[[i]])
 
   # item parameters ----------------------------------------------------------
@@ -52,7 +52,7 @@ for (i in 1:5) {
 }
 
 # additional variances for 4-group models
-for (i in 4:5) {
+for (i in 7:11) {
   pta <- partable(finalmod[[i]])
   eps3 <- pta[(pta$op == "~~" & substr(pta$rhs,1,1) == "X" & pta$group == 3),c("lhs", "rhs","est")]
   eps3$measure <- eps3$lhs
@@ -71,7 +71,9 @@ for (i in 4:5) {
 # latent variable parameters ----------------------------------------------------------
 
 lvpars <- list()
-for (i in 1:3) {
+
+# 2-group models
+for (i in 1:6) {
   # model with threshold and loading invariance
   lv.means <- inspect(finalmod[[i]], what="mean.lv") # means
   lv.covs <- inspect(finalmod[[i]], what="cov.lv")   # covariances
@@ -82,47 +84,55 @@ for (i in 1:3) {
     cbind(as.matrix(lv.means[[1]]), lv.covs[[1]], as.matrix(c(NA,lv.corrs[[1]][2,1])), as.matrix(lv.means[[2]]), lv.covs[[2]], as.matrix(c(NA,lv.corrs[[2]][2,1])))
   )
   
-}
-
-
-# 4-GROUP MODEL
-lv.means4 <- inspect(finalmod[[4]], what="mean.lv")
-lv.covs4 <- inspect(finalmod[[4]], what="cov.lv")
-for (j in 1:2) upperTriangle(lv.covs4[[j]]) <- NA
-lv.corrs4 <- lapply(lv.covs4,cov2cor)
-
-# females
-lvpars[[5]] <- data.frame(cbind(
-  as.matrix(lv.means4$BCS.F),
-  lv.covs4$BCS.F,
-  as.matrix(c(NA,lv.corrs4$BCS.F[2,1])),
-  as.matrix(lv.means4$MCS.F),
-  lv.covs4$MCS.F,
-  as.matrix(c(NA,lv.corrs4$MCS.F[2,1]))
-))
-# males
-lvpars[[4]] <- data.frame(cbind(
-  as.matrix(lv.means4$BCS.M),
-  lv.covs4$BCS.M,
-  as.matrix(c(NA,lv.corrs4$BCS.M[2,1])),
-  as.matrix(lv.means4$MCS.M),
-  lv.covs4$MCS.M,
-  as.matrix(c(NA,lv.corrs4$MCS.M[2,1]))
-))
-
-
-for (i in 1:5) {
   lvpars[[i]] <- cbind(as.matrix(c("$\\theta^{EXT}$", "$\\theta^{INT}$")),lvpars[[i]])
   names(lvpars[[i]]) <- c("measure", 
                           "mean_BCS", "covext_BCS", "covint_BCS", "corr_BCS", 
                           "mean_MCS", "covext_MCS", "covint_MCS", "corr_MCS")
 }
+
+
+
+# 4-GROUP MODELS
+for (i in 7:11) {
+  lv.means4 <- inspect(finalmod[[i]], what="mean.lv")
+  lv.covs4 <- inspect(finalmod[[i]], what="cov.lv")
+  for (j in 1:2) upperTriangle(lv.covs4[[j]]) <- NA
+  lv.corrs4 <- lapply(lv.covs4,cov2cor)
   
+  lvpars[[i]] <- list()
+  # males
+  lvpars[[i]][[1]] <- data.frame(cbind(
+    as.matrix(lv.means4$BCS.M),
+    lv.covs4$BCS.M,
+    as.matrix(c(NA,lv.corrs4$BCS.M[2,1])),
+    as.matrix(lv.means4$MCS.M),
+    lv.covs4$MCS.M,
+    as.matrix(c(NA,lv.corrs4$MCS.M[2,1]))
+  ))
+  # females
+  lvpars[[i]][[2]] <- data.frame(cbind(
+    as.matrix(lv.means4$BCS.F),
+    lv.covs4$BCS.F,
+    as.matrix(c(NA,lv.corrs4$BCS.F[2,1])),
+    as.matrix(lv.means4$MCS.F),
+    lv.covs4$MCS.F,
+    as.matrix(c(NA,lv.corrs4$MCS.F[2,1]))
+  ))
+  
+  for (j in 1:2) {
+    lvpars[[i]][[j]] <- cbind(as.matrix(c("$\\theta^{EXT}$", "$\\theta^{INT}$")),lvpars[[i]][[j]])
+    names(lvpars[[i]][[j]]) <- c("measure", 
+                            "mean_BCS", "covext_BCS", "covint_BCS", "corr_BCS", 
+                            "mean_MCS", "covext_MCS", "covint_MCS", "corr_MCS")
+  }
+}
+
+
   
 ## ---- CLEANUP
 rm(
    lambdas, means, pta, tau1, tau2, eps,
-   Xtemp.bcs, Xtemp.mcs, bcs5_rutb419, bcs5_rutbAB, bcs5_rutc419,
+   bcs5_rutb419, bcs5_rutbAB, bcs5_rutc419,
    dmfi, dcfi, dgam, indsel, mcskeepb, mnames, ncats, ncomm,
    t, t2)
 

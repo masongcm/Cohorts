@@ -9,8 +9,13 @@
 # lv variances = 1
 # intercepts = 0
 # unique variances = 1
-config.we.th <- glue::collapse(readLines(paste0(dir_syntax, "config_we_th.lav")), sep=" \n  ")
-config.we.thb <- glue::collapse(readLines(paste0(dir_syntax, "config_we_thb.lav")), sep=" \n  ")
+c.th.2a <- glue::collapse(readLines(paste0(dir_syntax, "c_th_2a.lav")), sep=" \n  ")
+c.th.2ac <- glue::collapse(readLines(paste0(dir_syntax, "c_th_2ac.lav")), sep=" \n  ")
+c.th.2 <- glue::collapse(readLines(paste0(dir_syntax, "c_th_2.lav")), sep=" \n  ")
+c.th.4a <- glue::collapse(readLines(paste0(dir_syntax, "c_th_4a.lav")), sep=" \n  ")
+c.th.4ac <- glue::collapse(readLines(paste0(dir_syntax, "c_th_4ac.lav")), sep=" \n  ")
+c.th.4 <- glue::collapse(readLines(paste0(dir_syntax, "c_th_4.lav")), sep=" \n  ")
+c.mimic <- paste(c.th.4, "EXT ~ age", "INT ~ age",  sep=" \n  ")
 
 # WE CONFIGURAL - DELTA PARAMETERISATION (Condition 7)
 # free loadings and thresholds
@@ -18,7 +23,7 @@ config.we.thb <- glue::collapse(readLines(paste0(dir_syntax, "config_we_thb.lav"
 # lv variances = 1
 # intercepts = 0
 # scales = 1
-config.we.d <- glue::collapse(readLines(paste0(dir_syntax, "config_we_d.lav")), sep=" \n  ")
+c.dl.2a <- glue::collapse(readLines(paste0(dir_syntax, "c_dl_2a.lav")), sep=" \n  ")
 
 
 # WE THRESHOLD invariance, theta par (Condition 15)
@@ -28,8 +33,13 @@ config.we.d <- glue::collapse(readLines(paste0(dir_syntax, "config_we_d.lav")), 
 # lv variances = 1
 # unique variances free in group 2 (except binary items)
 # intercepts free in group 2
-thr.we.th <- glue::collapse(readLines(paste0(dir_syntax, "thr_we_th.lav")), sep=" \n  ")
-thr.we.thb <- glue::collapse(readLines(paste0(dir_syntax, "thr_we_thb.lav")), sep=" \n  ")
+t.th.2a <- glue::collapse(readLines(paste0(dir_syntax, "t_th_2a.lav")), sep=" \n  ")
+t.th.2ac <- glue::collapse(readLines(paste0(dir_syntax, "t_th_2ac.lav")), sep=" \n  ")
+t.th.2 <- glue::collapse(readLines(paste0(dir_syntax, "t_th_2.lav")), sep=" \n  ")
+t.th.4a <- glue::collapse(readLines(paste0(dir_syntax, "t_th_4a.lav")), sep=" \n  ")
+t.th.4ac <- glue::collapse(readLines(paste0(dir_syntax, "t_th_4ac.lav")), sep=" \n  ")
+t.th.4 <- glue::collapse(readLines(paste0(dir_syntax, "t_th_4.lav")), sep=" \n  ")
+t.mimic <- paste(t.th.4, "EXT ~ age", "INT ~ age",  sep=" \n  ")
 
 
 # WE THRESHOLD+LOADINGS invariance, theta par (Condition 19)
@@ -39,18 +49,13 @@ thr.we.thb <- glue::collapse(readLines(paste0(dir_syntax, "thr_we_thb.lav")), se
 # lv variances free in group 2
 # unique variances free in group 2 (except binary items)
 # intercepts free in group 2
-thr.load.we.th <- glue::collapse(readLines(paste0(dir_syntax, "thr_load_we_th.lav")), sep=" \n  ")
-thr.load.we.thb <- glue::collapse(readLines(paste0(dir_syntax, "thr_load_we_thb.lav")), sep=" \n  ")
-
-
-# WE THRESHOLD+INTERCEPT invariance, delta par (Condition 21)
-# thresholds constrained across groups (specified in cfa call)
-# intercepts constrained to zero
-# lv means free
-# lv variances constrained to 1
-# unique variances free in group 2 (except binary items)
-# intercepts free in group 2
-thr.int.we.d <- glue::collapse(readLines(paste0(dir_syntax, "thr_int_we_d.lav")), sep=" \n  ")
+tl.th.2a <- glue::collapse(readLines(paste0(dir_syntax, "tl_th_2a.lav")), sep=" \n  ")
+tl.th.2ac <- glue::collapse(readLines(paste0(dir_syntax, "tl_th_2ac.lav")), sep=" \n  ")
+tl.th.2 <- glue::collapse(readLines(paste0(dir_syntax, "tl_th_2.lav")), sep=" \n  ")
+tl.th.4a <- glue::collapse(readLines(paste0(dir_syntax, "tl_th_4a.lav")), sep=" \n  ")
+tl.th.4ac <- glue::collapse(readLines(paste0(dir_syntax, "tl_th_4ac.lav")), sep=" \n  ")
+tl.th.4 <- glue::collapse(readLines(paste0(dir_syntax, "tl_th_4.lav")), sep=" \n  ")
+tl.mimic <- paste(tl.th.4, "EXT ~ age", "INT ~ age",  sep=" \n  ")
 
 
 # WE THRESHOLD+LOADINGS+INTERCEPT invariance, theta par (Condition 27)
@@ -60,8 +65,13 @@ thr.int.we.d <- glue::collapse(readLines(paste0(dir_syntax, "thr_int_we_d.lav"))
 # lv variances free in group 2
 # unique variances free in group 2 (except binary items)
 # intercepts constrained to zero for both groups
-thr.load.int.we.th <- glue::collapse(readLines(paste0(dir_syntax, "thr_load_int_we_th.lav")), sep=" \n  ")
-thr.load.int.we.thb <- glue::collapse(readLines(paste0(dir_syntax, "thr_load_int_we_thb.lav")), sep=" \n  ")
+tli.th.2a <- glue::collapse(readLines(paste0(dir_syntax, "tli_th_2a.lav")), sep=" \n  ")
+tli.th.2ac <- glue::collapse(readLines(paste0(dir_syntax, "tli_th_2ac.lav")), sep=" \n  ")
+tli.th.2 <- glue::collapse(readLines(paste0(dir_syntax, "tli_th_2.lav")), sep=" \n  ")
+tli.th.4a <- glue::collapse(readLines(paste0(dir_syntax, "tli_th_4a.lav")), sep=" \n  ")
+tli.th.4ac <- glue::collapse(readLines(paste0(dir_syntax, "tli_th_4ac.lav")), sep=" \n  ")
+tli.th.4 <- glue::collapse(readLines(paste0(dir_syntax, "tli_th_4.lav")), sep=" \n  ")
+tli.mimic <- paste(tli.th.4, "EXT ~ age", "INT ~ age",  sep=" \n  ")
 
 # MODELS -------------------------------------------------------
 # equivalent models (MT does not converge!)
@@ -75,60 +85,78 @@ thr.load.int.we.thb <- glue::collapse(readLines(paste0(dir_syntax, "thr_load_int
 # fa.thr.int.we.d <- cfa(thr.int.we.d, data = items.c, group = "cohort", estimator="wlsmv", parameterization="delta")
 # printfit(fa.thr.int.we.d)
 
-# WHOLE SAMPLE
-fa.c.a <- cfa(config.we.th, data = items[[1]], group = "cohort", estimator="wlsmv", parameterization="theta")
-printfit(fa.c.a)
-fa.t.a <- cfa(thr.we.th, data = items[[1]], group = "cohort", estimator="wlsmv", parameterization="theta")
-printfit(fa.t.a)
-# first restrictive model: THRESHOLDS + LOADINGS
-fa.tl.a <- cfa(thr.load.we.th, data = items[[1]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
-printfit(fa.tl.a)
-# second restrictive model: THRESHOLDS + LOADINGS + INTERCEPTS
-fa.tli.a <- cfa(thr.load.int.we.th, data = items[[1]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
-printfit(fa.tli.a)
 
+# INITIALISE LISTS
+fa.c <- list()
+fa.t <- list()
+fa.tl <- list()
+fa.tli <- list()
 
-# MALES
-fa.c.m   <- cfa(config.we.th,        data = items[[2]], group = "cohort", estimator="wlsmv", parameterization="theta")
-fa.t.m   <- cfa(thr.we.th,           data = items[[2]], group = "cohort", estimator="wlsmv", parameterization="theta")
-fa.tl.m  <- cfa(thr.load.we.th,      data = items[[2]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
-fa.tli.m <- cfa(thr.load.int.we.th,  data = items[[2]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+# MODEL 1: WHOLE SAMPLE, no gender split, not age adjusted
+fa.c[[1]]   <- cfa(c.th.2, data = items[[1]], group = "cohort", estimator="wlsmv", parameterization="theta")
+fa.tl[[1]]  <- cfa(tl.th.2, data = items[[1]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli[[1]] <- cfa(tli.th.2, data = items[[1]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
 
-# FEMALES
-fa.c.f   <- cfa(config.we.th,        data = items[[3]], group = "cohort", estimator="wlsmv", parameterization="theta")
-fa.t.f   <- cfa(thr.we.th,           data = items[[3]], group = "cohort", estimator="wlsmv", parameterization="theta")
-fa.tl.f  <- cfa(thr.load.we.th,      data = items[[3]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
-fa.tli.f <- cfa(thr.load.int.we.th,  data = items[[3]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+# MODEL 2: WHOLE SAMPLE, no gender split, age adjusted
+fa.c[[2]]   <- cfa(c.th.2a, data = items[[2]], group = "cohort", estimator="wlsmv", parameterization="theta")
+fa.tl[[2]]  <- cfa(tl.th.2a, data = items[[2]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli[[2]] <- cfa(tli.th.2a, data = items[[2]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
 
-# JOINT
-fa.c.b   <- cfa(config.we.thb,        data = items[[4]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
-fa.t.b   <- cfa(thr.we.thb,           data = items[[4]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
-fa.tl.b  <- cfa(thr.load.we.thb,      data = items[[4]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
-fa.tli.b <- cfa(thr.load.int.we.thb,  data = items[[4]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+# MODEL 3: MALES ONLY, not age adjusted
+fa.c[[3]]   <- cfa(c.th.2, data = items[[3]], group = "cohort", estimator="wlsmv", parameterization="theta")
+fa.tl[[3]]  <- cfa(tl.th.2, data = items[[3]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli[[3]] <- cfa(tli.th.2, data = items[[3]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
 
-# JOINT, overlapping ages only
-fa.c.ol   <- cfa(config.we.thb,        data = items[[5]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
-fa.t.ol   <- cfa(thr.we.thb,           data = items[[5]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
-fa.tl.ol  <- cfa(thr.load.we.thb,      data = items[[5]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
-fa.tli.ol <- cfa(thr.load.int.we.thb,  data = items[[5]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+# MODEL 7: FEMALES ONLY, not age adjusted
+fa.c[[4]]   <- cfa(c.th.2, data = items[[4]], group = "cohort", estimator="wlsmv", parameterization="theta")
+fa.tl[[4]]  <- cfa(tl.th.2, data = items[[4]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli[[4]] <- cfa(tli.th.2, data = items[[4]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
 
-# collect models
-fa.c <- list(fa.c.a, fa.c.m, fa.c.f, fa.c.b, fa.c.ol)
-fa.t <- list(fa.t.a, fa.t.m, fa.t.f, fa.t.b, fa.t.ol)
-fa.tl <- list(fa.tl.a, fa.tl.m, fa.tl.f, fa.tl.b, fa.tl.ol)
-fa.tli <- list(fa.tli.a, fa.tli.m, fa.tli.f, fa.tli.b, fa.tli.ol)
+# MODEL 5: MALES ONLY, age adjusted
+fa.c[[5]]   <- cfa(c.th.2a, data = items[[5]], group = "cohort", estimator="wlsmv", parameterization="theta")
+fa.tl[[5]]  <- cfa(tl.th.2a, data = items[[5]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli[[5]] <- cfa(tli.th.2a, data = items[[5]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+
+# MODEL 6: FEMALES ONLY, age adjusted
+fa.c[[6]]   <- cfa(c.th.2a, data = items[[6]], group = "cohort", estimator="wlsmv", parameterization="theta")
+fa.tl[[6]]  <- cfa(tl.th.2a, data = items[[6]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli[[6]] <- cfa(tli.th.2a, data = items[[6]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+
+# MODEL 7: separate gender groups, not age adjusted
+fa.c[[7]]   <- cfa(c.th.4, data = items[[7]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
+fa.tl[[7]]  <- cfa(tl.th.4, data = items[[7]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli[[7]] <- cfa(tli.th.4, data = items[[7]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+
+# MODEL 8: separate gender groups, age adjusted
+fa.c[[8]]   <- cfa(c.th.4a, data = items[[8]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
+fa.tl[[8]]  <- cfa(tl.th.4a, data = items[[8]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli[[8]] <- cfa(tli.th.4a, data = items[[8]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+
+# MODEL 9: separate gender groups, overlapping ages, no age adjustment
+fa.c[[9]]   <- cfa(c.th.4, data = items[[9]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
+fa.tl[[9]]  <- cfa(tl.th.4, data = items[[9]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli[[9]] <- cfa(tli.th.4, data = items[[9]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+
+# MODEL 10: separate gender groups, age adjusted (constrained)
+fa.c[[10]]   <- cfa(c.th.4ac, data = items[[10]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
+fa.tl[[10]]  <- cfa(tl.th.4ac, data = items[[10]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli[[10]] <- cfa(tli.th.4ac, data = items[[10]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+
+# MODEL 11: MIMIC
+fa.c[[11]]   <- cfa(c.mimic, data = items[[11]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
+fa.tl[[11]]  <- cfa(tl.mimic, data = items[[11]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli[[11]] <- cfa(tli.mimic, data = items[[11]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
 
 
 ## ---- FA_FIT
 # assemble AFIs indices for table
 indsel <- c("npar", "chisq", "rmsea", "mfi", "cfi.scaled")
-mnames <- c("Configural", "Threshold Invariance", "Threshold + Loading Invariance", "Threshold, Loading, + Intercept Invariance")
+mnames <- c("Configural", "Threshold + Loading Invariance", "Threshold, Loading, + Intercept Invariance")
 
 afitab <- list()
-for (i in 1:5) {
+for (i in 1:length(items)) {
   afitab[[i]] <- data.frame(rbind(
     round(c( fitMeasures(fa.c[[i]], indsel), moreFitIndices(fa.c[[i]])["gammaHat"] ),5),
-    round(c( fitMeasures(fa.t[[i]], indsel), moreFitIndices(fa.t[[i]])["gammaHat"] ),5),
     round(c( fitMeasures(fa.tl[[i]], indsel), moreFitIndices(fa.tl[[i]])["gammaHat"] ),5),
     round(c( fitMeasures(fa.tli[[i]], indsel), moreFitIndices(fa.tli[[i]])["gammaHat"] ),5)
   ))

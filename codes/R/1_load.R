@@ -158,18 +158,43 @@ levels(items.c$cohortsex) <- c("BCS.M", "BCS.F", "MCS.M", "MCS.F")
 items.c <- items.c[!is.na(items.c$cohortsex),] # drop missings
 
 # keep only complete cases in X
-items.c <- items.c[complete.cases(items.c[,c(grep("X", names(X.all), value=T),"age","sex")]),]
+items.c <- items.c[complete.cases(items.c[,c(grep("X[0-9]", names(X.all), value=T),"age","sex")]),]
+
+# add raw scores
+items.c$EXT.RAW <- rowSums(apply(items.c[,paste("X", seq(1,6), sep="")], 2, function(x) as.numeric(x)), na.rm = T)
+items.c$INT.RAW <- rowSums(apply(items.c[,paste("X", seq(7,11), sep="")], 2, function(x) as.numeric(x)), na.rm = T)
+items.c$EXT.RAWr <- residuals(lm(EXT.RAW ~ age, data=items.c, na.action = na.exclude))
+items.c$INT.RAWr <- residuals(lm(INT.RAW ~ age, data=items.c, na.action = na.exclude))
+
+# MODEL LIST
+# 1: no gender split, no age adjustment (2 groups, BCS MCS)
+# 2: no gender split, age adjustment (2 groups, BCS MCS)
+# 3: males only, no age adjustment (2 groups, BCS MCS)
+# 4: females only, no age adjustment (2 groups, BCS MCS)
+# 5: males only, age adjustment (2 groups, BCS MCS)
+# 6: females only, age adjustment (2 groups, BCS MCS)
+# 7: separate gender groups, no age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)
+# 8: separate gender groups, age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)
+# 9: separate gender groups, overlapping ages, no age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)
+# 10: separate gender groups, age adjustment constrained to be the same across ages (4 groups, BCS.M BCS.F MCS.M MCS.F)
+# 11: MIMIC model with age as regressor (4 groups, BCS.M BCS.F MCS.M MCS.F)
 
 # list of items for different models
 items <- list()
-items[[1]] <- items.c                      # no gender split
-items[[2]] <- subset(items.c, sex=="M")   # males only
-items[[3]] <- subset(items.c, sex=="F")   # females only
-items[[4]] <- items.c                      # cohort+sex split
-items[[5]] <- subset(items.c, age>=59 & age<=62)  # overlapping ages
+items[[1]] <- items.c
+items[[2]] <- items.c
+items[[3]] <- subset(items.c, sex=="M")
+items[[4]] <- subset(items.c, sex=="F")
+items[[5]] <- subset(items.c, sex=="M")
+items[[6]] <- subset(items.c, sex=="F")
+items[[7]] <- items.c
+items[[8]] <- items.c
+items[[9]] <- subset(items.c, age>=59 & age<=62)
+items[[10]] <- items.c
+items[[11]] <- items.c
 
 # order to merge correctly with scores
-for (i in 1:4) items[[i]] <- items[[i]][order(items[[i]][,"cohortsex"]) , ]
+for (i in 1:length(items)) items[[i]] <- items[[i]][order(items[[i]][,"cohortsex"]) , ]
 
 
 ## ---- MEANTABLE
@@ -183,7 +208,7 @@ colnames(means) <- c("num", "BCS_ca", "BCS_sa", "BCS_a", "MCS_ca", "MCS_sa", "MC
 
 for (i in 1:ncomm) {
   means[i,1] <- i
-  t <- table(X.all$cohort, X.all[,grep("X", names(X.all))][,i]) # ith column of item-only matrix
+  t <- table(X.all$cohort, X.all[,grep("X[0-9]", names(X.all))][,i]) # ith column of item-only matrix
   t2 <- 100*prop.table(t, 1)                           # convert to row percentages
   
   if (ncats[i] == 3) { # 3-category items

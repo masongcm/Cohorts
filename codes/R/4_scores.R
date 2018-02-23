@@ -17,4 +17,8 @@ for (i in 7:11) { # only specifications with separate gender groups
   
 }
 
+############################################################################################
+## ---- FA_SCORES_SELECT
+# select scores to plot
+scores2plot <- items.scored[[8]]
 

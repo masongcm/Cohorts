@@ -156,7 +156,7 @@ Maternal reports on child behaviours were surveyed with two different instrument
 
 \subsection{BCS: Rutter scale}
 
-For BCS, I augment the 20-item Rutter Scale with 4 other parent-reported questions from the parental questionnaire. 
+For BCS, I augment the 19-item Rutter Scale with 4 other parent-reported questions from the parental questionnaire. 
 \begin{enumerate}
 \item Very restless. Often running about or jumping up and down. Hardly ever still.
 \item Is squirmy or fidgety.
@@ -251,7 +251,7 @@ For ease of interpretation, I choose to rescale the factor loadings using \emph{
 
 
 
-The five-factor structure at the basis of the full SDQ has been validated in many contexts \citep{Stone2010}; however, lower-dimensional structures have been also suggested \citep{Dickey2004}, and recent research has shown that there are some benefits to using broader subscales that correspond to the externalising and internalising factors in Rutter \citep{Goodman2010}. To assess whether the two-factor conceptualisation suggested by the theory is valid in our ``reduced" 12-item scale, we conduct exploratory factor analysis (EFA) on the new 11-item scale separately for each cohort sample. Different methodologies for quantifying the optimal number of factors produce inconclusive results, but both Velicer MAP and very simple structure (VSS) seem to indicate that a two-factor structure is suitable. An EFA model with two factors, employing the usual cutoff of .3 for the loadings, delivers a neat and sensible separation between items, as shown in the second column of \autoref{tab:comm}. Thus, our two-factor structure seems justifiable on both theoretical and empirical grounds.
+The five-factor structure at the basis of the full SDQ has been validated in many contexts \citep{Stone2010}; however, lower-dimensional structures have been also suggested \citep{Dickey2004}, and recent research has shown that there are some benefits to using broader subscales that correspond to the externalising and internalising factors in Rutter \citep{Goodman2010}. To assess whether the two-factor conceptualisation suggested by the theory is valid in our ``reduced" 11-item scale, we conduct exploratory factor analysis (EFA) on the new 11-item scale separately for each cohort sample. Different methodologies for quantifying the optimal number of factors produce inconclusive results, but both Velicer MAP and very simple structure (VSS) seem to indicate that a two-factor structure is suitable. An EFA model with two factors, employing the usual cutoff of .3 for the loadings, delivers a neat and sensible separation between items, as shown in the second column of \autoref{tab:comm}. Thus, our two-factor structure seems justifiable on both theoretical and empirical grounds.
 
 
 
@@ -332,8 +332,8 @@ The propensity for each item can be written as follows:
 
 \begin{align}\label{eq:propens}
 \begin{split}
-X^*_{ijc} &=\nu_{ci} + \lambda_{ci}\theta^{EXT}_{cj} + u_{cji} \qquad \text{for} \; i=1,\dots, 6 \\
-X^*_{ijc} &=\nu_{ci} + \lambda_{ci}\theta^{INT}_{cj} + u_{cji} \qquad \text{for} \; i=7,\dots, 11
+X^*_{ijc} &=\nu_{ci} + \lambda_{ci}\theta^{EXT}_{jc} + u_{ijc} \qquad \text{for} \; i=1,\dots, 6 \\
+X^*_{ijc} &=\nu_{ci} + \lambda_{ci}\theta^{INT}_{jc} + u_{ijc} \qquad \text{for} \; i=7,\dots, 11
 \end{split}
 \end{align}
 
@@ -347,8 +347,8 @@ The model implies the following expression for the mean and covariance structure
 $$\bm{\mu}_c=\bm{\nu}_c + \bm{\Lambda}_c\bm{\kappa}_c \qquad \text{and} \qquad \Sigma_c = \bm{\Lambda}_c \bm{\Phi}_c \bm{\Lambda}_c^\prime + \bm{\Psi}_c.$$
 
 For each item $i$, we observe either a binary or ordinal (3-categories) manifestation $X_{cji}$. Given \eqref{eq:propens}, the observed outcome as a function of the propensities $X^*$ can be defined as a function of additional threshold parameters $\tau$, as follows:
-$$X_{cji} = s \qquad \text{if} \; \tau_{s,ci} \leq X^*_{cji} < \tau_{s+1,ci} \qquad \text{for} \; s=0,1,2$$
-with $\tau_{0,ci}=-\infty$ and $\tau_{3,ci}=+\infty$.
+$$X_{ijc} = s \qquad \text{if} \; \tau_{s,ic} \leq X^*_{ijc} < \tau_{s+1,ic} \qquad \text{for} \; s=0,1,2$$
+with $\tau_{0,ic}=-\infty$ and $\tau_{3,ic}=+\infty$.
 The probability of observing each category for a binary item takes values:
 \begin{equation}
 X_{cji}=
@@ -393,7 +393,7 @@ For all groups: $$\text{diag}(\bm{\Phi}) = \bm{I}, \quad \bm{\kappa}=\bm{0}, \qu
 
 \item Theta parameterisation {[WE{\textTheta}]} \citep{Wu2016}
 
-For all groups: $$\text{diag}(\bm{\Phi}) = \bm{I}, \quad \bm{\kappa}=\bm{0}, \quad \bm{\nu}=\bm{0}, \quad \text{and} \; \text{diag}\bm{\Psi}=\bm{I}.$$
+For all groups: $$\text{diag}(\bm{\Phi}) = \bm{I}, \quad \bm{\kappa}=\bm{0}, \quad \bm{\nu}=\bm{0}, \quad \text{and} \; \text{diag}(\bm{\Psi})=\bm{I}.$$
 
 \item Anchored parameterisation {[MT]} \citep{Millsap2004}
   \bi
@@ -482,21 +482,34 @@ Notes:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 <<FA_INVARIANCE, dependson='LOAD_DATA'>>=
+# estimate models of different levels of invariance
 @
 
 <<FA_FIT, dependson='FA_INVARIANCE'>>=
+# assemble fit indices into matrices
 @
 
 <<FA_FINAL, dependson='FA_INVARIANCE'>>=
+# select final model set
 @
 
 <<FA_FINAL_PARS, dependson='FA_FINAL'>>=
+# get parameters of final model
 @
 
 <<CLEANUP, dependson='FA_FINAL'>>=
 @
 
 <<FA_SCORES, dependson='FA_FINAL'>>=
+# produce scores for different models
+@
+
+<<FA_SCORES_COMPARE, dependson='FA_SCORES'>>=
+# assemble and compare scores across different models
+@
+
+<<FA_SCORES_SELECT, dependson='FA_FINAL'>>=
+# select model to use for inequality analysis
 @
 
 \clearpage

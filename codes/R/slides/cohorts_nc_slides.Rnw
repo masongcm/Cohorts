@@ -1,0 +1,1084 @@
+<<MAIN,cache=FALSE,echo=FALSE,results='hide',message=FALSE,warning=FALSE>>=
+rm(list=ls())         # Clear all objects from memory 
+  opts_chunk$set(concordance=FALSE,
+                 echo=FALSE,
+                 tidy=FALSE,
+                 autodep=TRUE,
+                 cache=T, # REPLACE LATER
+                 message=FALSE, 
+                 warning=FALSE,
+                 size='scriptsize',
+                 results='hide',
+                 comment=NA, 
+                 fig.width=4,
+                 fig.height=4, 
+                 out.width='\\textwidth',
+                 fig.show='hold',
+                 tikzDefaultEngine='pdftex',
+                 tikzDocumentDeclaration = "\\documentclass[10pt]{article}",
+                 tikzMetricPackages = c("\\usepackage[utf8]{inputenc}","\\usepackage[T1]{fontenc}", "\\usetikzlibrary{calc}", "\\usepackage{amssymb}")
+                 )
+
+
+@
+
+
+<<READ, cache=FALSE >>=
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/1_load.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/2_efa.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/3_mifa_invariance.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/3_mifa_final.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/4_scores.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/4_scores_compare.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/5_graphs.R")
+
+@
+
+<<PREAMBLE>>=
+@
+
+<<LOAD_DATA>>=
+@
+
+
+\documentclass[10pt,dvipsnames]{beamer}
+\usepackage{mathpazo}  % serif math
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{booktabs}
+\usepackage{bm}        % bold maths
+\usepackage{dsfont}
+\usepackage{ragged2e}
+\usepackage{multirow}
+\usepackage{natbib}
+\usepackage[outdir=./]{epstopdf}
+\usepackage{accents}  % accents in math mode
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{caption}
+\usefonttheme[onlymath]{serif}
+\usepackage{textgreek}
+
+
+%tikz library
+\usepackage{tikz}
+\usetikzlibrary{intersections,calc,arrows,shapes}
+\tikzset{>=latex}
+
+% stata folder path
+\newcommand{\statapics}{/Users/giacomomason/Dropbox/UCL/Whitehall/stata/w_graphs}
+
+% additional symbols
+\newcommand{\me}{\mathrm{e}}
+\newcommand{\veps}{\varepsilon}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\1}{\mathds{1}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Corr}{\mathrm{Corr}}
+\newcommand{\vect}{\mathrm{vec}}
+\newcommand{\vecht}{\mathrm{vech}}
+\newcommand{\ubar}[1]{\underaccent{\bar}{#1}}
+
+% additional commands
+\newcommand{\be}{\begin{eqnarray}}
+\newcommand{\ee}{\end{eqnarray}}
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\bnm}{\begin{enumerate}}
+\newcommand{\enm}{\end{enumerate}}
+
+% UCL beamer template
+\definecolor{steelblue}{RGB}{70,130,180}
+\definecolor{orangeucl}{RGB}{255,170,40}
+\usetheme{ucl}
+\setbeamertemplate{footline}[author title date]
+\useoutertheme[small]{ucltitlebanner}
+\setbeamertemplate{banner}[ucl][1]
+\setbeamercolor{banner stripe}{bg=steelblue!70,fg=black}
+\setbeamercolor{block body}{bg=steelblue!30,fg=black}
+% override default square sizes to make smaller
+\defbeamertemplate*{itemize item}{mysquare}{\tiny\raise0.5pt\hbox{$\blacksquare$}}
+\defbeamertemplate*{itemize subitem}{mysquare}{\tiny\raise0.5pt\hbox{$\blacksquare$}}
+\defbeamertemplate*{itemize subsubitem}{mysquare}{\tiny\raise0.5pt\hbox{$\blacksquare$}}
+\setbeamertemplate{itemize item}[mysquare]               % override default square sizes
+\setbeamertemplate{itemize subitem}[mysquare]
+\setbeamertemplate{itemize subsubitem}[mysquare]
+
+% define new columns
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\renewcommand{\arraystretch}{1.2}%
+
+\setlength{\footnotesep}{0.4cm}
+
+% reduced font size
+\newcommand\Fontvi{\fontsize{8}{8}\selectfont} % reduce font size on slide
+\newcommand\Fontvii{\fontsize{6}{6}\selectfont} % reduce font size on slide
+
+% print TOC at every section break
+\AtBeginSection[] { 
+   \begin{frame}[noframenumbering]
+   \frametitle{Outline}
+   \tableofcontents[currentsection]
+\end{frame}}
+
+\title[Noncognitive skills in cohorts]{\bf{Comparability of child noncognitive skills across UK birth cohorts}}
+
+\author[Mason]{Orazio Attanasio \and Richard Blundell \\ Gabriella Conti \and Giacomo Mason  }
+\institute[UCL Economics]{UCL Department of Economics}
+
+\date[HCRG]{Human Capital Reading Group \\ \today}
+
+\begin{document}
+
+\frame{\titlepage}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% INTRO
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Motivation}
+\framesubtitle{The role of noncognitive skills}
+\bi
+\item Traditional labour literature used to focus mainly on cognitive skills
+    \bi 
+    \item returns to ability in adulthood (labour market, health, \dots)
+    \item process of child development
+    \ei
+\item Attention broadened to include \emph{non}-cognitive skills \citep{Cunha2007a,Cunha2010}
+    \bi
+    \item Socio-emotional, behavioural problems, character, personality traits, locus of control, grit, \dots
+    \item Found to be very important in shaping adult outcomes \citep{Heckman2006,Carneiro2007,Heckman2012b}
+    \item Malleable until later childhood
+    \item Primary mechanism of transmission of effects from early life programmes to adult outcomes \citep{Heckman2013,Kautz2014a}
+    \ei
+\item Today, focus on behaviour problems and mental health
+\ei
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Motivation}
+\framesubtitle{Behavioural problems}
+
+... something more on how behavioural problems are defined and fit within the literature on noncognitive skills
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Motivation}
+\framesubtitle{Inequality in skills}
+
+\bi
+\item Socioeconomic gradients in behaviour problems are documented, and are persistent across childhood/adolescence \citep{Campbell1995,Segal2008}
+\item Still not clear 
+    \bi
+    \item how these gradients change across time
+    \item whether the returns to behavioural skills evolve as well
+    \ei
+\item \emph{Measurement} is a key (often overlooked) issue
+    \bi
+    \item Usually, behavioural constructs are measured via scales
+    \item Most research uses (normalised) aggregate scores from scales \citep{Blanden2007}
+    \item But does the same scale measure the same constructs in the same way:
+      \bi 
+      \item across different populations?
+      \item in the same population, at different points in time?
+      \ei
+    \item And what if only different scales are available?
+    \ei
+\ei
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{This study}
+
+\bi
+\item Focus on behavioural problems in two British cohorts
+  \bi \item British Cohort Study (BCS, b. 1970)
+  \item Millennium Cohort Study (MCS, b. 2000/1) \ei
+\item Construct a common 11-item, 2-dimensional scale from different instruments
+\item Investigate its psychometric properties (measurement invariance)
+\item Use scores from the new scale to document changes in socioeconomic gradients between cohorts 30 years apart
+\ei
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Outline}
+  \tableofcontents
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% DATA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Data}
+
+\begin{frame}
+\frametitle{Data}
+\framesubtitle{British Cohort Study}
+
+\begin{columns}
+
+\begin{column}{0.6\textwidth}
+\bi
+\item Data from 5 year follow-up, maternal questionnaire
+\item Rutter A scale \citep{Rutter1970}
+  \bi
+  \item 19 items (behaviours)
+  \item Options: \textit{Doesn't apply, Applies somewhat, Certainly applies}
+  \item Usually conceptualised as measuring two dimensions
+  \bi \item \emph{externalising} behaviour problems (anti-social) \item \emph{internalising} behaviour problems (neurotic) \ei
+  \ei
+  \item Additional questions from maternal module
+\ei
+\end{column}
+
+\begin{column}{0.4\textwidth}
+\includegraphics[width=\textwidth]{figs/bcsrut} 
+\includegraphics[width=\textwidth]{figs/bcsrut2} 
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Data}
+\framesubtitle{Millennium Cohort Study}
+
+\begin{columns}
+
+\begin{column}{0.5\textwidth}
+
+\bi
+\item Data from 5 year follow-up (MCS3), maternal questionnaire
+\item Complex survey design: need to rebalance data to make representative
+\item Strengths and Difficulties Questionnaire (SDQ, \citealp{Goodman1994})
+  \bi
+  \item ``Updated" and expanded version of the Rutter scale 
+  \item 25 items (behaviours)
+  \item Options: \textit{Not true, Somewhat true, Certainly true}
+  \item Designed with 5 subscales
+  \item Broader subscales are sometimes justifiable \citep{Goodman2010}
+  \ei
+\ei
+
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\includegraphics[width=\textwidth]{figs/mcssdq} 
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% ITEM CHOICE and MEAN TABLE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Harmonisation}
+
+\begin{frame}
+\frametitle{Harmonisation}
+\framesubtitle{Choice of items}
+
+\bi
+\item Aim: develop a new scale using only items that have similar wording across the two cohorts
+\item Try to preserve three categories to maximise information
+\item Combine items when needed (e.g. when SDQ items are positively coded)
+\item Recode all items to higher categories for ``better" behaviours
+\ei
+
+\end{frame}
+
+
+<<MEANTABLE>>=
+# make table with means
+@
+
+\begin{frame}
+\frametitle{Harmonisation}
+\framesubtitle{Items}
+\centering
+\resizebox{!}{4cm}{
+<<ITEM_TEXT, dependson="MEANTABLE", results='asis'>>=
+require(xtable)
+
+table <- meantab
+table <- table[,!names(meantab) %in% c("cats", "fac", "bcs.num", "mcs.num")] # drop if unneeded
+
+print(xtable(table,
+                    align="L{0cm}C{.04\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
+                    digits = 1
+                    ), 
+             size="\\small",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0)),
+                              command = c(
+                              # header
+                                    paste(" & 
+                                              \\multicolumn{4}{c}{\\textbf{BCS}} &
+                                              \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){2-5} \\cmidrule(lr){6-9} 
+                                            Item &
+                                              Text & Cert. Appl. & Smt. Appl. & Appl. &
+                                              Text & Cert. True & Smt. True & True \\\\ \\midrule
+                                          "
+                                            , sep="")
+                                    )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = ".8\\textwidth",
+             floating = FALSE
+)
+
+@
+} %scalebox
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% EXPLORATORY FACTOR ANALYSIS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<BCSEFA>>=
+@
+
+<<BCSEFARES, dependson='BCSEFA'>>=
+@
+
+<<MCSEFA>>=
+@
+
+<<MCSEFARES, dependson='MCSEFA'>>=
+@
+
+
+\section{Exploratory Analysis}
+
+\begin{frame}
+\frametitle{EFA}
+\framesubtitle{Number of factors}
+
+\bi
+\item Exploratory factor analysis on the two separate cohorts
+\item Two-factor structure seems ok according to various approaches
+\ei
+
+\begin{center}
+<<EFATAB, dependson='MCSEFA', results='asis'>>=
+# combine results
+efatab <- cbind(efatab.bcs,efatab.mcs)
+colnames(efatab) <- c("BCS", "MCS")
+rownames(efatab) <- c("Optimal Coordinates", "Acceleration Factor", "Parallel Analysis", "Kaiser", "VSS Compl. 1", "VSS Compl. 2")
+
+print(xtable(efatab,
+                                  # item num        Factor          Num cats        BCS text        BCS num           BCS Certain     BCS Somewhat    BCS Applies             MCS text          MCS num         
+                    align="L{.4\\textwidth}C{.2\\textwidth}C{.2\\textwidth}",
+                    digits = 0
+                    ), 
+             size="\\small",
+             include.rownames=T,
+             include.colnames=T,
+             booktabs = T,
+             sanitize.text.function = function(x){x},
+             tabular.environment = "tabular", width = ".8\\textwidth",
+             floating = FALSE
+)
+@
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{EFA}
+\framesubtitle{Factor structure}
+\bi
+\item In both cohorts, delivers a clear-cut split between two factors
+\item Factors can be coherently interpreted as internalising and internalising behaviour problems
+\ei 
+\vspace{12pt}
+\centering
+\begin{tabular}{C{.05\textwidth}L{.3\textwidth}|C{.05\textwidth}L{.3\textwidth}}
+  & \textbf{Externalising}  &    & \textbf{Internalising} \\
+1 & Restless                & 7  & Worried                \\
+2 & Squirmy/fidgety         & 8  & Afraid of new things   \\
+3 & Fights/bullies children & 9  & Solitary               \\
+4 & Cannot settle           & 10 & Unhappy/tearful        \\
+5 & Temper tantrums         & 11 & Head/stomachaches \\
+6 & Disobedient             &    &                       
+\end{tabular}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% MEASUREMENT INVARIANCE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Measurement Invariance}
+
+\begin{frame}
+\frametitle{Measurement Invariance}
+
+\bi
+\item Two constructs isolated in the new scale, separately by cohort
+\item But are externalising and internalising problems measured in a comparable way \emph{across cohorts}?
+  \bi
+  \item Slightly different wording of question and options
+  \item Different ordering in questionnaire
+  \ei 
+\vspace{12pt}\pause
+\item \textbf{Measurement Invariance (MI)} analysis
+  \bi
+  \item Factor analysis -- but can also use IRT
+  \item Pool the two cohorts together
+  \item Start from minimally restrictive model, where parameters are free to vary across cohorts
+  \item Place increasing restrictions on parameters across cohorts and test fit
+  \ei 
+\ei
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{MI}\label{mimain}
+\framesubtitle{Invariance steps}
+
+\bi
+\item Set up categorical Item Factor Analysis (IFA) model \hyperlink{miapp1}{\beamerbutton{Det.}}
+\item Specify and compare model of different invariance levels
+
+\bi
+\item Approach in \citep{Wu2016} \hyperlink{miapp2}{\beamerbutton{Det.}}
+\item \textbf{Configural} model
+  \bi
+  \item Minimally restrictive (all parameters free across cohorts)
+  \ei
+\item \textbf{Threshold and Loading invariance} model
+  \bi
+  \item Thresholds and loadings are restricted to be invariant across cohorts
+  \item Means set to zero in both grups, variances set to 1 in reference cohort only
+  \item Allows comparison of latent factor variances
+  \ei
+\item \textbf{Threshold, Loading, and Intercept invariance} model
+  \bi
+  \item Thresholds, loadings, intercepts restricted to be invariant across cohorts
+  \item Mean and variances unrestricted in target cohort
+  \item Allows comparison of latent factor means and variances
+  \ei
+\ei
+\ei
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<FA_INVARIANCE, dependson='LOAD_DATA'>>=
+# estimate models of different levels of invariance
+@
+
+<<FA_FIT, dependson='FA_INVARIANCE'>>=
+# assemble fit indices into matrices
+@
+
+<<FA_FINAL, dependson='FA_INVARIANCE'>>=
+# select final model set
+@
+
+<<FA_FINAL_PARS, dependson='FA_FINAL'>>=
+# get parameters of final model
+@
+
+<<CLEANUP, dependson='FA_FINAL'>>=
+@
+
+<<FA_SCORES, dependson='FA_FINAL'>>=
+# produce scores for different models
+@
+
+% # <<FA_SCORES_COMPARE, dependson='FA_SCORES'>>=
+% # # assemble and compare scores across different models
+% # @
+
+<<FA_SCORES_SELECT, dependson='FA_FINAL'>>=
+# select model to use for inequality analysis
+@
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% MEASUREMENT INVARIANCE RESULTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[noframenumbering]
+\frametitle{MI}
+\framesubtitle{Fit comparison}
+\begin{table}[ht]
+\centering
+\small
+<<FA_FIT_RES, dependson="FA_FIT", results='asis'>>=
+require(xtable)
+
+table <- rbind(afitab[[3]],afitab[[4]],afitab[[7]])
+
+print(xtable(table,
+                    align="L{0cm}L{.20\\textwidth}C{.03\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}",
+                    digits = 4
+                    ),
+             size="\\tiny",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0,3,6)),
+                              command = c(
+                              # header
+            "Model & Num. params & $\\chi^2$ & RMSEA & MFI & CFI & G-hat & \\textDelta MFI & \\textDelta CFI & \\textDelta G-hat \\\\ \\midrule
+                       \\textbf{Males only} \\\\ ",
+                      "\\newline \\textbf{Females only} \\\\ \\midrule ",
+                      "\\newline \\textbf{Males and females} \\\\ \\midrule "
+                                    )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = "\\textwidth",
+             floating = FALSE
+)
+
+@
+\end{table}
+\end{frame}
+
+\begin{frame}
+\frametitle{MI}\label{mires}
+\framesubtitle{Results}
+
+\bi
+\item Models with restricted intercepts do not pass MI test -- although the absolute fit is not terrible
+  \bi
+  \item $\Rightarrow$ cannot compare latent means according to \cite{Wu2016}
+  \item but more traditional approaches with item anchoring would disagree \cite{Millsap2004}
+  \ei
+\item There are age differences between BCS and MCS due to survey design \hyperlink{agehist}{\beamerbutton{Graph}}
+\item But restricting the age range to maximise overlap does not give significantly different results \hyperlink{fit4}{\beamerbutton{Graph}}
+\item {\color{red} Can still use the model with non-invariant intercepts to score the latent factors and investigate inequality}
+\ei
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Factor scores vs. Sum scores}
+\begin{figure}
+<<FACRAW, dev='tikz', fig.height=7, fig.width=7, out.width='.65\\linewidth'>>=
+@
+\end{figure}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% INEQUALITY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Inequality in behaviour problems}
+
+\begin{frame}
+\frametitle{Inequality}
+
+\bi
+\item Has inequality in behavioural problems increased between 1975 and 2005?
+\item Investigate income gradient in externalising and internalising scores
+  \bi
+  \item Merge harmonised income data from CLOSER Work Package 2(a)
+  \item Weekly family income when child is 10
+  \item Would be more interesting with harmonised social class...
+  \ei
+\ei
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Inequality}
+\framesubtitle{Visualising the gradient}
+\begin{figure}
+<<FACINEQ, dev='tikz', fig.height=6.7, fig.width=10, out.width='\\linewidth'>>=
+@
+\end{figure}
+\end{frame}
+
+<<LOESS_REAL, dependson="FA_SCORES_SELECT">>=
+@
+
+\begin{frame}
+\frametitle{Inequality}
+\framesubtitle{Visualising the gradient -- inflation- and growth-adjusted income}
+\begin{figure}
+<<LOESS_REAL_EXT, dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
+ploess.real.ext
+@
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Inequality}
+\framesubtitle{Visualising the gradient -- inflation- and growth-adjusted income}
+\begin{figure}
+<<LOESS_REAL_INT, dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
+ploess.real.int
+@
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Inequality}
+\framesubtitle{Quantifying the gradient -- inflation- and growth-adjusted income}
+\centering
+\resizebox{!}{4cm}{%
+<<FA_REGS_REAL, dependson='FA_SCORES', results='asis'>>=
+# regress scores on income
+library(dplyr)
+library(stargazer)
+
+scores2plot$incq_real <- factor(ntile(scores2plot$faminc_real, 5))
+
+# get min, max
+minmax.real <-aggregate(scores2plot[,c("faminc_real")],list(scores2plot$incq_real), 
+            FUN = function(x) c(min = min(x, na.rm=T), max = max(x, na.rm=T)))
+minmax.real <- round(minmax.real[,-1],2)*1000
+
+r.ext.f.q <- lm(EXT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="F"))
+r.int.f.q <- lm(INT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="F"))
+
+r.ext.m.q <- lm(EXT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="M"))
+r.int.m.q <- lm(INT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="M"))
+
+stargazer(r.ext.m.q, r.int.m.q, r.ext.f.q, r.int.f.q,
+          column.labels=c("Males","Females"), column.separate=c(2,2),
+          dep.var.caption = "", multicolumn = FALSE,
+          omit=c("Constant"),
+          covariate.labels=c(
+                paste0("Income Q2 [",toString(minmax.real[2,1]),"-",toString(minmax.real[2,2])," £/w]"),
+                paste0("Income Q3 [",toString(minmax.real[3,1]),"-",toString(minmax.real[3,2])," £/w]"),
+                paste0("Income Q4 [",toString(minmax.real[4,1]),"-",toString(minmax.real[4,2])," £/w]"),
+                paste0("Income Q5 [",toString(minmax.real[5,1]),"-",toString(minmax.real[5,2])," £/w]"),
+                             "MCS dummy",
+                             "Income Q2 x MCS",
+                             "Income Q3 x MCS",
+                             "Income Q4 x MCS",
+                             "Income Q5 x MCS"
+                             ),
+          no.space=TRUE, 
+          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Inequality}
+
+\bi
+  \item The difference in scores between top and bottom quintiles has increased
+  \item Scores at top quintiles have drifted upwards
+\ei
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Returns}
+\framesubtitle{Education returns to behaviour skills in BCS}
+\centering
+\resizebox{!}{4cm}{%
+<<FA_RETURNS, dependson='FA_SCORES', results='asis'>>=
+# regress scores on income
+library(dplyr)
+library(stargazer)
+
+# get BCS data and make dummy for higher education
+scoresBCS <- scores2plot[scores2plot$cohort=="BCS",]
+scoresBCS$highered <- as.numeric(scoresBCS$hinvq00>3)
+scoresBCS[is.na(scoresBCS$hinvq00), "highered"] <- NA
+
+# females
+r.nvq.f <- list()
+r.nvq.f[[1]] <- lm(highered ~ EXT + INT, data=subset(scoresBCS, sex=="F"))
+r.nvq.f[[2]] <- lm(highered ~ EXT + INT + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="F"))
+r.nvq.f[[3]] <- lm(highered ~ EXT + INT + factor(incq), data=subset(scoresBCS, sex=="F"))
+r.nvq.f[[4]] <- lm(highered ~ EXT + INT + ysch_moth + ysch_fath, data=subset(scoresBCS, sex=="F"))
+r.nvq.f[[5]] <- lm(highered ~ EXT + INT + factor(incq) + ysch_moth + ysch_fath + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="F"))
+
+# females
+r.nvq.m <- list()
+r.nvq.m[[1]] <- lm(highered ~ EXT + INT, data=subset(scoresBCS, sex=="M"))
+r.nvq.m[[2]] <- lm(highered ~ EXT + INT + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="M"))
+r.nvq.m[[3]] <- lm(highered ~ EXT + INT + factor(incq), data=subset(scoresBCS, sex=="M"))
+r.nvq.m[[4]] <- lm(highered ~ EXT + INT + ysch_moth + ysch_fath, data=subset(scoresBCS, sex=="M"))
+r.nvq.m[[5]] <- lm(highered ~ EXT + INT + factor(incq) + ysch_moth + ysch_fath + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="M"))
+
+stargazer(r.nvq.m[[1]], r.nvq.m[[2]], r.nvq.m[[3]], r.nvq.m[[4]], r.nvq.m[[5]],
+          r.nvq.f[[1]], r.nvq.f[[2]], r.nvq.f[[3]], r.nvq.f[[4]], r.nvq.f[[5]],
+          dep.var.caption = "Completed Higher Ed. at 30",
+          column.labels=c("Males","Females"), column.separate=c(5,5),
+          omit=c("Constant"),
+          covariate.labels=c("Externalising skill at 5",
+                             "Internalising skill at 5",
+                             "EPVT Z at 5",
+                             "Human figure drawing Z at 5",
+                             "Copy design Z at 5",
+                             "Family inc. at 10 Q2",
+                             "Family inc. at 10 Q3",
+                             "Family inc. at 10 Q4",
+                             "Family inc. at 10 Q5",
+                             "Mother's years of schooling",
+                             "Father's years of schooling"
+                             ),
+          no.space=TRUE, 
+          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% MEASUREMENT INVARIANCE APPENDIX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[noframenumbering]
+\centering
+{\Large Appendix}
+\end{frame}
+
+\begin{frame}[noframenumbering]
+\frametitle{MI}\label{miapp1}
+\framesubtitle{IFA model}
+Categorical Item Factor Analysis (IFA) model \hyperlink{mimain}{\beamerreturnbutton{Back}}
+
+\bi
+\item Threshold model \citep{Muthen1984}
+\item Latent propensity to endorse each item $i$ for child $j$ in cohort $c$
+\begin{align}\label{eq:propens}
+\begin{split}
+X^*_{ijc} &=\nu_{ci} + \lambda_{ci}\theta^{EXT}_{jc} + u_{ijc} \qquad \text{for} \; i=1,\dots, 6 \\
+X^*_{ijc} &=\nu_{ci} + \lambda_{ci}\theta^{INT}_{jc} + u_{ijc} \qquad \text{for} \; i=7,\dots, 11
+\end{split}
+\end{align}
+
+\item Mean/covariance structure
+$$\bm{\mu}_c=\bm{\nu}_c + \bm{\Lambda}_c\bm{\kappa}_c \qquad \text{and} \qquad \Sigma_c = \bm{\Lambda}_c \bm{\Phi}_c \bm{\Lambda}_c^\prime + \bm{\Psi}_c.$$
+with $$(\theta^{EXT}_{jc}, \theta^{INT}_{jc}) = \bm{\Theta}_{jc} \sim N(\bm{\kappa}_c, \bm{\Phi}_c) \qquad \text{and} \qquad \bm{u}_{jc} \sim N(\bm{0}, \bm{\Psi}_c)$$
+
+\item Discreteness
+$$X_{ijc} = s \qquad \text{if} \; \tau_{s,ic} \leq X^*_{ijc} < \tau_{s+1,ic} \qquad \text{for} \; s=0,1,2$$
+with $\tau_{0,ic}=-\infty$ and $\tau_{3,ic}=+\infty$.
+
+\ei
+\end{frame}
+
+
+\begin{frame}[noframenumbering]
+\frametitle{MI}
+\framesubtitle{Key Parameters for Invariance}
+
+\bi
+\item Loadings $\lambda_{ci}$
+\item Thresholds $\tau_{1,ci}$, $\tau_{2,ci}$
+\item Intercepts $\nu_{ci}$
+\item Unique variances $\Var(u_{ci})$
+\item Latent mean vector $\bm{\kappa}_c$
+\item Latent covariance matrix $\bm{\Phi}_c$
+\ei
+
+\end{frame}
+
+
+\begin{frame}[noframenumbering]
+\frametitle{MI}\label{miapp2}
+\framesubtitle{Invariance steps \hyperlink{mimain}{\beamerreturnbutton{Back}}}
+\Fontvi
+\bi
+\item \textbf{Configural} model
+$$\text{diag}(\bm{\Phi}) = \bm{I}, \quad \bm{\kappa}=\bm{0}, \quad \bm{\nu}=\bm{0}, \quad \text{and} \; \text{diag}(\bm{\Psi})=\bm{I}.$$
+
+\item \textbf{Threshold invariance} model
+  \bi
+  \item $\tau_{1,Ai} = \tau_{1,Bi}$ for $i=1,\dots,11$, $\tau_{2,Ai} = \tau_{2,Bi}$ for $i=\{1,2,3,4,7,8,9,10\}$
+  \item For all groups: $\text{diag}(\bm{\Phi}) = \bm{I}, \quad \bm{\kappa}=\bm{0}$
+  \item For the reference group: $\bm{\nu}_A=\bm{0}, \quad \; \text{diag}(\bm{\Sigma}_A)=\bm{I}$
+  \ei
+\item \textbf{Threshold and Loading invariance} model
+  \bi
+  \item $\tau_{1,Ai} = \tau_{1,Bi}$ for $i=1,\dots,11$, $\tau_{2,Ai} = \tau_{2,Bi}$ for $i=\{1,2,3,4,7,8,9,10\}$
+  \item $\lambda_{Ai} = \lambda_{Bi}$ for $i=1,\dots,11$
+  \item For all groups: $\bm{\kappa}=\bm{0}$
+  \item For the reference group: $\bm{\nu}_A=\bm{0}, \quad \; \text{diag}(\bm{\Sigma}_A)=\bm{I}, \quad \text{diag}(\bm{\Phi}_A) = \bm{I}$
+  \ei
+\item \textbf{Threshold, Loading, and Intercept invariance} model
+  \bi
+  \item $\tau_{1,Ai} = \tau_{1,Bi}$ for $i=1,\dots,11$, $\tau_{2,Ai} = \tau_{2,Bi}$ for $i=\{1,2,3,4,7,8,9,10\}$
+  \item $\lambda_{Ai} = \lambda_{Bi}$ for $i=1,\dots,11$
+  \item For all groups: $\bm{\nu}=\bm{0}$
+  \item For the reference group: $\bm{\kappa}_A=\bm{0}, \quad \; \text{diag}(\bm{\Sigma}_A)=\bm{I}, \quad \text{diag}(\bm{\Phi}_A) = \bm{I}$
+  \ei
+\ei
+
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% ROBUSTNESS APPENDIX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[noframenumbering]
+\frametitle{Age distribution \hyperlink{mires}{\beamerreturnbutton{Back}}}\label{agehist}
+\begin{figure}
+\begin{center}
+<<AGEHIST, dev='tikz', fig.height=6, fig.width=6, out.width='.6\\linewidth', cache=TRUE>>=
+@
+\end{center}
+\caption{Distribution of age in the BCS and MCS sample}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[noframenumbering]
+\frametitle{MI}
+\framesubtitle{Fit comparison -- Robustness}
+List of estimated models:
+\bnm
+\item no gender split, no age adjustment (2 groups, BCS MCS)
+\item no gender split, age adjustment (2 groups, BCS MCS)
+\item males only, no age adjustment (2 groups, BCS MCS)
+\item females only, no age adjustment (2 groups, BCS MCS)
+\item males only, age adjustment (2 groups, BCS MCS)
+\item females only, age adjustment (2 groups, BCS MCS)
+\item separate gender groups, no age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)
+\item separate gender groups, age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)
+\item separate gender groups, overlapping ages, no age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)
+\item separate gender groups, age adjustment constrained to be the same across ages (4 groups, BCS.M BCS.F MCS.M MCS.F)
+\item MIMIC model with age as regressor (4 groups, BCS.M BCS.F MCS.M MCS.F)
+\enm
+
+\end{frame}
+
+
+\begin{frame}[noframenumbering]
+\frametitle{MI}
+\framesubtitle{Fit comparison -- 2 group models, age unadjusted}
+
+\begin{table}[ht]
+\centering
+\small
+<<FA_FIT_RES2a, dependson="FA_FIT", results='asis'>>=
+require(xtable)
+
+table <- rbind(afitab[[1]],afitab[[3]],afitab[[4]])
+
+print(xtable(table,
+                    align="L{0cm}L{.20\\textwidth}C{.03\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}",
+                    digits = 4
+                    ),
+             size="\\tiny",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0,3,6)),
+                              command = c(
+                              # header
+            "Model & Num. params & $\\chi^2$ & RMSEA & MFI & CFI & G-hat & \\textDelta MFI & \\textDelta CFI & \\textDelta G-hat \\\\ \\midrule
+                       \\textbf{(1) No gender split, not age adjusted} \\\\",
+                      "\\newline \\textbf{(3) Males only, not age adjusted} \\\\ \\midrule ",
+                      "\\newline \\textbf{(4) Females only, not age adjusted} \\\\ \\midrule "
+                                    )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = "\\textwidth",
+             floating = FALSE
+)
+
+@
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}[noframenumbering]
+\frametitle{MI}
+\framesubtitle{Fit comparison -- 2 group models, age adjusted}
+\begin{table}[ht]
+\centering
+\small
+<<FA_FIT_RES2b, dependson="FA_FIT", results='asis'>>=
+require(xtable)
+
+table <- rbind(afitab[[2]],afitab[[5]],afitab[[6]])
+
+print(xtable(table,
+                    align="L{0cm}L{.20\\textwidth}C{.03\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}",
+                    digits = 4
+                    ),
+             size="\\tiny",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0,3,6)),
+                              command = c(
+                              # header
+            "Model & Num. params & $\\chi^2$ & RMSEA & MFI & CFI & G-hat & \\textDelta MFI & \\textDelta CFI & \\textDelta G-hat \\\\ \\midrule
+                       \\textbf{(2) No gender split, age adjusted} \\\\ ",
+                      "\\newline \\textbf{(5) Males only, age adjusted} \\\\ \\midrule ",
+                      "\\newline \\textbf{(6) Females only, age adjusted} \\\\ \\midrule "
+                                    )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = "\\textwidth",
+             floating = FALSE
+)
+
+@
+\end{table}
+\end{frame}
+
+
+\begin{frame}[noframenumbering]
+\frametitle{MI}\label{fit4}
+\framesubtitle{Fit comparison -- 4 group models \hyperlink{mires}{\beamerreturnbutton{Back}}}
+
+\begin{table}[ht]
+\centering
+\small
+<<FA_FIT_RES4, dependson="FA_FIT", results='asis'>>=
+require(xtable)
+
+table <- rbind(afitab[[7]],afitab[[8]],afitab[[9]])
+
+print(xtable(table,
+                    align="L{0cm}L{.20\\textwidth}C{.03\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}",
+                    digits = 4
+                    ),
+             size="\\tiny",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0,3,6)),
+                              command = c(
+                              # header
+            "Model & Num. params & $\\chi^2$ & RMSEA & MFI & CFI & G-hat & \\textDelta MFI & \\textDelta CFI & \\textDelta G-hat \\\\ \\midrule
+                      \\newline \\textbf{(7) not age adjusted} \\\\",
+                      "\\newline \\textbf{(8) age adjusted} \\\\\\midrule ",
+                      "\\newline \\textbf{(9) 59-62m range} \\\\ \\midrule "
+                                    )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = "\\textwidth",
+             floating = FALSE
+)
+
+@
+\end{table}
+
+\end{frame}
+
+
+<<LOESS_INFL, dependson="FA_SCORES_SELECT">>=
+@
+
+\begin{frame}
+\frametitle{Inequality}
+\framesubtitle{Visualising the gradient -- inflation-adjusted income}
+\begin{figure}
+<<LOESS_INFL_EXT, dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
+ploess.infl.ext
+@
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Inequality}
+\framesubtitle{Visualising the gradient -- inflation-adjusted income}
+\begin{figure}
+<<LOESS_INFL_INT, dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
+ploess.infl.int
+@
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Inequality}
+\framesubtitle{Quantifying the gradient -- inflation-adjusted income}
+\centering
+\resizebox{!}{4cm}{%
+<<FA_REGS_INFL, dependson='FA_SCORES', results='asis'>>=
+# regress scores on income
+library(dplyr)
+library(stargazer)
+
+scores2plot$incq_infl <- factor(ntile(scores2plot$faminc_infl, 5))
+
+r.ext.f.c <- lm(EXT ~ faminc_infl*cohort, data=subset(scores2plot, sex=="F"))
+r.ext.f.q <- lm(EXT ~ incq_infl*cohort, data=subset(scores2plot, sex=="F"))
+r.int.f.c <- lm(INT ~ faminc_infl*cohort, data=subset(scores2plot, sex=="F"))
+r.int.f.q <- lm(INT ~ incq_infl*cohort, data=subset(scores2plot, sex=="F"))
+
+r.ext.m.c <- lm(EXT ~ faminc_infl*cohort, data=subset(scores2plot, sex=="M"))
+r.ext.m.q <- lm(EXT ~ incq_infl*cohort, data=subset(scores2plot, sex=="M"))
+r.int.m.c <- lm(INT ~ faminc_infl*cohort, data=subset(scores2plot, sex=="M"))
+r.int.m.q <- lm(INT ~ incq_infl*cohort, data=subset(scores2plot, sex=="M"))
+
+stargazer(r.ext.m.q, r.int.m.q, r.ext.f.q, r.int.f.q,
+          column.labels=c("Males","Females"), column.separate=c(2,2),
+          dep.var.caption = "", multicolumn = FALSE,
+          omit=c("Constant"),
+          covariate.labels=c(
+                             "Income Q2",
+                             "Income Q3",
+                             "Income Q4",
+                             "Income Q5",
+                             "MCS dummy",
+                             "Income Q2 x MCS",
+                             "Income Q3 x MCS",
+                             "Income Q4 x MCS",
+                             "Income Q5 x MCS"
+                             ),
+          no.space=TRUE, 
+          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{frame}
+
+
+
+
+\begin{frame}[noframenumbering]
+\bibliographystyle{chicago}
+\def\bibfont{\tiny}
+\bibliography{/Users/giacomomason/Documents/BibTex/Papers-cohorts_nc}
+\end{frame}
+
+\end{document}

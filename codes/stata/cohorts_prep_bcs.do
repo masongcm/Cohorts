@@ -8,7 +8,10 @@
 /* birth data (sex, country, region) */
 use "$bcsraw/1970_birth/bcs7072a.dta", clear
 rename a0255 sex
-keep bcsid sex
+recode a0278 (-3/-2=.), gen(bwt)
+recode a0043b (1/3=0) (4/6=1), gen(smkpr)
+recode a0014 (-2=.) (7 8 = 7), gen(pscl)
+keep bcsid sex bwt smkpr pscl
 tempfile bcsdem1
 save `bcsdem1'
 
@@ -266,7 +269,7 @@ preserve
 egen ncmiss=rowmiss(bcs10_rut*)
 drop if ncmiss >22
 
-keep bcsid bcs_country sex bcs_region age*10 incq faminc* *_moth *_fath bcs10_rut* bcs10_ws* hinvq00
+keep bcsid bcs_country sex bwt smkpr pscl bcs_region age*10 incq faminc* *_moth *_fath bcs10_rut* bcs10_ws* hinvq00
 saveold "$rdata/bcs10y.dta", replace version(12)
 
 // england only
@@ -283,7 +286,7 @@ preserve
 egen ncmiss=rowmiss(bcs5_rut*)
 drop if ncmiss >22
 
-keep bcsid bcs_country sex bcs_region age*5 incq faminc* *_moth *_fath epvt_z copy_z hfd_z bcs5_rut* hinvq00
+keep bcsid bcs_country sex bwt smkpr pscl bcs_region age*5 incq faminc* *_moth *_fath epvt_z copy_z hfd_z bcs5_rut* hinvq00
 saveold "$rdata/bcs5y.dta", replace version(12)
 
 // england only

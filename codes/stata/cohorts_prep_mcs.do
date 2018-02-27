@@ -15,7 +15,14 @@ save `mcslong'
 use "$mcsraw/S1/mcs1_parent_interview.dta", clear
 rename ahcsexa0 sex
 recode amlfte00 aplfte00 (-9 -8 -1 =.)
-keep mcsid sex amlfte00 aplfte00
+
+recode amcipr00 (-8/-1=.) (1/max=1), gen(smkprepreg)
+replace smkprepreg = 0 if amsmev00==2 | amsmty00==2
+gen smkpr = smkprepreg
+replace smkpr = 0 if inlist(amcich00,0,96) & inlist(amwhch00,1,2)  
+// gave up, less than 1/day, changed in 1st/2nd month
+
+keep mcsid sex smkpr amlfte00 aplfte00
 tempfile mcsdem1
 save `mcsdem1'
 
@@ -25,7 +32,14 @@ rename ADCTRY00 mcs_country
 rename ADREGN00 mcs_region
 rename ADC06EA0 mcs_ethn
 rename MCSID mcsid
-keep mcsid mcs_country mcs_region mcs_ethn
+recode ADBWGTA0 (-8 -1 = .), gen(bwt)
+replace bwt = 1000*bwt
+
+recode AMD05C00 (-1=.), gen(scmain)
+recode APD05C00 (-1=.), gen(scpart)
+gen pscl = min(scmain, scpart)
+
+keep mcsid mcs_country mcs_region mcs_ethn bwt pscl
 tempfile mcsdem2
 save `mcsdem2'
 
@@ -400,7 +414,7 @@ egen ncmiss=rowmiss(mcs5_sdq*)
 drop if ncmiss >21
 
 /* SAVE OUTPUT */
-keep mcsid sentry sex country pttype2 incq faminc* ysch_* mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5
+keep mcsid sentry sex country smkpr bwt pscl pttype2 incq faminc* ysch_* mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5
 saveold "$rdata/mcs5yeng_rwt.dta", replace version(12)
 
 restore
@@ -415,7 +429,7 @@ egen ncmiss=rowmiss(mcs11_sdq*)
 drop if ncmiss >21
 
 /* SAVE OUTPUT */
-keep mcsid sentry sex country pttype2 incq faminc* ysch_* mcs11_sdq* mcs11_ws* age*11
+keep mcsid sentry sex country smkpr bwt pscl pttype2 incq faminc* ysch_* mcs11_sdq* mcs11_ws* age*11
 saveold "$rdata/mcs11yeng_rwt.dta", replace version(12)
 
 restore

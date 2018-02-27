@@ -566,9 +566,9 @@ colnames(regcoeffs) <- c("cohort", "sex", "EXTd", "INTd")
 regs.ext <- list()
 regs.int <- list()
 for (r in 1:nrow(regcoeffs)) {
-  regs.ext[[r]] <- lm(EXT ~ as.factor(incq) + age, data=subset(items.scored[[8]], cohort==regcoeffs[r,1] & sex==regcoeffs[r,2]))
+  regs.ext[[r]] <- lm(EXT ~ as.factor(incq) + age, data=subset(scores2plot, cohort==regcoeffs[r,1] & sex==regcoeffs[r,2]))
   regcoeffs[r,3] <- round(regs.ext[[r]]$coefficients["as.factor(incq)5"],2)
-  regs.int[[r]] <- lm(INT ~ as.factor(incq) + age, data=subset(items.scored[[8]], cohort==regcoeffs[r,1] & sex==regcoeffs[r,2]))
+  regs.int[[r]] <- lm(INT ~ as.factor(incq) + age, data=subset(scores2plot, cohort==regcoeffs[r,1] & sex==regcoeffs[r,2]))
   regcoeffs[r,4] <- round(regs.int[[r]]$coefficients["as.factor(incq)5"],2)
 }
 

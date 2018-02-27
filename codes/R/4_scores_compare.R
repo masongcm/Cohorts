@@ -5,7 +5,7 @@
 
 # 4 group with no intercept invariance
 scores.tl <- predict(fa.tl[[7]], newdata = items[[7]]) # new scores prediction
-items.scored.tl <- cbind(items[[7]][,c("id", "cohortsex", "faminc_real", "incq")], do.call(rbind, scores.tl))
+items.scored.tl <- cbind(items[[7]], do.call(rbind, scores.tl))
 names(items.scored.tl)[names(items.scored.tl) %in% c("EXT","INT")] <- c("EXTtl", "INTtl")
 
 # 4 group with no intercept invariance, overlapping ages (model 9)
@@ -47,6 +47,12 @@ means.int <- cbind(group = factor(c(1,3,2,4)), means.int)
 levels(means.int$group) <- c("BCS Males", "MCS Males", "BCS Females", "MCS Females")
 means.int <- means.int[order(means.int$group),]
 means.int <- as.matrix(means.int[, !names(means.int) %in% "Group.1"],3)
+
+############################################################################################
+## ---- FA_SCORES_SELECT
+# select scores to plot
+scores2plot <- items.scored.tl
+names(scores2plot)[names(scores2plot) %in% c("EXTtl","INTtl")] <- c("EXT", "INT")
 
 
 # ggplot(compare.scores, aes(x=EXTtl, y=EXTtli, color=cohortsex)) + geom_point(size=2, alpha=.2) + coord_fixed()

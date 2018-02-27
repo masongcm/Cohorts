@@ -5,7 +5,7 @@
 scores <- list()
 scoresdf <- list()
 items.scored <- list()
-for (i in 7:11) { # only specifications with separate gender groups
+for (i in 7:7) { # only specifications with separate gender groups
 
   scores[[i]] <- predict(finalmod[[i]], newdata = items[[i]])
   scoresdf[[i]] <- do.call(rbind, scores[[i]])
@@ -16,9 +16,4 @@ for (i in 7:11) { # only specifications with separate gender groups
   items.scored[[i]]$INTr <- residuals(lm(INT ~ age, data=items.scored[[i]], na.action = na.exclude))
   
 }
-
-############################################################################################
-## ---- FA_SCORES_SELECT
-# select scores to plot
-scores2plot <- items.scored[[8]]
 

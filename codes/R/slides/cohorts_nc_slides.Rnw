@@ -233,7 +233,7 @@ read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/5_graph
 
 \begin{column}{0.6\textwidth}
 \bi
-\item Data from 5 year follow-up, maternal questionnaire
+\item Data from 5 year follow-up (England only), maternal questionnaire
 \item Rutter A scale \citep{Rutter1970}
   \bi
   \item 19 items (behaviours)
@@ -265,8 +265,8 @@ read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/5_graph
 \begin{column}{0.5\textwidth}
 
 \bi
-\item Data from 5 year follow-up (MCS3), maternal questionnaire
-\item Complex survey design: need to rebalance data to make representative
+\item Data from 5 year follow-up (England only), maternal questionnaire
+\item Complex survey design: rebalanced data to make representative
 \item Strengths and Difficulties Questionnaire (SDQ, \citealp{Goodman1994})
   \bi
   \item ``Updated" and expanded version of the Rutter scale 
@@ -387,12 +387,11 @@ print(xtable(table,
 <<EFATAB, dependson='MCSEFA', results='asis'>>=
 # combine results
 efatab <- cbind(efatab.bcs,efatab.mcs)
-colnames(efatab) <- c("BCS", "MCS")
-rownames(efatab) <- c("Optimal Coordinates", "Acceleration Factor", "Parallel Analysis", "Kaiser", "VSS Compl. 1", "VSS Compl. 2")
+colnames(efatab) <- c("BCS All", "BCS M", "BCS F", "MCS All", "MCS M", "MCS F")
+
 
 print(xtable(efatab,
-                                  # item num        Factor          Num cats        BCS text        BCS num           BCS Certain     BCS Somewhat    BCS Applies             MCS text          MCS num         
-                    align="L{.4\\textwidth}C{.2\\textwidth}C{.2\\textwidth}",
+                    align="L{.25\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}",
                     digits = 0
                     ), 
              size="\\small",
@@ -492,7 +491,7 @@ print(xtable(efatab,
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-<<FA_INVARIANCE, dependson='LOAD_DATA'>>=
+<<FA_INVARIANCE>>=
 # estimate models of different levels of invariance
 @
 
@@ -515,11 +514,15 @@ print(xtable(efatab,
 # produce scores for different models
 @
 
-% # <<FA_SCORES_COMPARE, dependson='FA_SCORES'>>=
-% # # assemble and compare scores across different models
-% # @
+<<FA_SCORES_MERGE, dependson='LOAD_DATA'>>=
+# merge scores with other data
+@
 
-<<FA_SCORES_SELECT, dependson='FA_FINAL'>>=
+<<FA_SCORES_COMPARE, dependson='FA_SCORES'>>=
+# assemble and compare scores across different models
+@
+
+<<FA_SCORES_SELECT, dependson='FA_SCORES_COMPARE'>>=
 # select model to use for inequality analysis
 @
 
@@ -584,13 +587,6 @@ print(xtable(table,
 
 \end{frame}
 
-\begin{frame}
-\frametitle{Factor scores vs. Sum scores}
-\begin{figure}
-<<FACRAW, dev='tikz', fig.height=7, fig.width=7, out.width='.65\\linewidth'>>=
-@
-\end{figure}
-\end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -623,14 +619,14 @@ print(xtable(table,
 \end{figure}
 \end{frame}
 
-<<LOESS_REAL, dependson="FA_SCORES_SELECT">>=
+<<LOESS_REAL, dependson='FA_SCORES_SELECT'>>=
 @
 
 \begin{frame}
 \frametitle{Inequality}
 \framesubtitle{Visualising the gradient -- inflation- and growth-adjusted income}
 \begin{figure}
-<<LOESS_REAL_EXT, dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
+<<LOESS_REAL_EXT, dependson='LOESS_REAL', dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
 ploess.real.ext
 @
 \end{figure}
@@ -640,7 +636,7 @@ ploess.real.ext
 \frametitle{Inequality}
 \framesubtitle{Visualising the gradient -- inflation- and growth-adjusted income}
 \begin{figure}
-<<LOESS_REAL_INT, dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
+<<LOESS_REAL_INT, dependson='LOESS_REAL', dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
 ploess.real.int
 @
 \end{figure}
@@ -652,7 +648,7 @@ ploess.real.int
 \framesubtitle{Quantifying the gradient -- inflation- and growth-adjusted income}
 \centering
 \resizebox{!}{4cm}{%
-<<FA_REGS_REAL, dependson='FA_SCORES', results='asis'>>=
+<<FA_REGS_REAL, dependson='FA_SCORES_SELECT', results='asis'>>=
 # regress scores on income
 library(dplyr)
 library(stargazer)
@@ -678,7 +674,7 @@ stargazer(r.ext.m.q, r.int.m.q, r.ext.f.q, r.int.f.q,
                 paste0("Income Q2 [",toString(minmax.real[2,1]),"-",toString(minmax.real[2,2])," £/w]"),
                 paste0("Income Q3 [",toString(minmax.real[3,1]),"-",toString(minmax.real[3,2])," £/w]"),
                 paste0("Income Q4 [",toString(minmax.real[4,1]),"-",toString(minmax.real[4,2])," £/w]"),
-                paste0("Income Q5 [",toString(minmax.real[5,1]),"-",toString(minmax.real[5,2])," £/w]"),
+                paste0("Income Q5 [",toString(minmax.real[5,1]),"+ £/w]"),
                              "MCS dummy",
                              "Income Q2 x MCS",
                              "Income Q3 x MCS",
@@ -692,6 +688,97 @@ stargazer(r.ext.m.q, r.int.m.q, r.ext.f.q, r.int.f.q,
 @
 }
 \end{frame}
+
+
+
+\begin{frame}
+\frametitle{Inequality}
+\framesubtitle{Quantifying the gradient -- males}
+\centering
+\resizebox{12cm}{4cm}{%
+<<FA_REGS_REAL_M, dependson='FA_SCORES', results='asis'>>=
+# regress scores on income
+library(dplyr)
+library(stargazer)
+
+
+r.ext.m.bcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="BCS"))
+r.ext2.m.bcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="BCS"))
+r.ext.m.mcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="MCS"))
+r.ext2.m.mcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="MCS"))
+r.int.m.bcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="BCS"))
+r.int2.m.bcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="BCS"))
+r.int.m.mcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="MCS"))
+r.int2.m.mcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="MCS"))
+
+stargazer(r.ext.m.bcs, r.ext2.m.bcs, r.int.m.bcs, r.int2.m.bcs, r.ext.m.mcs, r.ext2.m.mcs, r.int.m.mcs, r.int2.m.mcs,
+          column.labels=c("BCS","MCS"), column.separate=c(4,4),
+          dep.var.caption = "", multicolumn = FALSE,
+          omit=c("Constant"),
+          covariate.labels=c(
+                             "Income Q2",
+                             "Income Q3",
+                             "Income Q4",
+                             "Income Q5",
+                             "Birthweight",
+                             "Mat. Smoking in preg.",
+                             "Father years of schooling",
+                             "Mother years of schooling"
+                             ),
+          no.space=TRUE, 
+          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Inequality}
+\framesubtitle{Quantifying the gradient -- females}
+\centering
+\resizebox{12cm}{4cm}{%
+<<FA_REGS_REAL_F, dependson='FA_SCORES', results='asis'>>=
+# regress scores on income
+library(dplyr)
+library(stargazer)
+
+
+r.ext.f.bcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="BCS"))
+r.ext2.f.bcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="BCS"))
+r.ext.f.mcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="MCS"))
+r.ext2.f.mcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="MCS"))
+r.int.f.bcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="BCS"))
+r.int2.f.bcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="BCS"))
+r.int.f.mcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="MCS"))
+r.int2.f.mcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="MCS"))
+
+
+
+stargazer(r.ext.f.bcs, r.ext2.f.bcs, r.int.f.bcs, r.int2.f.bcs, r.ext.f.mcs, r.ext2.f.mcs, r.int.f.mcs, r.int2.f.mcs,
+          column.labels=c("BCS","MCS"), column.separate=c(4,4),
+          dep.var.caption = "", multicolumn = FALSE,
+          omit=c("Constant"),
+          covariate.labels=c(
+                             "Income Q2",
+                             "Income Q3",
+                             "Income Q4",
+                             "Income Q5",
+                             "Birthweight",
+                             "Mat. Smoking in preg.",
+                             "Father years of schooling",
+                             "Mother years of schooling"
+                             ),
+          no.space=TRUE, 
+          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{frame}
+
 
 
 \begin{frame}
@@ -710,7 +797,7 @@ stargazer(r.ext.m.q, r.int.m.q, r.ext.f.q, r.int.f.q,
 \framesubtitle{Education returns to behaviour skills in BCS}
 \centering
 \resizebox{!}{4cm}{%
-<<FA_RETURNS, dependson='FA_SCORES', results='asis'>>=
+<<FA_RETURNS, dependson='FA_SCORES_SELECT', results='asis'>>=
 # regress scores on income
 library(dplyr)
 library(stargazer)
@@ -1002,6 +1089,14 @@ print(xtable(table,
 
 \end{frame}
 
+\begin{frame}[noframenumbering]
+\frametitle{Factor scores vs. Sum scores}
+\begin{figure}
+<<FACRAW, dev='tikz', fig.height=7, fig.width=7, out.width='.65\\linewidth'>>=
+@
+\end{figure}
+\end{frame}
+
 
 <<LOESS_INFL, dependson="FA_SCORES_SELECT">>=
 @
@@ -1010,7 +1105,7 @@ print(xtable(table,
 \frametitle{Inequality}
 \framesubtitle{Visualising the gradient -- inflation-adjusted income}
 \begin{figure}
-<<LOESS_INFL_EXT, dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
+<<LOESS_INFL_EXT, dependson='LOESS_INFL', dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
 ploess.infl.ext
 @
 \end{figure}
@@ -1020,7 +1115,7 @@ ploess.infl.ext
 \frametitle{Inequality}
 \framesubtitle{Visualising the gradient -- inflation-adjusted income}
 \begin{figure}
-<<LOESS_INFL_INT, dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
+<<LOESS_INFL_INT, dependson='LOESS_INFL', dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
 ploess.infl.int
 @
 \end{figure}
@@ -1032,7 +1127,7 @@ ploess.infl.int
 \framesubtitle{Quantifying the gradient -- inflation-adjusted income}
 \centering
 \resizebox{!}{4cm}{%
-<<FA_REGS_INFL, dependson='FA_SCORES', results='asis'>>=
+<<FA_REGS_INFL, dependson='FA_SCORES_SELECT', results='asis'>>=
 # regress scores on income
 library(dplyr)
 library(stargazer)

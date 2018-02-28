@@ -33,6 +33,10 @@ printfit <- function(m) {
 
 ## ---- LOAD_DATA
 
+# auxiliary variables to retain
+auxvars <- c("faminc_real", "faminc_infl", "incq", "ysch_moth", "ysch_fath", 
+             "ageint5", "sex", "bwt", "smkpr", "pscl")
+
 # BCS -------------------------------------------
 bcs5data <- read.dta(paste(dir_data, "bcs5yeng.dta", sep=""), convert.factors = F) # all BCS data
 bcs5rutb <- bcs5data[,grep("bcs5_rutb", names(bcs5data), value=TRUE)]                 # BINARY Rutter items only
@@ -72,7 +76,7 @@ for (i in 1:ncol(bcs5rutc)) bcs5rutcf[,i] <- as.ordered(bcs5rutc[,i])
 
 
 # auxiliary variables
-bcs5aux <- cbind(bcs5data[,c("bcsid", "faminc_real", "faminc_infl", "incq", "ysch_moth", "ysch_fath", "ageint5", "sex", "hinvq00")],
+bcs5aux <- cbind(bcs5data[,c("bcsid", auxvars, "hinvq00")],
                 cog1 = bcs5data$epvt_z,
                 cog2 = bcs5data$hfd_z,
                 cog3 = bcs5data$copy_z
@@ -115,7 +119,7 @@ mcs5sdqcf <- mcs5sdqc
 for (i in 1:ncol(mcs5sdqc)) mcs5sdqcf[,i] <- as.ordered(mcs5sdqc[,i])                    
 
 # add SES and cognitive data
-mcs5aux <- cbind(mcs5data[,c("mcsid", "faminc_real", "faminc_infl", "incq", "ysch_moth", "ysch_fath", "ageint5", "sex")],
+mcs5aux <- cbind(mcs5data[,c("mcsid", auxvars)],
                 cog1 = mcs5data$nvoc_bastz,
                 cog2 = mcs5data$psim_bastz,
                 cog3 = mcs5data$patc_bastz
@@ -145,10 +149,8 @@ X.all <- data.frame(rbind(Xtemp.bcs, Xtemp.mcs))
 
 # assemble final data
 items.c <- X.all[,c(grep("X", names(X.all), value=T), 
-                "id", "cohort", "ageint5", "sex", 
-                "cog1", "cog2", "cog3",
-                "incq", "faminc_real", "faminc_infl", "ysch_moth", "ysch_fath",
-                "hinvq00")]
+                "id", "cohort", auxvars, "hinvq00",
+                "cog1", "cog2", "cog3")]
 colnames(items.c)[colnames(items.c) == "ageint5"] <- "age"
 items.c$sex <- factor(items.c$sex)
 levels(items.c$sex) = c("M", "F")

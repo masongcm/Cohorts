@@ -33,7 +33,6 @@ rename ADREGN00 mcs_region
 rename ADC06EA0 mcs_ethn
 rename MCSID mcsid
 recode ADBWGTA0 (-8 -1 = .), gen(bwt)
-replace bwt = 1000*bwt
 
 recode AMD05C00 (-1=.), gen(scmain)
 recode APD05C00 (-1=.), gen(scpart)

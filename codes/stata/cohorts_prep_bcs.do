@@ -9,7 +9,8 @@
 use "$bcsraw/1970_birth/bcs7072a.dta", clear
 rename a0255 sex
 recode a0278 (-3/-2=.), gen(bwt)
-recode a0043b (1/3=0) (4/6=1), gen(smkpr)
+replace bwt=bwt/1000
+recode a0043b (-3=.) (1/3=0) (4/6=1), gen(smkpr)
 recode a0014 (-2=.) (7 8 = 7), gen(pscl)
 keep bcsid sex bwt smkpr pscl
 tempfile bcsdem1

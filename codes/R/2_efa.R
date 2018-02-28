@@ -11,19 +11,42 @@ nbcs <- dim(items.bcs)[1]
 bcscor <- hetcor(items.bcs, ML=TRUE, std.err = F)$correlations
 bcsfa <- fa(r=bcscor, nfactors=2, rotate = rotation, fm="wls")
 
+items.bcs.m <- items.c[items.c$cohort=="BCS" & items.c$sex=="M",c(grep("X[0-9]", names(items.c), value=T))]
+nbcs.m <- dim(items.bcs.m)[1]
+bcscor.m <- hetcor(items.bcs.m, ML=TRUE, std.err = F)$correlations
+bcsfa.m <- fa(r=bcscor.m, nfactors=2, rotate = rotation, fm="wls")
+
+items.bcs.f <- items.c[items.c$cohort=="BCS" & items.c$sex=="F",c(grep("X[0-9]", names(items.c), value=T))]
+nbcs.f <- dim(items.bcs.f)[1]
+bcscor.f <- hetcor(items.bcs.f, ML=TRUE, std.err = F)$correlations
+bcsfa.f <- fa(r=bcscor.f, nfactors=2, rotate = rotation, fm="wls")
+
+
 
 ## ---- BCSEFARES
 # Scree
 ns.bcs <- nScree(bcscor)$Components
+ns.bcs.m <- nScree(bcscor.m)$Components
+ns.bcs.f <- nScree(bcscor.f)$Components
+
 # VSS for number of factors
 vss.bcs <- VSS(bcscor, plot=F, rotate=rotation, n.obs = nbcs)
+vss.bcs.m <- VSS(bcscor.m, plot=F, rotate=rotation, n.obs = nbcs.m)
+vss.bcs.f <- VSS(bcscor.f, plot=F, rotate=rotation, n.obs = nbcs.f)
 #combine
-efatab.bcs <- rbind(t(ns.bcs), which.max(vss.bcs$cfit.1), which.max(vss.bcs$cfit.2))
-rownames(efatab.bcs) <- c("Optimal Coordinates", "Acceleration Factor", "Parallel Analysis", "Kaiser", "VSS Compl. 1", "VSS Compl. 2")
+efatab.bcs <- cbind(
+  rbind(t(ns.bcs), which.max(vss.bcs$cfit.1), which.max(vss.bcs$cfit.2), which.min(vss.bcs$map)),
+  rbind(t(ns.bcs.m), which.max(vss.bcs.m$cfit.1), which.max(vss.bcs.m$cfit.2), which.min(vss.bcs.m$map)),
+  rbind(t(ns.bcs.f), which.max(vss.bcs.f$cfit.1), which.max(vss.bcs.f$cfit.2), which.min(vss.bcs.f$map))
+)
+rownames(efatab.bcs) <- c("Optimal Coordinates", "Acceleration Factor", "Parallel Analysis", "Kaiser", 
+                          "VSS Compl. 1", "VSS Compl. 2", "Velicer MAP")
 efatab.bcs
 
 # FACTOR ANALYSIS loadings
 bcsfa$loadings
+bcsfa.m$loadings
+bcsfa.f$loadings
 
 ## ---- BCSREL
 # reliability 
@@ -42,20 +65,42 @@ nmcs <- dim(items.mcs)[1]
 mcscor <- hetcor(items.mcs, ML=TRUE, std.err = F)$correlations
 mcsfa <- fa(r=mcscor, nfactors=2, rotate = rotation, fm="wls")
 
+items.mcs.m <- items.c[items.c$cohort=="MCS" & items.c$sex=="M",c(grep("X[0-9]", names(items.c), value=T))]
+nmcs.m <- dim(items.mcs.m)[1]
+mcscor.m <- hetcor(items.mcs.m, ML=TRUE, std.err = F)$correlations
+mcsfa.m <- fa(r=mcscor.m, nfactors=2, rotate = rotation, fm="wls")
+
+items.mcs.f <- items.c[items.c$cohort=="MCS" & items.c$sex=="F",c(grep("X[0-9]", names(items.c), value=T))]
+nmcs.f <- dim(items.mcs.f)[1]
+mcscor.f <- hetcor(items.mcs.f, ML=TRUE, std.err = F)$correlations
+mcsfa.f <- fa(r=mcscor.f, nfactors=2, rotate = rotation, fm="wls")
+
 ## ---- MCSEFARES
 # VSS for number of factors
 ns.mcs <- nScree(mcscor)$Components
-ns.mcs
+ns.mcs.m <- nScree(mcscor.m)$Components
+ns.mcs.f <- nScree(mcscor.f)$Components
+
 # VSS for number of factors
 vss.mcs <- VSS(mcscor, plot=F, rotate=rotation, n.obs = nmcs)
+vss.mcs.m <- VSS(mcscor.m, plot=F, rotate=rotation, n.obs = nmcs)
+vss.mcs.f <- VSS(mcscor.f, plot=F, rotate=rotation, n.obs = nmcs)
 
 #combine
-efatab.mcs <- rbind(t(ns.mcs), which.max(vss.mcs$cfit.1), which.max(vss.mcs$cfit.2))
-rownames(efatab.mcs) <- c("Optimal Coordinates", "Acceleration Factor", "Parallel Analysis", "Kaiser", "VSS Compl. 1", "VSS Compl. 2")
+efatab.mcs <- cbind(
+  rbind(t(ns.mcs), which.max(vss.mcs$cfit.1), which.max(vss.mcs$cfit.2), which.min(vss.mcs$map)),
+  rbind(t(ns.mcs.m), which.max(vss.mcs.m$cfit.1), which.max(vss.mcs.m$cfit.2), which.min(vss.mcs.m$map)),
+  rbind(t(ns.mcs.f), which.max(vss.mcs.f$cfit.1), which.max(vss.mcs.f$cfit.2), which.min(vss.mcs.f$map))
+)
+  
+rownames(efatab.mcs) <- c("Optimal Coordinates", "Acceleration Factor", "Parallel Analysis", "Kaiser", 
+                          "VSS Compl. 1", "VSS Compl. 2", "Velicer MAP")
 efatab.mcs
 
 # FACTOR ANALYSIS
 mcsfa$loadings
+mcsfa.m$loadings
+mcsfa.f$loadings
 
 ## ---- MCSREL
 # reliability 

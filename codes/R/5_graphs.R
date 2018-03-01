@@ -147,7 +147,7 @@ l.inc <- lapply(l.inc,
                 function(x) x + theme(legend.position="none") + labs(list(fill="", colour = "")) +
                   geom_smooth(method = "loess") + 
                   coord_cartesian(xlim = inc.lims, ylim = c(-.6, .6)) + #axis limits withouth affecting sample
-                  xlab("Weekly Family Income at 10 (,000£ 2015 CPI+GDP)") +
+                  xlab("Weekly Family Income at 10 (,000£ 2015 CPI)") +
                   ylab("Factor Score")
 ) # apply options to all graphs 
 

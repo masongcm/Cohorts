@@ -148,7 +148,7 @@ read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/5_graph
 \framesubtitle{Inequality in skills}
 
 \bi
-\item Non-cognitive (socio-emotional, behavioural) skills are important in childhood
+\item Non-cognitive (socio-emotional, behavioural) skills developed during childhood are important for lifetime outcomes
 \item Socioeconomic gradients in these skills are persistent 
 \pause 
 \item \textbf{Q1}: Can we derive \textbf{comparable measures} across populations?
@@ -175,9 +175,21 @@ read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/5_graph
 \item Focus on behavioural problems in two British cohorts
   \bi \item British Cohort Study (BCS, b. 1970)
   \item Millennium Cohort Study (MCS, b. 2000/1) \ei
-\item Construct a common 11-item scale, from different instruments
-\item Investigate some psychometric properties
+\ei
+\vspace{6pt} \pause
+\bnm
+\item Construct a common 11-item scale of non-cognitive skills, starting from different instruments
+\item Investigate its psychometric properties
 \item Use scores from the new scale to document changes in socioeconomic gradients between cohorts 30 years apart
+\enm
+\vspace{6pt} \pause
+\bi
+\item \textbf{Key findings}:
+  \bi
+  \item Inequality in non-cognitive skills has increased in 1975-2005
+  \item Sharpest change for boys rather than girls
+  \item Mostly driven by improvements at the top of the distribution
+  \ei
 \ei
 
 \end{frame}
@@ -432,19 +444,21 @@ print(xtable(table,
 \framesubtitle{Results}
 
 \bi
+\item Restricting thresholds and loadings provides a good fit
+  \bi \item We can compare the scale (variance) of the latent factors \ei
 \item Models with restricted intercepts do \emph{not} pass MI test
   \bi
-  \item \cite{Wu2016} suggests we cannot compare latent means
-  \item Traditional approaches would disagree... \citep{Millsap2004}
+  \item Unclear whether mean comparisons can be done
+  \item \cite{Wu2016} vs \cite{Millsap2004}
   \ei
-\item Might \emph{age differences} in the sample be playing a role?
-  \bi
-  \item BCS and MCS samples differ due to survey design \hyperlink{agehist}{\beamerbutton{Graph}}
-  \item But restricting the age range to maximise overlap does not give significantly different results \hyperlink{fit4}{\beamerbutton{Det.}}
-  \ei
+% \item Might \emph{age differences} in the sample be playing a role?
+%   \bi
+%   \item BCS and MCS samples differ due to survey design \hyperlink{agehist}{\beamerbutton{Graph}}
+%   \item But restricting the age range to maximise overlap does not give significantly different results \hyperlink{fit4}{\beamerbutton{Det.}}
+%   \ei
   \pause
 \item \textbf{Q1}: Can we derive comparable measures of noncognitive skills across cohorts?
-\item Yes, we can the model with non-invariant intercepts to score the latent factors (externalising and internalising skills)
+\item Yes, we can use the model with non-invariant intercepts to score the latent factors (externalising and internalising skills)
 \ei
 
 \end{frame}
@@ -482,141 +496,181 @@ print(xtable(table,
 \end{frame}
 
 
-\begin{frame}
-\frametitle{Inequality}
-\framesubtitle{Quantifying the gradient -- inflation- and growth-adjusted income}
-\centering
-\resizebox{!}{4cm}{%
-<<FA_REGS_REAL, dependson='FA_SCORES_SELECT', results='asis'>>=
-# regress scores on income
-library(dplyr)
-library(stargazer)
-
-scores2plot$incq_real <- factor(ntile(scores2plot$faminc_real, 5))
-
-# get min, max
-minmax.real <-aggregate(scores2plot[,c("faminc_real")],list(scores2plot$incq_real), 
-            FUN = function(x) c(min = min(x, na.rm=T), max = max(x, na.rm=T)))
-minmax.real <- round(minmax.real[,-1],2)*1000
-
-r.ext.f.q <- lm(EXT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="F"))
-r.int.f.q <- lm(INT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="F"))
-
-r.ext.m.q <- lm(EXT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="M"))
-r.int.m.q <- lm(INT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="M"))
-
-stargazer(r.ext.m.q, r.int.m.q, r.ext.f.q, r.int.f.q,
-          column.labels=c("Males","Females"), column.separate=c(2,2),
-          dep.var.caption = "", multicolumn = FALSE,
-          omit=c("Constant"),
-          covariate.labels=c(
-                paste0("Income Q2 [",toString(minmax.real[2,1]),"-",toString(minmax.real[2,2])," £/w]"),
-                paste0("Income Q3 [",toString(minmax.real[3,1]),"-",toString(minmax.real[3,2])," £/w]"),
-                paste0("Income Q4 [",toString(minmax.real[4,1]),"-",toString(minmax.real[4,2])," £/w]"),
-                paste0("Income Q5 [",toString(minmax.real[5,1]),"+ £/w]"),
-                             "MCS dummy",
-                             "Income Q2 x MCS",
-                             "Income Q3 x MCS",
-                             "Income Q4 x MCS",
-                             "Income Q5 x MCS"
-                             ),
-          no.space=TRUE, 
-          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
-          float=FALSE    # needs begin table outside it
-)
-@
-}
-\end{frame}
-
-
+% \begin{frame}
+% \frametitle{Inequality}
+% \framesubtitle{Quantifying the gradient -- inflation- and growth-adjusted income}
+% \centering
+% \resizebox{!}{4cm}{%
+% <<FA_REGS_REAL, dependson='FA_SCORES_SELECT', results='asis'>>=
+% # regress scores on income
+% library(dplyr)
+% library(stargazer)
+% 
+% scores2plot$incq_real <- factor(ntile(scores2plot$faminc_real, 5))
+% 
+% # get min, max
+% minmax.real <-aggregate(scores2plot[,c("faminc_real")],list(scores2plot$incq_real), 
+%             FUN = function(x) c(min = min(x, na.rm=T), max = max(x, na.rm=T)))
+% minmax.real <- round(minmax.real[,-1],2)*1000
+% 
+% r.ext.f.q <- lm(EXT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="F"))
+% r.int.f.q <- lm(INT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="F"))
+% 
+% r.ext.m.q <- lm(EXT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="M"))
+% r.int.m.q <- lm(INT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="M"))
+% 
+% stargazer(r.ext.m.q, r.int.m.q, r.ext.f.q, r.int.f.q,
+%           column.labels=c("Males","Females"), column.separate=c(2,2),
+%           dep.var.caption = "", multicolumn = FALSE,
+%           omit=c("Constant"),
+%           covariate.labels=c(
+%                 paste0("Income Q2 [",toString(minmax.real[2,1]),"-",toString(minmax.real[2,2])," £/w]"),
+%                 paste0("Income Q3 [",toString(minmax.real[3,1]),"-",toString(minmax.real[3,2])," £/w]"),
+%                 paste0("Income Q4 [",toString(minmax.real[4,1]),"-",toString(minmax.real[4,2])," £/w]"),
+%                 paste0("Income Q5 [",toString(minmax.real[5,1]),"+ £/w]"),
+%                              "MCS dummy",
+%                              "Income Q2 x MCS",
+%                              "Income Q3 x MCS",
+%                              "Income Q4 x MCS",
+%                              "Income Q5 x MCS"
+%                              ),
+%           no.space=TRUE, 
+%           omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+%           float=FALSE    # needs begin table outside it
+% )
+% @
+% }
+% \end{frame}
 
 \begin{frame}
 \frametitle{Inequality}
-\framesubtitle{Quantifying the gradient -- males}
+\framesubtitle{Quantifying the gradient}
 \centering
-\resizebox{12cm}{4cm}{%
-<<FA_REGS_REAL_M, dependson='FA_SCORES', results='asis'>>=
+\resizebox{12cm}{!}{%
+<<FA_REGS_REAL_MF, dependson='FA_SCORES', results='asis'>>=
 # regress scores on income
 library(dplyr)
 library(stargazer)
 
 
 r.ext.m.bcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="BCS"))
-r.ext2.m.bcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="BCS"))
 r.ext.m.mcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="MCS"))
-r.ext2.m.mcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="MCS"))
 r.int.m.bcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="BCS"))
-r.int2.m.bcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="BCS"))
 r.int.m.mcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="MCS"))
-r.int2.m.mcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="MCS"))
-
-stargazer(r.ext.m.bcs, r.ext2.m.bcs, r.int.m.bcs, r.int2.m.bcs, r.ext.m.mcs, r.ext2.m.mcs, r.int.m.mcs, r.int2.m.mcs,
-          column.labels=c("BCS","MCS"), column.separate=c(4,4),
-          dep.var.caption = "", multicolumn = FALSE,
-          omit=c("Constant"),
-          covariate.labels=c(
-                             "Income Q2",
-                             "Income Q3",
-                             "Income Q4",
-                             "Income Q5",
-                             "Birthweight",
-                             "Mat. Smoking in preg.",
-                             "Father years of schooling",
-                             "Mother years of schooling"
-                             ),
-          no.space=TRUE, 
-          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
-          float=FALSE    # needs begin table outside it
-)
-@
-}
-\end{frame}
-
-
-
-\begin{frame}
-\frametitle{Inequality}
-\framesubtitle{Quantifying the gradient -- females}
-\centering
-\resizebox{12cm}{4cm}{%
-<<FA_REGS_REAL_F, dependson='FA_SCORES', results='asis'>>=
-# regress scores on income
-library(dplyr)
-library(stargazer)
-
 
 r.ext.f.bcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="BCS"))
-r.ext2.f.bcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="BCS"))
 r.ext.f.mcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="MCS"))
-r.ext2.f.mcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="MCS"))
 r.int.f.bcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="BCS"))
-r.int2.f.bcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="BCS"))
 r.int.f.mcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="MCS"))
-r.int2.f.mcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="MCS"))
 
-
-
-stargazer(r.ext.f.bcs, r.ext2.f.bcs, r.int.f.bcs, r.int2.f.bcs, r.ext.f.mcs, r.ext2.f.mcs, r.int.f.mcs, r.int2.f.mcs,
-          column.labels=c("BCS","MCS"), column.separate=c(4,4),
+stargazer(r.ext.m.bcs, r.ext.m.mcs , r.int.m.bcs, r.int.m.mcs, r.ext.f.bcs, r.ext.f.mcs , r.int.f.bcs, r.int.f.mcs,
+          column.labels=c("BCS M","MCS M","BCS M","MCS M","BCS F","MCS F","BCS F","MCS F"),
           dep.var.caption = "", multicolumn = FALSE,
           omit=c("Constant"),
           covariate.labels=c(
                              "Income Q2",
                              "Income Q3",
                              "Income Q4",
-                             "Income Q5",
-                             "Birthweight",
-                             "Mat. Smoking in preg.",
-                             "Father years of schooling",
-                             "Mother years of schooling"
+                             "Income Q5"
                              ),
-          no.space=TRUE, 
+          no.space=TRUE,
           omit.stat= c("rsq", "f", "ser", "aic", "ll"),
           float=FALSE    # needs begin table outside it
 )
 @
 }
 \end{frame}
+
+
+
+% 
+% \begin{frame}
+% \frametitle{Inequality}
+% \framesubtitle{Quantifying the gradient -- males}
+% \centering
+% \resizebox{12cm}{4cm}{%
+% <<FA_REGS_REAL_M, dependson='FA_SCORES', results='asis'>>=
+% # regress scores on income
+% library(dplyr)
+% library(stargazer)
+% 
+% 
+% r.ext.m.bcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="BCS"))
+% r.ext2.m.bcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="BCS"))
+% r.ext.m.mcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="MCS"))
+% r.ext2.m.mcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="MCS"))
+% r.int.m.bcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="BCS"))
+% r.int2.m.bcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="BCS"))
+% r.int.m.mcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="MCS"))
+% r.int2.m.mcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="MCS"))
+% 
+% stargazer(r.ext.m.bcs, r.ext2.m.bcs, r.int.m.bcs, r.int2.m.bcs, r.ext.m.mcs, r.ext2.m.mcs, r.int.m.mcs, r.int2.m.mcs,
+%           column.labels=c("BCS","MCS"), column.separate=c(4,4),
+%           dep.var.caption = "", multicolumn = FALSE,
+%           omit=c("Constant"),
+%           covariate.labels=c(
+%                              "Income Q2",
+%                              "Income Q3",
+%                              "Income Q4",
+%                              "Income Q5",
+%                              "Birthweight",
+%                              "Mat. Smoking in preg.",
+%                              "Father years of schooling",
+%                              "Mother years of schooling"
+%                              ),
+%           no.space=TRUE, 
+%           omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+%           float=FALSE    # needs begin table outside it
+% )
+% @
+% }
+% \end{frame}
+% 
+% 
+% 
+% \begin{frame}
+% \frametitle{Inequality}
+% \framesubtitle{Quantifying the gradient -- females}
+% \centering
+% \resizebox{12cm}{4cm}{%
+% <<FA_REGS_REAL_F, dependson='FA_SCORES', results='asis'>>=
+% # regress scores on income
+% library(dplyr)
+% library(stargazer)
+% 
+% 
+% r.ext.f.bcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="BCS"))
+% r.ext2.f.bcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="BCS"))
+% r.ext.f.mcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="MCS"))
+% r.ext2.f.mcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="MCS"))
+% r.int.f.bcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="BCS"))
+% r.int2.f.bcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="BCS"))
+% r.int.f.mcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="MCS"))
+% r.int2.f.mcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="MCS"))
+% 
+% 
+% 
+% stargazer(r.ext.f.bcs, r.ext2.f.bcs, r.int.f.bcs, r.int2.f.bcs, r.ext.f.mcs, r.ext2.f.mcs, r.int.f.mcs, r.int2.f.mcs,
+%           column.labels=c("BCS","MCS"), column.separate=c(4,4),
+%           dep.var.caption = "", multicolumn = FALSE,
+%           omit=c("Constant"),
+%           covariate.labels=c(
+%                              "Income Q2",
+%                              "Income Q3",
+%                              "Income Q4",
+%                              "Income Q5",
+%                              "Birthweight",
+%                              "Mat. Smoking in preg.",
+%                              "Father years of schooling",
+%                              "Mother years of schooling"
+%                              ),
+%           no.space=TRUE, 
+%           omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+%           float=FALSE    # needs begin table outside it
+% )
+% @
+% }
+% \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%% CONCLUSION
@@ -628,8 +682,8 @@ stargazer(r.ext.f.bcs, r.ext2.f.bcs, r.int.f.bcs, r.int2.f.bcs, r.ext.f.mcs, r.e
 \frametitle{Conclusions and next steps}
 
 \bi
-\item We derived a comparable scale of non-cognitive skills / behaviour problems
-\item We have shown that inequality (across the income dimension) has increased
+\item We derived a comparable scale of non-cognitive skills, based on maternal reports of behaviour problems
+\item We have shown that inequality in these skills at five years of age has increased between children born in 1970 and 2000
   \bi
   \item Profile has become steeper (particularly for males)
   \item Scores at upper quantiles have drifted upwards
@@ -639,7 +693,7 @@ stargazer(r.ext.f.bcs, r.ext2.f.bcs, r.int.f.bcs, r.int2.f.bcs, r.ext.f.mcs, r.e
 \item Next steps
   \bi
   \item Harmonise more cohorts (NCDS) and ages (10)
-  \item Extend analysis to the \emph{returns} to non-cognitive skills -- are they remunerated differently on the labour market?
+  \item Broaden analysis to the \emph{returns} to non-cognitive skills -- are these remunerated differently on the labour market for people born in different years?
   \ei
 \ei
 
@@ -930,7 +984,7 @@ print(xtable(table,
 <<LOESS_REAL, dependson='FA_SCORES_SELECT'>>=
 @
 
-\begin{frame}
+\begin{frame}[noframenumbering]
 \frametitle{Inequality \hyperlink{meanci}{\beamerreturnbutton{Back}}}\label{loessext}
 \framesubtitle{Visualising the gradient -- inflation- and growth-adjusted income}
 \begin{figure}
@@ -940,7 +994,7 @@ ploess.real.ext
 \end{figure}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[noframenumbering]
 \frametitle{Inequality \hyperlink{meanci}{\beamerreturnbutton{Back}}}\label{loessint}
 \framesubtitle{Visualising the gradient -- inflation- and growth-adjusted income}
 \begin{figure}
@@ -954,7 +1008,7 @@ ploess.real.int
 <<LOESS_INFL, dependson="FA_SCORES_SELECT">>=
 @
 
-\begin{frame}
+\begin{frame}[noframenumbering]
 \frametitle{Inequality}
 \framesubtitle{Visualising the gradient -- inflation-adjusted income}
 \begin{figure}
@@ -964,7 +1018,7 @@ ploess.infl.ext
 \end{figure}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[noframenumbering]
 \frametitle{Inequality}
 \framesubtitle{Visualising the gradient -- inflation-adjusted income}
 \begin{figure}
@@ -975,7 +1029,7 @@ ploess.infl.int
 \end{frame}
 
 
-\begin{frame}
+\begin{frame}[noframenumbering]
 \frametitle{Inequality}
 \framesubtitle{Quantifying the gradient -- inflation-adjusted income}
 \centering

@@ -1,23 +1,41 @@
 # SCRIPT TO COMPARE SCORED FACTORS FROM DIFFERENT MODELS
 
+
+############################################################################################
+## ---- FA_SCORES_AUX
+
+# select models to score
+auxtoscore <- c(1,2,9,10,11)
+
+items.scored <- list()
+scores <- list()
+for (i in auxtoscore) { # only specifications with separate gender groups
+  scores[[i]] <- predict(fa.tli[[i]], newdata = items[[i]])
+  items.scored[[i]] <- cbind(items[[i]], do.call(rbind, scores[[i]]))
+  
+  # residualise scores in age
+  items.scored[[i]]$EXTr <- residuals(lm(EXT ~ age, data=items.scored[[i]], na.action = na.exclude))
+  items.scored[[i]]$INTr <- residuals(lm(INT ~ age, data=items.scored[[i]], na.action = na.exclude))
+}
+
+
 ############################################################################################
 ## ---- FA_SCORES_COMPARE
 
 # 4 group with no intercept invariance
-scores.tl <- predict(fa.tl[[7]], newdata = items[[7]]) # new scores prediction
-items.scored.tl <- cbind(items[[7]], do.call(rbind, scores.tl))
+items.scored.tl <- cbind(items[[1]], do.call(rbind, scores.final))
 names(items.scored.tl)[names(items.scored.tl) %in% c("EXT","INT")] <- c("EXTtl", "INTtl")
 
 # 4 group with no intercept invariance, overlapping ages (model 9)
-items.scored.tlir <- cbind(items[[9]][,c("id", "cohortsex")], do.call(rbind, scores[[9]]))
+items.scored.tlir <- cbind(items[[2]][,c("id", "cohortsex")], do.call(rbind, scores[[2]]))
 names(items.scored.tlir)[names(items.scored.tlir) %in% c("EXT","INT")] <- c("EXTtlir", "INTtlir")
 
-# 4 group with intercept invariance, no age adjustment (model 7)
-items.scored.tli <- cbind(items[[7]][,c("id", "cohortsex")], do.call(rbind, scores[[7]]))
+# 4 group with intercept invariance, no age adjustment (model 1)
+items.scored.tli <- cbind(items[[1]][,c("id", "cohortsex")], do.call(rbind, scores[[1]]))
 names(items.scored.tli)[names(items.scored.tli) %in% c("EXT","INT")] <- c("EXTtli", "INTtli")
 
-# 4 group with intercept invariance, age adjustment (model 8)
-items.scored.tlia <- cbind(items[[8]][,c("id", "cohortsex")], do.call(rbind, scores[[8]]))
+# 4 group with intercept invariance, age adjustment (model 9)
+items.scored.tlia <- cbind(items[[9]][,c("id", "cohortsex")], do.call(rbind, scores[[9]]))
 names(items.scored.tlia)[names(items.scored.tlia) %in% c("EXT","INT")] <- c("EXTtlia", "INTtlia")
 
 # 4 group with intercept invariance, age adjustment (constrained) (model 10)
@@ -25,7 +43,7 @@ items.scored.tliac <- cbind(items[[10]][,c("id", "cohortsex")], do.call(rbind, s
 names(items.scored.tliac)[names(items.scored.tliac) %in% c("EXT","INT")] <- c("EXTtliac", "INTtliac")
 
 # 4 group MIMIC
-items.scored.mim <- cbind(items[[10]][,c("id", "cohortsex")], do.call(rbind, scores[[11]]))
+items.scored.mim <- cbind(items[[11]][,c("id", "cohortsex")], do.call(rbind, scores[[11]]))
 names(items.scored.mim)[names(items.scored.mim) %in% c("EXT","INT")] <- c("EXTmim", "INTmim")
 
 # merge scores
@@ -48,11 +66,6 @@ levels(means.int$group) <- c("BCS Males", "MCS Males", "BCS Females", "MCS Femal
 means.int <- means.int[order(means.int$group),]
 means.int <- as.matrix(means.int[, !names(means.int) %in% "Group.1"],3)
 
-############################################################################################
-## ---- FA_SCORES_SELECT
-# select scores to plot
-scores2plot <- items.scored.tl
-names(scores2plot)[names(scores2plot) %in% c("EXTtl","INTtl")] <- c("EXT", "INT")
 
 
 # ggplot(compare.scores, aes(x=EXTtl, y=EXTtli, color=cohortsex)) + geom_point(size=2, alpha=.2) + coord_fixed()

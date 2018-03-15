@@ -1,21 +1,8 @@
 # FUNCTION FOR SCORES
 
 ############################################################################################
-## ---- FA_SCORES
-scores <- list()
-for (i in 7:11) { # only specifications with separate gender groups
-  scores[[i]] <- predict(finalmod[[i]], newdata = items[[i]])
-}
+## ---- FA_SCORES_MAIN
+# score model selected as final
+scores.final <- predict(finalmod, newdata = items[[1]])
+scores2plot <- cbind(items[[1]], do.call(rbind, scores.final))
 
-############################################################################################
-## ---- FA_SCORES_MERGE
-items.scored <- list()
-scoresdf <- list()
-for (i in 7:11) { # only specifications with separate gender groups
-  scoresdf[[i]] <- do.call(rbind, scores[[i]])
-  items.scored[[i]] <- cbind(items[[i]], scoresdf[[i]])
-  
-  # residualise scores in age
-  items.scored[[i]]$EXTr <- residuals(lm(EXT ~ age, data=items.scored[[i]], na.action = na.exclude))
-  items.scored[[i]]$INTr <- residuals(lm(INT ~ age, data=items.scored[[i]], na.action = na.exclude))
-}

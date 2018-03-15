@@ -169,29 +169,30 @@ items.c$EXT.RAWr <- residuals(lm(EXT.RAW ~ age, data=items.c, na.action = na.exc
 items.c$INT.RAWr <- residuals(lm(INT.RAW ~ age, data=items.c, na.action = na.exclude))
 
 # MODEL LIST
-# 1: no gender split, no age adjustment (2 groups, BCS MCS)
-# 2: no gender split, age adjustment (2 groups, BCS MCS)
-# 3: males only, no age adjustment (2 groups, BCS MCS)
-# 4: females only, no age adjustment (2 groups, BCS MCS)
-# 5: males only, age adjustment (2 groups, BCS MCS)
-# 6: females only, age adjustment (2 groups, BCS MCS)
-# 7: separate gender groups, no age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)
-# 8: separate gender groups, age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)
-# 9: separate gender groups, overlapping ages, no age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)
+# 1 (MAIN) : separate gender groups, no age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)
+# 2 (AGECHECK): separate gender groups, overlapping ages, no age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)
+
+# 3: no gender split, no age adjustment (2 groups, BCS MCS)
+# 4: males only, no age adjustment (2 groups, BCS MCS)
+# 5: females only, no age adjustment (2 groups, BCS MCS)
+# 6: no gender split, age adjustment (2 groups, BCS MCS)
+# 7: males only, age adjustment (2 groups, BCS MCS)
+# 8: females only, age adjustment (2 groups, BCS MCS)
+# 9: separate gender groups, age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)
 # 10: separate gender groups, age adjustment constrained to be the same across ages (4 groups, BCS.M BCS.F MCS.M MCS.F)
 # 11: MIMIC model with age as regressor (4 groups, BCS.M BCS.F MCS.M MCS.F)
 
 # list of items for different models
 items <- list()
 items[[1]] <- items.c
-items[[2]] <- items.c
-items[[3]] <- subset(items.c, sex=="M")
-items[[4]] <- subset(items.c, sex=="F")
-items[[5]] <- subset(items.c, sex=="M")
-items[[6]] <- subset(items.c, sex=="F")
-items[[7]] <- items.c
-items[[8]] <- items.c
-items[[9]] <- subset(items.c, age>=59 & age<=62)
+items[[2]] <- subset(items.c, age>=59 & age<=62)
+items[[3]] <- items.c
+items[[4]] <- subset(items.c, sex=="M")
+items[[5]] <- subset(items.c, sex=="F")
+items[[6]] <- items.c
+items[[7]] <- subset(items.c, sex=="M")
+items[[8]] <- subset(items.c, sex=="F")
+items[[9]] <- items.c
 items[[10]] <- items.c
 items[[11]] <- items.c
 

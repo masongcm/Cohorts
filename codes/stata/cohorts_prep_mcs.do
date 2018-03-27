@@ -149,6 +149,24 @@ replace faminc_infl = faminc_infl/inflMCS/1000
 tempfile mcsinc11y
 save `mcsinc11y'	
 
+*SOCIAL CLASS	 ******************************************************************
+use "$data/CohortsHarmonisedSES/raw/MCS Harmonised ChildhoodSES.dta", clear // income
+decode MCSID, gen(mcsid)
+rename MCS5PCL scl10
+replace scl10 = scl10-1
+lab def scllab 	1 "I Professional" ///
+				2 "II Managerial-technical" ///
+				3 "IIINM Skilled non-manual" ///
+				4 "IIIM Skilled manual" ///
+				5 "IV Partly skilled" ///
+				6 "V Unskilled" ///
+				7 "Unclassifiable/other"
+lab val scl10 scllab
+
+keep mcsid scl10
+tempfile mcsscl11y
+save `mcsscl11y'
+
 ********************************************************************************
 // MERGE
 ********************************************************************************
@@ -164,6 +182,7 @@ merge 1:1 mcsid using `mcscog5y', gen(mcs_merge_cog5)
 merge 1:1 mcsid using `mcssdq11y', gen(mcs_merge_sdq10)
 merge 1:1 mcsid using `mcscog11y', gen(mcs_merge_cog10)
 merge 1:1 mcsid using `mcsinc11y', gen(mcs_merge_inc11)
+merge 1:1 mcsid using `mcsscl11y', gen(mcs_merge_scl11)
 
 
 ********************************************************************************
@@ -413,7 +432,7 @@ egen ncmiss=rowmiss(mcs5_sdq*)
 drop if ncmiss >21
 
 /* SAVE OUTPUT */
-keep mcsid sentry sex country smkpr bwt pscl pttype2 incq faminc* ysch_* mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5
+keep mcsid sentry sex country smkpr bwt scl10 pttype2 incq faminc* ysch_* mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5
 saveold "$rdata/mcs5yeng_rwt.dta", replace version(12)
 
 restore
@@ -428,7 +447,7 @@ egen ncmiss=rowmiss(mcs11_sdq*)
 drop if ncmiss >21
 
 /* SAVE OUTPUT */
-keep mcsid sentry sex country smkpr bwt pscl pttype2 incq faminc* ysch_* mcs11_sdq* mcs11_ws* age*11
+keep mcsid sentry sex country smkpr bwt scl10 pttype2 incq faminc* ysch_* mcs11_sdq* mcs11_ws* age*11
 saveold "$rdata/mcs11yeng_rwt.dta", replace version(12)
 
 restore

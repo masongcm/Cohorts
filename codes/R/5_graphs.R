@@ -85,6 +85,46 @@ legend_b <- get_legend(ineqlist[[1]] + theme(legend.position="bottom"))
 p <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
 p
 
+## ---- FACINEQ_SC
+# MEAN/CI plot of scores by social class
+
+scores2plot$scl10b <- NA
+scores2plot$scl10b[scores2plot$scl10 %in% c("I", "II")] <- 5
+scores2plot$scl10b[scores2plot$scl10 %in% c("IIINM")] <- 4
+scores2plot$scl10b[scores2plot$scl10 %in% c("IIIM")] <- 3
+scores2plot$scl10b[scores2plot$scl10 %in% c("IV", "V")] <- 2
+scores2plot$scl10b[scores2plot$scl10 %in% c("other")] <- 1
+scores2plot$scl10b <- factor(scores2plot$scl10b, labels = c("oth","IV-V","IIIM","IIINM","I-II"))
+
+#common options
+addopts <- function(x) {
+  x <- x + xlab("Parental Social Class at 10") + ylab("Factor score") +
+    coord_cartesian(ylim = c(-.4, .5)) +
+    stat_summary(geom="errorbar", fun.data=mean_cl_normal, width=.2, position=position_dodge(.5)) +
+    stat_summary(fun.y=mean, geom="point", size=4, aes(colour=cohort), position=position_dodge(.5)) +
+    labs(list(colour="")) + theme(legend.position="none")
+  return(x)
+}
+
+ineq.ext.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$scl10b)), aes(x=as.factor(scl10b), y=EXT, colour=cohort)) + ggtitle("Males Externalising")
+ineq.ext.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$scl10b)), aes(x=as.factor(scl10b), y=EXT, colour=cohort)) + ggtitle("Females Externalising")
+ineq.int.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$scl10b)), aes(x=as.factor(scl10b), y=INT, colour=cohort)) + ggtitle("Males Internalising")
+ineq.int.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$scl10b)), aes(x=as.factor(scl10b), y=INT, colour=cohort)) + ggtitle("Females Internalising")
+
+ineqlist <- list(ineq.ext.m, ineq.ext.f, ineq.int.m, ineq.int.f) 
+ineqlist <- lapply(ineqlist, addopts) # apply options to all graphs
+
+# arrange the plots in a single column
+pcol <- plot_grid( ineqlist[[1]],ineqlist[[2]],ineqlist[[3]],ineqlist[[4]],
+                   align = 'vh',
+                   hjust = -1,
+                   nrow = 2
+)
+# add the legend underneath the row we made earlier. Give it 10% of the height of one plot (via rel_heights).
+legend_b <- get_legend(ineqlist[[1]] + theme(legend.position="bottom"))
+p <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
+p
+
 
 ## ---- LOESS_REAL
 require(grid)

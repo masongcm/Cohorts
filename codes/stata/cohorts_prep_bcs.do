@@ -134,7 +134,14 @@ replace faminc_infl = faminc_infl/inflBCS/1000
 tempfile bcsinc10y
 save `bcsinc10y'
 
-
+*SOCIAL CLASS	 ******************************************************************
+use "$data/CohortsHarmonisedSES/raw/BCS70 Harmonised ChildhoodSES.dta", clear // income
+decode BCSID, gen(bcsid)
+rename BCS3FCL scl10
+recode scl10 (13=.) // no questionnaire
+keep bcsid scl10
+tempfile bcsscl10y
+save `bcsscl10y'
 
 ********************************************************************************
 // MERGE
@@ -146,6 +153,7 @@ merge 1:1 bcsid using `bcsdem3', gen(bcs_merge_ethn)
 merge 1:1 bcsid using `bcsrutter5y', gen(bcs_merge_rut5y)
 merge 1:1 bcsid using `bcscog5y', gen(bcs_merge_cog5y)
 merge 1:1 bcsid using `bcsinc10y', gen(bcs_merge_inc10y)
+merge 1:1 bcsid using `bcsscl10y', gen(bcs_merge_scl10y)
 merge 1:1 bcsid using `bcsall10y', gen(bcs_merge_all10y)
 merge 1:1 bcsid using `bcsnvq30y', gen(bcs_merge_nvq30y)
 
@@ -270,7 +278,7 @@ preserve
 egen ncmiss=rowmiss(bcs10_rut*)
 drop if ncmiss >22
 
-keep bcsid bcs_country sex bwt smkpr pscl bcs_region age*10 incq faminc* *_moth *_fath bcs10_rut* bcs10_ws* hinvq00
+keep bcsid bcs_country sex bwt smkpr scl10 bcs_region age*10 incq faminc* *_moth *_fath bcs10_rut* bcs10_ws* hinvq00
 saveold "$rdata/bcs10y.dta", replace version(12)
 
 // england only
@@ -287,7 +295,7 @@ preserve
 egen ncmiss=rowmiss(bcs5_rut*)
 drop if ncmiss >22
 
-keep bcsid bcs_country sex bwt smkpr pscl bcs_region age*5 incq faminc* *_moth *_fath epvt_z copy_z hfd_z bcs5_rut* hinvq00
+keep bcsid bcs_country sex bwt smkpr scl10 bcs_region age*5 incq faminc* *_moth *_fath epvt_z copy_z hfd_z bcs5_rut* hinvq00
 saveold "$rdata/bcs5y.dta", replace version(12)
 
 // england only

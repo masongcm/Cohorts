@@ -42,8 +42,8 @@ iqtab <- function(var, by) {
 df.final2 <- scores2plot
 
 # ADD RESIDUALISED SCORES
-df.final$EXTres <- NA
-df.final$INTres <- NA
+df.final2$EXTres <- NA
+df.final2$INTres <- NA
 
 df.final <- df.final2[FALSE,]
 for (g in c("M","F")) {
@@ -138,3 +138,5 @@ T <- mean(y3.mcs)-mean(y3.bcs)
 Q <- mean(y1.mcs)-mean(y1.bcs)
 P <- mean(y2.mcs)-mean(y2.bcs) - Q
 U <- mean(y3.mcs)-mean(y3.bcs) - mean(y2.mcs)-mean(y2.bcs)
+
+

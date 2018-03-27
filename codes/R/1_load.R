@@ -2,6 +2,7 @@
 rm(list=ls())         # Clear all objects from memory 
 set.seed(42)
 
+library(knitr)
 library(nFactors)
 library(polycor)
 library(random.polychor.pa)
@@ -13,14 +14,12 @@ library(cowplot)
 library(tikzDevice)
 library(lavaan)
 library(semTools)
-library(difR)
-library(np)
 library(gdata)
-library(knitr)
 library(xtable)
 library(cowplot)
 library(tikzDevice)
 library(gtools)
+library(Counterfactual)
 
 
 dir_data  <- c("/Users/giacomomason/Documents/Projects/CohortStudies/rdata/")

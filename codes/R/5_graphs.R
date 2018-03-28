@@ -88,14 +88,6 @@ p
 ## ---- FACINEQ_SC
 # MEAN/CI plot of scores by social class
 
-scores2plot$scl10b <- NA
-scores2plot$scl10b[scores2plot$scl10 %in% c("I", "II")] <- 5
-scores2plot$scl10b[scores2plot$scl10 %in% c("IIINM")] <- 4
-scores2plot$scl10b[scores2plot$scl10 %in% c("IIIM")] <- 3
-scores2plot$scl10b[scores2plot$scl10 %in% c("IV", "V")] <- 2
-scores2plot$scl10b[scores2plot$scl10 %in% c("other")] <- 1
-scores2plot$scl10b <- factor(scores2plot$scl10b, labels = c("oth","IV-V","IIIM","IIINM","I-II"))
-
 #common options
 addopts <- function(x) {
   x <- x + xlab("Parental Social Class at 10") + ylab("Factor score") +

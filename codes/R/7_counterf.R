@@ -1,5 +1,6 @@
 #######################################################################################################
 ## ---- COUNTERF
+library(Counterfactual)
 
 # numeric cohort
 scores2plot$cohn <- as.numeric(scores2plot$cohort)-1

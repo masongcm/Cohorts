@@ -214,6 +214,15 @@ items.c$INT.RAW <- rowSums(apply(items.c[,paste("X", seq(7,11), sep="")], 2, fun
 items.c$EXT.RAWr <- residuals(lm(EXT.RAW ~ age, data=items.c, na.action = na.exclude))
 items.c$INT.RAWr <- residuals(lm(INT.RAW ~ age, data=items.c, na.action = na.exclude))
 
+# recode social class for plots
+items.c$scl10b <- NA
+items.c$scl10b[items.c$scl10 %in% c("I", "II")] <- 5
+items.c$scl10b[items.c$scl10 %in% c("IIINM")] <- 4
+items.c$scl10b[items.c$scl10 %in% c("IIIM")] <- 3
+items.c$scl10b[items.c$scl10 %in% c("IV", "V")] <- 2
+items.c$scl10b[items.c$scl10 %in% c("other")] <- 1
+items.c$scl10b <- factor(items.c$scl10b, labels = c("oth","IV-V","IIIM","IIINM","I-II"))
+
 # MODEL LIST
 # 1 (MAIN) : separate gender groups, no age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)
 # 2 (AGECHECK): separate gender groups, overlapping ages, no age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)

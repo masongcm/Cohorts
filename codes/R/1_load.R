@@ -19,7 +19,6 @@ library(xtable)
 library(cowplot)
 library(tikzDevice)
 library(gtools)
-library(Counterfactual)
 
 
 dir_data  <- c("/Users/giacomomason/Documents/Projects/CohortStudies/rdata/")

@@ -189,6 +189,7 @@ merge 1:1 mcsid using `mcsscl11y', gen(mcs_merge_scl11)
 // REWEIGHT SAMPLE (ENGLAND)
 ********************************************************************************
 keep if country == 1
+keep if sentry == 1 // only those who entered in sweep 1
 
 /*
 selection probability by stratum (ENG)
@@ -394,6 +395,7 @@ foreach v of varlist mcs*_sdq* {
 	lab val `v' ncmcs
 	}
 
+	
 ********************************************************************************
 // RECODE ALL SDQ
 ********************************************************************************
@@ -428,7 +430,6 @@ preserve
 * SAMPLE SELECTION
 // keep only interviews with mother
 keep if cmpsex00 == 2
-egen ncmiss=rowmiss(mcs5_sdq*)
 drop if ncmiss >21
 
 /* SAVE OUTPUT */

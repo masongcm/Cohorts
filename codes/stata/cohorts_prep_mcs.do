@@ -22,26 +22,54 @@ gen smkpr = smkprepreg
 replace smkpr = 0 if inlist(amcich00,0,96) & inlist(amwhch00,1,2)  
 // gave up, less than 1/day, changed in 1st/2nd month
 
-keep mcsid sex smkpr amlfte00 aplfte00
+// relationship of main respondent
+rename ahprelaa ahprela1
+rename ahprelab ahprela2
+rename ahprelac ahprela3
+rename ahprelad ahprela4
+rename ahprelae ahprela5
+rename ahprelaf ahprela6
+gen relmain = .
+levelsof ampnum00, local(mainrcodes)
+di "`mainrcodes'"
+foreach x of local mainrcodes {
+	di `x'
+	replace relmain = ahprela`x' if ampnum00==`x'
+}
+lab val relmain LABF
+
+// marital status
+recode amfcin00 (-9/-1=.) (2 3 = 1) (1 4 5 6 = 0), gen(marr)
+
+lab var sex			"CM sex"
+lab var smkpr		"Smoked during pregnancy (main resp)"
+lab var marr		"Married (main resp)"
+lab var relmain		"CM relationship to main respondent"
+
+keep mcsid sex smkpr amlfte00 aplfte00 marr relmain
 tempfile mcsdem1
 save `mcsdem1'
 
+******************************************************************
 * derived (country, region, ethnicity)
 use "$mcsraw/S1/mcs1_derived_variables.dta", clear
-rename ADCTRY00 mcs_country
-rename ADREGN00 mcs_region
-rename ADC06EA0 mcs_ethn
 rename MCSID mcsid
+rename ADREGN00 region
+recode ADC06EA0 (-9/-1=.) (1=0) (2/6=1), gen(ethn)
 recode ADBWGTA0 (-8 -1 = .), gen(bwt)
+recode AMDAGB00 (-2=.), gen(mothageb)
+gen gestaw = floor(ADGESTA0/7) if ADGESTA0>0
 
-recode AMD05C00 (-1=.), gen(scmain)
-recode APD05C00 (-1=.), gen(scpart)
-gen pscl = min(scmain, scpart)
+lab var ethn 			"Nonwhite ethnicity"
+lab var bwt				"CM Birthweight (kg)"
+lab var gestaw			"Gestational age (weeks)"
+lab var mothageb		"Age at CM birth (main resp)"
 
-keep mcsid mcs_country mcs_region mcs_ethn bwt pscl
+keep mcsid region ethn bwt gestaw mothageb
 tempfile mcsdem2
 save `mcsdem2'
 
+******************************************************************
 * 5y parent interview (parental education, age at interview)
 use "$mcsraw/S3/mcs3_parent_interview.dta", clear
 recode cmlfte00 cplfte00 (-9 -8 -1 =.)
@@ -53,23 +81,30 @@ gen lfte_fath = aplfte00
 replace lfte_fath = cplfte00 if cplfte00!=.
 recode lfte_moth lfte_fath (0=.) // still in FTE to missing
 
-gen ysch_moth = lfte_moth-15	// years continued school after 15
-gen ysch_fath = lfte_fath-15
-recode ysch_moth ysch_fath (-15/-1 = 0) // put to 0 everyone who had less than 15 years education
+gen ysch_moth5 = lfte_moth-15	// years continued school after 15
+gen ysch_fath5 = lfte_fath-15
+recode ysch_moth5 ysch_fath5 (-15/-1 = 0) // put to 0 everyone who had less than 15 years education
 
 gen ageint5 = floor(chcagea0/30.42)
 lab var ageint5		"Age at 5y interview (months)"
+lab var ysch_fath5	"Father years of schooling (5y)"
+lab var ysch_moth5	"Mother years of schooling (5y)"
 
 keep mcsid ageint5 ysch_*
 tempfile mcsdem3
 save `mcsdem3'
 
+******************************************************************
 * 5y derived (parental NVQ)
 use "$mcsraw/S3/mcs3_derived_variables.dta", clear
 rename _all, lower
 rename cmdnvq00 hnvq_main
 rename cpdnvq00 hnvq_part
-keep mcsid hnvq_main hnvq_part
+gen numch5 = cdtots00-1
+
+lab var numch5		"Number other children in HH at 5"
+
+keep mcsid hnvq_main hnvq_part numch5
 tempfile mcsnvq
 save `mcsnvq'
 
@@ -190,6 +225,7 @@ merge 1:1 mcsid using `mcsscl11y', gen(mcs_merge_scl11)
 ********************************************************************************
 keep if country == 1
 keep if sentry == 1 // only those who entered in sweep 1
+keep if relmain == 3 // only natural children
 
 /*
 selection probability by stratum (ENG)
@@ -425,32 +461,32 @@ forvalues i=1(1)25 {
 
 
 ****************************
-/* SAVE 5Y FILE for R */
-preserve
+/* SAVE FILES for R */
+
 * SAMPLE SELECTION
 // keep only interviews with mother
 keep if cmpsex00 == 2
+
+local covarstokeep country region sex bwt smkpr gestaw mothageb parity scl10 incq faminc_real faminc_infl ysch_moth5 ysch_fath5 numch5
+
+/* SAVE 5y FILE */
+preserve
+egen ncmiss=rowmiss(mcs5_sdq*)
 drop if ncmiss >21
-
-/* SAVE OUTPUT */
-keep mcsid sentry sex country smkpr bwt scl10 pttype2 incq faminc* ysch_* mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5
+keep mcsid sentry sex country region smkpr bwt scl10 pttype2 incq faminc* ysch_* mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5
 saveold "$rdata/mcs5yeng_rwt.dta", replace version(12)
-
 restore
 
 ****************************
 /* SAVE 11Y FILE for R */
+
+
+/* SAVE 10y FILE */
 preserve
-* SAMPLE SELECTION
-// keep only interviews with mother
-keep if cmpsex00 == 2
 egen ncmiss=rowmiss(mcs11_sdq*)
 drop if ncmiss >21
-
-/* SAVE OUTPUT */
-keep mcsid sentry sex country smkpr bwt scl10 pttype2 incq faminc* ysch_* mcs11_sdq* mcs11_ws* age*11
+keep mcsid sentry sex country region smkpr bwt scl10 pttype2 incq faminc* ysch_* mcs11_sdq* mcs11_ws* age*11
 saveold "$rdata/mcs11yeng_rwt.dta", replace version(12)
-
 restore
 
 

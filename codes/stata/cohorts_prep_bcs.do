@@ -11,33 +11,44 @@ rename a0255 sex
 recode a0278 (-3/-2=.), gen(bwt)
 replace bwt=bwt/1000
 recode a0043b (-3=.) (1/3=0) (4/6=1), gen(smkpr)
-recode a0014 (-2=.) (7 8 = 7), gen(pscl)
-keep bcsid sex bwt smkpr pscl
+rename a0005a mothageb
+rename a0166 parity
+recode a0195b (-3 -2 = .), gen(gestaw)
+
+lab var sex				"CM sex"
+lab var bwt				"CM Birthweight (kg)"
+lab var parity			"Parity"
+lab var mothageb		"Mother age at CM birth"
+lab var smkpr			"Smoked during pregnancy"
+lab var gestaw			"Gestational age (weeks)"
+
+keep bcsid sex bwt smkpr mothageb parity gestaw
 tempfile bcsdem1
 save `bcsdem1'
 
 use "$bcsraw/1970_birth/bcs1derived.dta", clear
 rename BCSID bcsid
-rename BD1CNTRY bcs_country 
-lab var bcs_country 		"Country of Interview"
-rename BD1REGN bcs_region
-lab var bcs_region 			"Standard Region of Residence"
+rename BD1CNTRY country 
+lab var country 		"Country at Birth"
+rename BD1REGN region
+lab var region 			"Standard Region of Residence"
 
-keep bcsid bcs_country bcs_region
+keep bcsid country region
 tempfile bcsdem2
 save `bcsdem2'
 
 /* 5y data (age at interview, parental education, and ethnicity) */
 use "$bcsraw/1975/f699b.dta", clear
-rename e245 bcs_ethn
 
-rename e189a	educ_moth
-rename e189b	educ_fath
-recode educ_moth educ_fath (-3 -2 -1 8 =.)
+recode e245 (-3 -2 = .) (1 2 = 0) (3/7=1), gen(ethn)
 
-rename e195		ysch_moth
-rename e196		ysch_fath
-recode ysch_moth ysch_fath (-3 -2 -1 =.)
+rename e189a	educ_moth5
+rename e189b	educ_fath5
+recode educ_moth5 educ_fath5 (-3 -2 -1 8 =.)
+
+rename e195		ysch_moth5
+rename e196		ysch_fath5
+recode ysch_moth5 ysch_fath5 (-3 -2 -1 =.)
 
 recode e271 (-3=.)
 tostring e271, gen(datestr)
@@ -46,14 +57,19 @@ gen year = 1900 + real((substr(datestr,1,2)))
 gen month = real((substr(datestr,3,2)))
 gen dateint5 = ym(year,month)
 format dateint5 %tm
-
 gen dateb = tm(1970-04)
 format dateb %tm
-
 gen ageint5 = dateint5 - dateb
-lab var ageint5		"Age at 5y interview (months)"
 
-keep bcsid bcs_ethn ageint5 *_moth *_fath
+gen numch5 = e006 + e007 if e007!=-1 & e006!=-1
+
+lab var ageint5		"Age at 5y interview (months)"
+lab var ethn		"Nonwhite ethnicity"
+lab var ysch_fath5	"Father years of schooling (5y)"
+lab var ysch_moth5	"Mother years of schooling (5y)"
+lab var numch5		"Number other children in HH at 5"
+
+keep bcsid ethn ageint5 *_moth5 *_fath5 numch5
 tempfile bcsdem3
 save `bcsdem3'
 
@@ -273,16 +289,18 @@ foreach x in epvt_z copy_z hfd_z {
 ****************************
 /* SAVE 10Y FILE for R */
 
+local covarstokeep country region sex bwt smkpr gestaw mothageb parity scl10 region incq faminc_real faminc_infl ysch_moth5 ysch_fath5 numch5
+
 preserve
 * SAMPLE SELECTION
 egen ncmiss=rowmiss(bcs10_rut*)
 drop if ncmiss >22
 
-keep bcsid bcs_country sex bwt smkpr scl10 bcs_region age*10 incq faminc* *_moth *_fath bcs10_rut* bcs10_ws* hinvq00
+keep bcsid age*10 bcs10_rut* bcs10_ws* hinvq00 `covarstokeep'
 saveold "$rdata/bcs10y.dta", replace version(12)
 
 // england only
-keep if bcs_country==1
+keep if country==1
 saveold "$rdata/bcs10yeng.dta", replace version(12)
 restore
 
@@ -295,11 +313,11 @@ preserve
 egen ncmiss=rowmiss(bcs5_rut*)
 drop if ncmiss >22
 
-keep bcsid bcs_country sex bwt smkpr scl10 bcs_region age*5 incq faminc* *_moth *_fath epvt_z copy_z hfd_z bcs5_rut* hinvq00
+keep bcsid age*5 epvt_z copy_z hfd_z bcs5_rut* hinvq00 `covarstokeep'
 saveold "$rdata/bcs5y.dta", replace version(12)
 
 // england only
-keep if bcs_country==1
+keep if country==1
 saveold "$rdata/bcs5yeng.dta", replace version(12)
 restore
 

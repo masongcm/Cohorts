@@ -57,11 +57,12 @@ rename MCSID mcsid
 rename ADREGN00 region
 recode ADC06EA0 (-9/-1=.) (1=0) (2/6=1), gen(ethn)
 recode ADBWGTA0 (-8 -1 = .), gen(bwt)
+replace bwt = bwt*1000
 recode AMDAGB00 (-2=.), gen(mothageb)
 gen gestaw = floor(ADGESTA0/7) if ADGESTA0>0
 
 lab var ethn 			"Nonwhite ethnicity"
-lab var bwt				"CM Birthweight (kg)"
+lab var bwt				"CM Birthweight (g)"
 lab var gestaw			"Gestational age (weeks)"
 lab var mothageb		"Age at CM birth (main resp)"
 
@@ -95,7 +96,7 @@ tempfile mcsdem3
 save `mcsdem3'
 
 ******************************************************************
-* 5y derived (parental NVQ)
+* 5y derived 
 use "$mcsraw/S3/mcs3_derived_variables.dta", clear
 rename _all, lower
 rename cmdnvq00 hnvq_main
@@ -105,8 +106,8 @@ gen numch5 = cdtots00-1
 lab var numch5		"Number other children in HH at 5"
 
 keep mcsid hnvq_main hnvq_part numch5
-tempfile mcsnvq
-save `mcsnvq'
+tempfile mcs5d
+save `mcs5d'
 
 *SKILLS AT 5	 ***************************************************************
 
@@ -214,6 +215,7 @@ merge 1:1 mcsid using `mcsdem2', nogen
 merge 1:1 mcsid using `mcsdem3', gen(mcs_merge_educ)
 merge 1:1 mcsid using `mcssdq5y', gen(mcs_merge_sdq5)
 merge 1:1 mcsid using `mcscog5y', gen(mcs_merge_cog5)
+merge 1:1 mcsid using `mcs5d', gen(mcs_merge_der5)
 merge 1:1 mcsid using `mcssdq11y', gen(mcs_merge_sdq10)
 merge 1:1 mcsid using `mcscog11y', gen(mcs_merge_cog10)
 merge 1:1 mcsid using `mcsinc11y', gen(mcs_merge_inc11)
@@ -467,13 +469,13 @@ forvalues i=1(1)25 {
 // keep only interviews with mother
 keep if cmpsex00 == 2
 
-local covarstokeep country region sex bwt smkpr gestaw mothageb parity scl10 incq faminc_real faminc_infl ysch_moth5 ysch_fath5 numch5
+local covarstokeep country region sex bwt smkpr gestaw mothageb scl10 region incq faminc_real faminc_infl ysch_moth5 ysch_fath5 numch5
 
 /* SAVE 5y FILE */
 preserve
 egen ncmiss=rowmiss(mcs5_sdq*)
 drop if ncmiss >21
-keep mcsid sentry sex country region smkpr bwt scl10 pttype2 incq faminc* ysch_* mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5
+keep mcsid sentry pttype2 mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5 `covarstokeep'
 saveold "$rdata/mcs5yeng_rwt.dta", replace version(12)
 restore
 
@@ -485,7 +487,7 @@ restore
 preserve
 egen ncmiss=rowmiss(mcs11_sdq*)
 drop if ncmiss >21
-keep mcsid sentry sex country region smkpr bwt scl10 pttype2 incq faminc* ysch_* mcs11_sdq* mcs11_ws* age*11
+keep mcsid sentry pttype2 mcs11_sdq* mcs11_ws* age*11 `covarstokeep'
 saveold "$rdata/mcs11yeng_rwt.dta", replace version(12)
 restore
 

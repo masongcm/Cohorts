@@ -9,14 +9,13 @@
 use "$bcsraw/1970_birth/bcs7072a.dta", clear
 rename a0255 sex
 recode a0278 (-3/-2=.), gen(bwt)
-replace bwt=bwt/1000
 recode a0043b (-3=.) (1/3=0) (4/6=1), gen(smkpr)
 rename a0005a mothageb
 rename a0166 parity
 recode a0195b (-3 -2 = .), gen(gestaw)
 
 lab var sex				"CM sex"
-lab var bwt				"CM Birthweight (kg)"
+lab var bwt				"CM Birthweight (g)"
 lab var parity			"Parity"
 lab var mothageb		"Mother age at CM birth"
 lab var smkpr			"Smoked during pregnancy"
@@ -289,7 +288,7 @@ foreach x in epvt_z copy_z hfd_z {
 ****************************
 /* SAVE 10Y FILE for R */
 
-local covarstokeep country region sex bwt smkpr gestaw mothageb parity scl10 region incq faminc_real faminc_infl ysch_moth5 ysch_fath5 numch5
+local covarstokeep country region sex bwt smkpr gestaw mothageb scl10 region incq faminc_real faminc_infl ysch_moth5 ysch_fath5 numch5
 
 preserve
 * SAMPLE SELECTION

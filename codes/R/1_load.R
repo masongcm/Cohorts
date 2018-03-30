@@ -1,44 +1,4 @@
-## ---- PREAMBLE
-rm(list=ls())         # Clear all objects from memory 
-set.seed(42)
 
-library(knitr)
-library(nFactors)
-library(polycor)
-library(random.polychor.pa)
-library(foreign)
-library(ggplot2)
-library(psych)
-library(mirt)
-library(cowplot)
-library(tikzDevice)
-library(lavaan)
-library(semTools)
-library(gdata)
-library(xtable)
-library(cowplot)
-library(tikzDevice)
-library(gtools)
-
-
-dir_data  <- c("/Users/giacomomason/Documents/Projects/CohortStudies/rdata/")
-dir_syntax  <- c("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/syntax/")
-
-# define printfit function
-printfit <- function(m) {
-  c( fitMeasures(m, c("npar", "df", "rmsea", "mfi", "cfi.scaled")), moreFitIndices(m)["gammaHat"] )
-}
-
-## ---- LOAD_DATA
-
-# auxiliary variables to retain
-auxvars <- c("faminc_real", "faminc_infl", "incq", "ysch_moth", "ysch_fath", 
-             "ageint5", "sex", "bwt", "smkpr", "scl10")
-
-# BCS -------------------------------------------
-bcs5data <- read.dta(paste(dir_data, "bcs5yeng.dta", sep=""), convert.factors = F) # all BCS data
-bcs5rutb <- bcs5data[,grep("bcs5_rutb", names(bcs5data), value=TRUE)]                 # BINARY Rutter items only
-bcs5rutc <- bcs5data[,grep("bcs5_rutc", names(bcs5data), value=TRUE)]                 # 3CAT Rutter items only
 ## ---- PREAMBLE
 rm(list=ls())         # Clear all objects from memory 
 set.seed(42)
@@ -75,8 +35,8 @@ printfit <- function(m) {
 ## ---- LOAD_DATA
 
 # auxiliary variables to retain
-auxvars <- c("faminc_real", "faminc_infl", "incq", "ysch_moth", "ysch_fath", 
-             "ageint5", "sex", "bwt", "smkpr", "scl10")
+auxvars <- c("faminc_real", "faminc_infl", "incq", "ysch_moth5", "ysch_fath5", 
+             "ageint5", "sex", "bwt", "smkpr", "scl10", "gestaw", "region", "numch5")
 
 # BCS -------------------------------------------
 bcs5data <- read.dta(paste(dir_data, "bcs5yeng.dta", sep=""), convert.factors = F) # all BCS data
@@ -214,6 +174,8 @@ items.c$INT.RAW <- rowSums(apply(items.c[,paste("X", seq(7,11), sep="")], 2, fun
 items.c$EXT.RAWr <- residuals(lm(EXT.RAW ~ age, data=items.c, na.action = na.exclude))
 items.c$INT.RAWr <- residuals(lm(INT.RAW ~ age, data=items.c, na.action = na.exclude))
 
+
+# FINAL CLEANING/RECODING
 # recode social class for plots
 items.c$scl10b <- NA
 items.c$scl10b[items.c$scl10 %in% c("I", "II")] <- 5
@@ -222,6 +184,12 @@ items.c$scl10b[items.c$scl10 %in% c("IIIM")] <- 3
 items.c$scl10b[items.c$scl10 %in% c("IV", "V")] <- 2
 items.c$scl10b[items.c$scl10 %in% c("other")] <- 1
 items.c$scl10b <- factor(items.c$scl10b, labels = c("oth","IV-V","IIIM","IIINM","I-II"))
+
+# convert to factor
+items.c$smkpr <- factor(items.c$smkpr)
+items.c$region <- factor(items.c$region)
+items.c$incq <- ordered(items.c$incq)
+
 
 # MODEL LIST
 # 1 (MAIN) : separate gender groups, no age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)

@@ -8,11 +8,6 @@ scores2plot$cohn <- as.numeric(scores2plot$cohort)-1
 # decide how many quantiles
 quants <- seq(.1,.9,.025)
 
-covars <- c("faminc_infl","scl10b","ysch_moth","ysch_fath")
-# formulas
-form.ext <- as.formula(paste("EXT ~ ", paste0(covars, collapse = '+')))
-form.int <- as.formula(paste("INT ~ ", paste0(covars, collapse = '+')))
-
 # Logit regression
 logitcf.ext.m <- counterfactual(form.ext, data = subset(scores2plot, sex=='M'),
                                 group = cohn, treatment=TRUE, decomposition=TRUE, 

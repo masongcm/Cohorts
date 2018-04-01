@@ -466,8 +466,10 @@ forvalues i=1(1)25 {
 /* SAVE FILES for R */
 
 * SAMPLE SELECTION
-// keep only interviews with mother
-keep if cmpsex00 == 2
+
+keep if cmpsex00 == 2		// keep only interviews with mother
+drop if region > 9			// drop interviews not in England
+
 
 local covarstokeep country region sex bwt smkpr gestaw mothageb scl10 region incq faminc_real faminc_infl ysch_moth5 ysch_fath5 numch5
 

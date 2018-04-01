@@ -172,8 +172,11 @@ merge 1:1 bcsid using `bcsscl10y', gen(bcs_merge_scl10y)
 merge 1:1 bcsid using `bcsall10y', gen(bcs_merge_all10y)
 merge 1:1 bcsid using `bcsnvq30y', gen(bcs_merge_nvq30y)
 
-drop if sex<1		/* missing observations */
 
+// SAMPLE SELECTION
+keep if country==1			// England only
+drop if sex<1				/* missing observations */
+drop if region > 9			// drop interviews not in England
 
 ********************************************************************************
 
@@ -288,6 +291,7 @@ foreach x in epvt_z copy_z hfd_z {
 ****************************
 /* SAVE 10Y FILE for R */
 
+
 local covarstokeep country region sex bwt smkpr gestaw mothageb scl10 region incq faminc_real faminc_infl ysch_moth5 ysch_fath5 numch5
 
 preserve
@@ -296,10 +300,6 @@ egen ncmiss=rowmiss(bcs10_rut*)
 drop if ncmiss >22
 
 keep bcsid age*10 bcs10_rut* bcs10_ws* hinvq00 `covarstokeep'
-saveold "$rdata/bcs10y.dta", replace version(12)
-
-// england only
-keep if country==1
 saveold "$rdata/bcs10yeng.dta", replace version(12)
 restore
 
@@ -313,10 +313,6 @@ egen ncmiss=rowmiss(bcs5_rut*)
 drop if ncmiss >22
 
 keep bcsid age*5 epvt_z copy_z hfd_z bcs5_rut* hinvq00 `covarstokeep'
-saveold "$rdata/bcs5y.dta", replace version(12)
-
-// england only
-keep if country==1
 saveold "$rdata/bcs5yeng.dta", replace version(12)
 restore
 

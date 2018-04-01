@@ -35,8 +35,8 @@ printfit <- function(m) {
 ## ---- LOAD_DATA
 
 # auxiliary variables to retain
-auxvars <- c("faminc_real", "faminc_infl", "incq", "ysch_moth5", "ysch_fath5", 
-             "ageint5", "sex", "bwt", "smkpr", "scl10", "gestaw", "region", "numch5")
+auxvars <- c("faminc_real", "faminc_infl", "incq", "ysch_moth5", "ysch_fath5", "numch5", "ageint5",
+             "sex", "bwt", "smkpr", "scl10", "gestaw", "region","mothageb")
 
 # BCS -------------------------------------------
 bcs5data <- read.dta(paste(dir_data, "bcs5yeng.dta", sep=""), convert.factors = F) # all BCS data

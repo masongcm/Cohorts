@@ -17,6 +17,7 @@ ggplot(aged, aes(x=age, y=dens, fill=cohort)) +
   theme(legend.position = c(0.9, 0.2)) +
   geom_hline(aes(yintercept=0))
 
+############################################################################################
 ## ---- FACDENS
 # densities of factor scores
 pdext.ebm.m <- ggplot(subset(scores2plot, sex=="M"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1) + ggtitle("EXT Scores (Males)")
@@ -25,6 +26,7 @@ pdext.ebm.f <- ggplot(subset(scores2plot, sex=="F"), aes(x=EXT, group=cohort, fi
 pdint.ebm.f <- ggplot(subset(scores2plot, sex=="F"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1) + ggtitle("INT Scores (Females)")
 plot_grid(pdext.ebm.m, pdext.ebm.f, pdint.ebm.m, pdint.ebm.f, ncol=2, align="h")
 
+############################################################################################
 ## ---- FACLOESS_AGE
 # loess plot of scores on age
 loess.ext.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=age, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + geom_smooth(method = "loess") + xlab("Age (months)") + ylab("EXT") + ggtitle("Males Externalising")
@@ -45,6 +47,7 @@ legend_b <- get_legend(loess.ext.m + theme(legend.position="bottom"))
 p <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
 p
 
+############################################################################################
 ## ---- FACRAW
 # see how scored factors compare with raw scores
 box.ext.bcs <- ggplot(data=subset(scores2plot, cohort=="BCS"), aes(x=as.factor(EXT.RAW), y=EXT)) + geom_boxplot() + ggtitle("BCS EXT") + xlab("Sum score") + ylab("Factor score")
@@ -53,6 +56,38 @@ box.ext.mcs <- ggplot(data=subset(scores2plot, cohort=="MCS"), aes(x=as.factor(E
 box.int.mcs <- ggplot(data=subset(scores2plot, cohort=="MCS"), aes(x=as.factor(INT.RAW), y=INT)) + geom_boxplot() + ggtitle("MCS INT") + xlab("Sum score") + ylab("Factor score")
 plot_grid(box.ext.bcs, box.int.bcs, box.ext.mcs, box.int.mcs, ncol=2, align="h")
 
+
+############################################################################################
+## ---- INCINEQ
+# MEAN/CI plot of income by income quintile
+
+# aggregate mean income
+semean <- function(x) sqrt(var(x,na.rm=TRUE)/length(na.omit(x)))
+meaninc <- data.frame(
+  aggregate(scores2plot$faminc_real, 
+            by = list(scores2plot$cohort, scores2plot$incq), 
+            FUN=function(x) c(m = mean(x, na.rm=T), se = semean(x) )))
+meaninc <- cbind(meaninc[1:2], as.matrix(meaninc$x))
+colnames(meaninc) <- c("cohort", "quant", "mean", "semean")
+
+# restandardise
+q1.bcs <- meaninc[meaninc$cohort=="BCS" & meaninc$quant=="1", "mean"]
+q1.mcs <- meaninc[meaninc$cohort=="MCS" & meaninc$quant=="1", "mean"]
+meaninc[meaninc$cohort=="BCS", "mean"] <- (meaninc[meaninc$cohort=="BCS", "mean"] - q1.bcs)/q1.bcs
+meaninc[meaninc$cohort=="MCS", "mean"] <- (meaninc[meaninc$cohort=="MCS", "mean"] - q1.mcs)/q1.mcs
+meaninc$ciu <- meaninc$mean + 1.96*meaninc$semean
+meaninc$cil <- meaninc$mean - 1.96*meaninc$semean
+
+ineq.inc <- ggplot(data=meaninc, aes(x=as.factor(quant), y=mean, colour=cohort)) +
+  geom_point(size=3) + 
+  scale_y_continuous(name = "Mean Family Income", breaks = seq(0,11,2)) +
+  xlab("Family Income Quintile at 10") +
+  theme(legend.justification=c(0,0), legend.position=c(0,.8), legend.title = element_blank())
+
+ineq.inc
+
+
+############################################################################################
 ## ---- FACINEQ
 # MEAN/CI plot of scores by income quintile
 
@@ -85,6 +120,8 @@ legend_b <- get_legend(ineqlist[[1]] + theme(legend.position="bottom"))
 p <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
 p
 
+
+############################################################################################
 ## ---- FACINEQ_SC
 # MEAN/CI plot of scores by social class
 
@@ -117,7 +154,7 @@ legend_b <- get_legend(ineqlist[[1]] + theme(legend.position="bottom"))
 p <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
 p
 
-
+############################################################################################
 ## ---- LOESS_REAL
 require(grid)
 require(gridExtra)
@@ -163,6 +200,8 @@ legend_b <- get_legend(l.inc[[3]] + theme(legend.position="bottom"))
 ploess.real.int <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
 
 
+
+############################################################################################
 ## ---- LOESS_INFL
 
 # limits for plots
@@ -205,6 +244,8 @@ pcol <- plot_grid(l.inc[[3]], l.inc[[4]], dens.m, dens.f, ncol=2, nrow=2, rel_he
 legend_b <- get_legend(l.inc[[3]] + theme(legend.position="bottom"))
 ploess.infl.int <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
 
+
+############################################################################################
 ## ---- FACLOESS_INC_INFL
 
 # loess plot of scores on income

@@ -136,8 +136,8 @@ use "$rdata/bcs5yeng.dta", clear
 keep agetest5 faminc*
 gen cohort = 1
 append using `mcsage'
-tw 		(kdensity faminc_real if cohort==1 , width(1)  color(navy)) || ///
-		(kdensity faminc_real if cohort==2 , width(1)  lcolor(red)), ///
+tw 		(kdensity faminc_real if cohort==1 ,  lcolor(navy)) || ///
+		(kdensity faminc_real if cohort==2 ,  lcolor(red)), ///
 		legend(label(1 "BCS") label(2 "MCS")) title("Weekly Family Income")
 
 tw 		(hist agetest5 if cohort==1 , width(1)  color(navy)) || ///

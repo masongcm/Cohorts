@@ -246,9 +246,9 @@ Our aim is to assess whether the two scales can be used to derive measures of no
 The second step to our invariance analysis seeks to justify a common latent factor structure across the two cohorts. The Rutter scale is constructed to measure two latent constructs: anti-social (externalising problems), and neurotic (internalising problems) behaviours. To validate these constructs in our new scale, we carry out exploratory factor analysis based on the matrix of pairwise tetrachoric correlations between the item responses. Various methods to assess the optimal number of factors underlying these items give inconsistent results, ranging from 1 (Velicer MAP) to 7 or even 8 (BIC). I choose to conduct analyses with two factors as suggested by the theory and by the Very Simple Structure method.
 
 For ease of interpretation, I choose to rescale the factor loadings using \emph{oblimin} rotation: this method allows the underlying factors to be correlated to each other. From the results of the exploratory FA and IRT analysis with 2 factors, the pattern that seems to emerge is consistent with the theoretical constructs of externalising (EXT) and internalising (INT) behaviour problems.
-
-<<BCSEFA>>=
-@
+% 
+% <<BCSEFA>>=
+% @
 % 
 % <<BCSEFARES, dependson='BCSEFA', echo=T, results='markup'>>=
 % @
@@ -258,9 +258,9 @@ For ease of interpretation, I choose to rescale the factor loadings using \emph{
 The five-factor structure at the basis of the full SDQ has been validated in many contexts \citep{Stone2010}; however, lower-dimensional structures have been also suggested \citep{Dickey2004}, and recent research has shown that there are some benefits to using broader subscales that correspond to the externalising and internalising factors in Rutter \citep{Goodman2010}. To assess whether the two-factor conceptualisation suggested by the theory is valid in our ``reduced" 11-item scale, we conduct exploratory factor analysis (EFA) on the new 11-item scale separately for each cohort sample. Different methodologies for quantifying the optimal number of factors produce inconclusive results, but both Velicer MAP and very simple structure (VSS) seem to indicate that a two-factor structure is suitable. An EFA model with two factors, employing the usual cutoff of .3 for the loadings, delivers a neat and sensible separation between items, as shown in the second column of \autoref{tab:comm}. Thus, our two-factor structure seems justifiable on both theoretical and empirical grounds.
 
 
-
-<<MCSEFA>>=
-@
+% 
+% <<MCSEFA>>=
+% @
 % 
 % # <<MCSEFARES, dependson='BCSEFA', echo=T, results='markup'>>=
 % # @
@@ -521,6 +521,15 @@ The model can be used to investigate how inequality of noncognitive skills has c
 \textbf{REVIEW} We can derive scores for $\theta^{EXT}$ and $\theta^{INT}$ directly, and plot them against socioeconomic measures observed in the data. Our main socioeconomic indicator is a measure of weekly total family net income in the prices of the interview year.\footnote{This measure is harmonised across cohorts and derived as part of CLOSER, which is funded by the ESRC.} Using the estimated parameters for the model with invariant thresholds and loadings (but non-invariant intercepts), I compute the scores for each individual in the sample (using the Empirical Bayes modal approach). In \autoref{fig:meanci}, we can see that the gradient in noncognitive skills along family income quintiles is more pronounced in the MCS cohort.
 %In particular, a male five-year old at the top quintile of the income distribution in 1975 has a better score by \Sexpr{regcoeffs[1,3]} in the externalising dimension and \Sexpr{regcoeffs[1,4]} in the internalising dimension, compared to a child at the bottom quintile. In 2005, the differences amount to \Sexpr{regcoeffs[3,3]} and \Sexpr{regcoeffs[3,4]}, respectively.
 
+\clearpage
+\begin{figure}
+\begin{center}
+<<INCINEQ, dependson="FA_SCORES_MAIN", dev='tikz', fig.height=4, fig.width=4, out.width='.5\\linewidth'>>=
+@
+\end{center}
+\caption{Evolution of income inequality }
+{\scriptsize \emph{Notes}:  \par}
+\end{figure}
 
 \begin{figure}
 <<FACINEQ, dependson="FA_SCORES_MAIN", dev='tikz', fig.height=12, fig.width=10, out.width='1\\linewidth'>>=
@@ -538,21 +547,87 @@ The model can be used to investigate how inequality of noncognitive skills has c
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \clearpage
-% THIS BREAKS THE CACHING FOR SOME REASON
-% <<IQRDEC_FUN>>=
-% # load functions
+\clearpage
+
+<<DEC_VARS>>=
+# define variables for decomposition
+@
+% 
+% !!!!!!!!!! THIS BREAKS CACHING !!!!!!!!!!!!!!!!!!!!!
+% <<DEC_IQR, dependson="DEC_VARS">>=
+% # decompose SD and IQRs
 % @
 % 
-% <<IQRDEC, dependson="FA_SCORES_MAIN">>=
-% # decompose
+% Compare inequality statistics of original vs residualised scores
+% <<DEC_RES, dependson='DEC_IQR', echo=T, results='markup'>>=
+% iqs.orig
+% iqs.resid
 % @
-% 
-% % Compare inequality statistics of original vs residualised scores
-% % <<IQRDEC_RES, dependson='IQRDEC', echo=T, results='markup'>>=
-% % iqs.orig
-% % iqs.resid
-% % @
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{table}
+\caption{Quantifying the gradient -- males}
+\centering
+<<FA_REGS_REAL_M, dependson='DEC_VARS', results='asis'>>=
+# regress scores on income
+library(dplyr)
+library(stargazer)
+
+r.ext.m.bcs <- lm(form.ext, data=subset(scores2plot, sex=="M" & cohort=="BCS"))
+r.ext.m.mcs <- lm(form.ext, data=subset(scores2plot, sex=="M" & cohort=="MCS"))
+r.int.m.bcs <- lm(form.int, data=subset(scores2plot, sex=="M" & cohort=="BCS"))
+r.int.m.mcs <- lm(form.int, data=subset(scores2plot, sex=="M" & cohort=="MCS"))
+
+stargazer(r.ext.m.bcs, r.ext.m.mcs , r.int.m.bcs, r.int.m.mcs, #r.ext.f.bcs, r.ext.f.mcs , r.int.f.bcs, r.int.f.mcs,
+          column.labels=c("BCS M","MCS M","BCS M","MCS M"), #,"BCS F","MCS F","BCS F","MCS F"),
+          dep.var.caption = "", multicolumn = FALSE,
+          omit=c("Constant", paste0("region", c(2:9))),
+          # covariate.labels=c(
+          #                    "Income Q2",
+          #                    "Income Q3",
+          #                    "Income Q4",
+          #                    "Income Q5"
+          #                    ),
+          no.space=TRUE,
+          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+          notes = "All estimates control for Government Office Region of birth.",
+          float=FALSE    # needs begin table outside it
+)
+@
+\end{table}
+
+\begin{table}
+\caption{Quantifying the gradient -- females}
+\centering
+<<FA_REGS_REAL_F, dependson='DEC_VARS', results='asis'>>=
+# regress scores on income
+library(dplyr)
+library(stargazer)
+
+r.ext.m.bcs <- lm(form.ext, data=subset(scores2plot, sex=="F" & cohort=="BCS"))
+r.ext.m.mcs <- lm(form.ext, data=subset(scores2plot, sex=="F" & cohort=="MCS"))
+r.int.m.bcs <- lm(form.int, data=subset(scores2plot, sex=="F" & cohort=="BCS"))
+r.int.m.mcs <- lm(form.int, data=subset(scores2plot, sex=="F" & cohort=="MCS"))
+
+stargazer(r.ext.m.bcs, r.ext.m.mcs , r.int.m.bcs, r.int.m.mcs, #r.ext.f.bcs, r.ext.f.mcs , r.int.f.bcs, r.int.f.mcs,
+          column.labels=c("BCS F","MCS F","BCS F","MCS F"), #,"BCS F","MCS F","BCS F","MCS F"),
+          dep.var.caption = "", multicolumn = FALSE,
+          omit=c("Constant", paste0("region", c(2:9))),
+          # covariate.labels=c(
+          #                    "Income Q2",
+          #                    "Income Q3",
+          #                    "Income Q4",
+          #                    "Income Q5"
+          #                    ),
+          no.space=TRUE,
+          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+          notes = "All estimates control for Government Office Region of birth.",
+          float=FALSE    # needs begin table outside it
+)
+@
+\end{table}
+
 
 \clearpage
 \subsection{Decomposition of inequality}
@@ -577,35 +652,34 @@ $$F_{(\theta^{EXT}_{MCS} \mid X_{MCS})} - F_{(\theta^{EXT}_{BCS} \mid X_{BCS})} 
   \left[ F_{(\theta^{EXT}_{BCS} \mid X_{MCS})} - F_{(\theta^{EXT}_{BCS} \mid X_{BCS})} \right]$$
 
 
-
-<<COUNTERF, dependson="FA_SCORES_MAIN">>=
-# perform counterfactuals
-@
-
-
-<<COUNTERF_PREP_PLOTS, dependson='COUNTERF'>>=
-# prepare counterfactual plots
-@
-
-\begin{landscape}
-\begin{figure}
-<<COUNTERF_EXT, dependson='COUNTERF_PREP_PLOTS', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
-cfp.ext
-@
-\caption{Counterfactual decomposition -- externalising skills}\label{fig:counterf}
-{\scriptsize \emph{Notes}: \par}
-\end{figure}
-\end{landscape}
-
-\begin{landscape}
-\begin{figure}
-<<COUNTERF_INT, dependson='COUNTERF_PREP_PLOTS', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
-cfp.int
-@
-\caption{Counterfactual decomposition -- internalising skills}\label{fig:counterf}
-{\scriptsize \emph{Notes}: \par}
-\end{figure}
-\end{landscape}
+% 
+% <<COUNTERF, dependson="FA_SCORES_MAIN">>=
+% # perform counterfactuals
+% @
+% 
+% <<COUNTERF_PREP_PLOTS, dependson='COUNTERF'>>=
+% # prepare counterfactual plots
+% @
+% 
+% \begin{landscape}
+% \begin{figure}
+% <<COUNTERF_EXT, dependson='COUNTERF_PREP_PLOTS', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
+% cfp.ext
+% @
+% \caption{Counterfactual decomposition -- externalising skills}\label{fig:counterf}
+% {\scriptsize \emph{Notes}: \par}
+% \end{figure}
+% \end{landscape}
+% 
+% \begin{landscape}
+% \begin{figure}
+% <<COUNTERF_INT, dependson='COUNTERF_PREP_PLOTS', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
+% cfp.int
+% @
+% \caption{Counterfactual decomposition -- internalising skills}\label{fig:counterf}
+% {\scriptsize \emph{Notes}: \par}
+% \end{figure}
+% \end{landscape}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

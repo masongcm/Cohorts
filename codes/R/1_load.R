@@ -183,7 +183,7 @@ items.c$scl10b[items.c$scl10 %in% c("IIINM")] <- 4
 items.c$scl10b[items.c$scl10 %in% c("IIIM")] <- 3
 items.c$scl10b[items.c$scl10 %in% c("IV", "V")] <- 2
 items.c$scl10b[items.c$scl10 %in% c("other")] <- 1
-items.c$scl10b <- factor(items.c$scl10b, labels = c("oth","IV_V","IIIM","IIINM","I_II"))
+items.c$scl10b <- factor(items.c$scl10b, labels = c("oth","IV V","IIIM","IIINM","I II"))
 
 # convert to factor
 items.c$smkpr <- factor(items.c$smkpr)

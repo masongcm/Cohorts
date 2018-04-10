@@ -154,6 +154,7 @@ legend_b <- get_legend(ineqlist[[1]] + theme(legend.position="bottom"))
 p <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
 p
 
+
 ############################################################################################
 ## ---- LOESS_REAL
 require(grid)

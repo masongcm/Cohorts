@@ -652,34 +652,34 @@ $$F_{(\theta^{EXT}_{MCS} \mid X_{MCS})} - F_{(\theta^{EXT}_{BCS} \mid X_{BCS})} 
   \left[ F_{(\theta^{EXT}_{BCS} \mid X_{MCS})} - F_{(\theta^{EXT}_{BCS} \mid X_{BCS})} \right]$$
 
 
-% 
-% <<COUNTERF, dependson="FA_SCORES_MAIN">>=
-% # perform counterfactuals
-% @
-% 
-% <<COUNTERF_PREP_PLOTS, dependson='COUNTERF'>>=
-% # prepare counterfactual plots
-% @
-% 
-% \begin{landscape}
-% \begin{figure}
-% <<COUNTERF_EXT, dependson='COUNTERF_PREP_PLOTS', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
-% cfp.ext
-% @
-% \caption{Counterfactual decomposition -- externalising skills}\label{fig:counterf}
-% {\scriptsize \emph{Notes}: \par}
-% \end{figure}
-% \end{landscape}
-% 
-% \begin{landscape}
-% \begin{figure}
-% <<COUNTERF_INT, dependson='COUNTERF_PREP_PLOTS', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
-% cfp.int
-% @
-% \caption{Counterfactual decomposition -- internalising skills}\label{fig:counterf}
-% {\scriptsize \emph{Notes}: \par}
-% \end{figure}
-% \end{landscape}
+
+<<COUNTERF, dependson="FA_SCORES_MAIN">>=
+# perform counterfactuals
+@
+
+<<COUNTERF_PREP_PLOTS, dependson='COUNTERF'>>=
+# prepare counterfactual plots
+@
+
+\begin{landscape}
+\begin{figure}
+<<COUNTERF_EXT, dependson='COUNTERF_PREP_PLOTS', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
+cfp.ext
+@
+\caption{Counterfactual decomposition -- externalising skills}\label{fig:counterf_ext}
+{\scriptsize \emph{Notes}: \par}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}
+<<COUNTERF_INT, dependson='COUNTERF_PREP_PLOTS', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
+cfp.int
+@
+\caption{Counterfactual decomposition -- internalising skills}\label{fig:counterf_int}
+{\scriptsize \emph{Notes}: \par}
+\end{figure}
+\end{landscape}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

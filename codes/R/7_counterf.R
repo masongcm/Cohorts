@@ -10,7 +10,7 @@ quants <- seq(.1,.9,.025)
 
 # remove region from formulas
 form.ext.cf <- as.formula(paste("EXT ~ ", paste0(decvars[decvars!="region"], collapse = '+')))
-form.int.cf <- as.formula(paste("EXT ~ ", paste0(decvars[decvars!="region"], collapse = '+')))
+form.int.cf <- as.formula(paste("INT ~ ", paste0(decvars[decvars!="region"], collapse = '+')))
 
 # Logit regression
 logitcf.ext.m <- counterfactual(form.ext.cf, data = subset(scores2plot, sex=='M'),

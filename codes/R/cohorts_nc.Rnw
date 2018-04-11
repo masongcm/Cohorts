@@ -145,6 +145,7 @@ read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/5_graph
 read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/6_ineq.R")
 read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/7_counterf.R")
 read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/7_counterf_graphs.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/7_counterf_tabs.R")
 
 @
 
@@ -680,6 +681,25 @@ cfp.int
 {\scriptsize \emph{Notes}: \par}
 \end{figure}
 \end{landscape}
+
+<<COUNTERF_PREP_TAB, dependson='COUNTERF'>>=
+# prepare counterfactual tables
+@
+
+<<COUNTERF_INEQ, dependson='COUNTERF_PREP_TABS', results='markup'>>=
+cat("Males EXT")
+print(iqdecomp(logitcf.ext.m))
+
+cat("Males INT")
+print(iqdecomp(logitcf.int.m))
+
+cat("Females EXT")
+print(iqdecomp(logitcf.ext.f))
+
+cat("Females INT")
+print(iqdecomp(logitcf.int.f))
+@
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

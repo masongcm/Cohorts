@@ -6,17 +6,23 @@ getcfdat <- function(cffit) {
   plotdata <- data.frame(cbind(
     quant = cffit$quantiles,
     str = cffit$resSE[,1],
+    str.se = cffit$resSE[,2],
     str.l = cffit$resSE[,3],
     str.u = cffit$resSE[,4],
     com = cffit$resCE[,1],
+    com.se = cffit$resCE[,2],
     com.l = cffit$resCE[,3],
     com.u = cffit$resCE[,4],
     tot = cffit$resTE[,1],
+    tot.se = cffit$resTE[,2],
     tot.l = cffit$resTE[,3],
     tot.u = cffit$resTE[,4],
     qf.cf = cffit$model_quantile_counter[,1],
+    qf.cf.se = cffit$model_quantile_counter[,2],
     qf.ref1 = cffit$model_quantile_ref1[,1],
-    qf.ref0 = cffit$model_quantile_ref0[,1]
+    qf.ref1.se = cffit$model_quantile_ref1[,2],
+    qf.ref0 = cffit$model_quantile_ref0[,1],
+    qf.ref0.se = cffit$model_quantile_ref0[,2]
   ))
   return(plotdata)
 }

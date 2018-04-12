@@ -1,14 +1,5 @@
 # INEQUALITY DECOMPOSITION
 
-## ---- DEC_VARS
-# select variables for decomposition
-decvars <- c("region","faminc_infl","scl10b","ysch_moth5","smkpr","mothageb","numch5")
-
-# formulas
-form.ext <- as.formula(paste("EXT ~ ", paste0(decvars, collapse = '+')))
-form.int <- as.formula(paste("INT ~ ", paste0(decvars, collapse = '+')))
-
-
 #######################################################################################################
 ## ---- DEC_IQR
 # functions

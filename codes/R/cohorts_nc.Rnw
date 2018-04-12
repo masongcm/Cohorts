@@ -146,6 +146,7 @@ read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/6_ineq.
 read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/7_counterf.R")
 read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/7_counterf_graphs.R")
 read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/7_counterf_tabs.R")
+read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/7_counterf_seqdec.R")
 
 @
 
@@ -700,13 +701,41 @@ cat("Females INT")
 print(iqdecomp(logitcf.int.f))
 @
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% COUNTERFACTUAL DECOMPOSITIONS
 
+<<COUNTERF_SEQDEC_PREP>>=
+# data for decomposition plots
+@
+
+<<COUNTERF_SEQDEC_PLOT>>=
+# decomposition plots
+@
+
+\begin{landscape}
+\begin{figure}
+<<COUNTERF_SEQDEC_EXT, dependson='COUNTERF_SEQDEC_PREP', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
+cfp.seqdec.ext
+@
+\caption{Counterfactual sequential decomposition -- externalising skills}\label{fig:counterf_seq_ext}
+{\scriptsize \emph{Notes}: \par}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}
+<<COUNTERF_SEQDEC_INT, dependson='COUNTERF_SEQDEC_PREP', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
+cfp.seqdec.int
+@
+\caption{Counterfactual sequential decomposition -- internalising skills}\label{fig:counterf_seq_int}
+{\scriptsize \emph{Notes}: \par}
+\end{figure}
+\end{landscape}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \clearpage
 \bibliographystyle{chicago}
-%\bibliography{/Users/giacomomason/Documents/BibTeX/Papers-cohorts_nc}
 \bibliography{/Users/giacomomason/Dropbox/Zotero/cohorts.bib}
 
 

@@ -62,14 +62,14 @@ makecfplots <- function(cffit) {
   p.tot <- ggplot(cfdata, aes(quant, tot))+
     geom_line() + ggtitle("Total difference") +
     geom_ribbon(aes(ymin=tot.l,ymax=tot.u),alpha=0.3)
-  p.str <- ggplot(cfdata, aes(quant, str))+
-    geom_line() + ggtitle("Structure") +
-    geom_ribbon(aes(ymin=str.l,ymax=str.u),alpha=0.3)
   p.com <- ggplot(cfdata, aes(quant, com))+
     geom_line() + ggtitle("Composition") +
     geom_ribbon(aes(ymin=com.l,ymax=com.u),alpha=0.3)
+  p.str <- ggplot(cfdata, aes(quant, str))+
+    geom_line() + ggtitle("Structure") +
+    geom_ribbon(aes(ymin=str.l,ymax=str.u),alpha=0.3)
   
-  cfplist <- list(p.qfs, p.tot, p.str, p.com) 
+  cfplist <- list(p.qfs, p.tot, p.com, p.str) 
   cfplist <- lapply(cfplist, addopts.all) # apply options to all graphs
   cfplist[2:4] <- lapply(cfplist[2:4], addopts.ce) # apply options to all graphs
   

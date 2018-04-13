@@ -134,19 +134,21 @@ rm(list=ls())         # Clear all objects from memory
 
 
 <<READ, cache=FALSE >>=
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/1_load.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/2_efa.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/3_inv_main.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/3_inv_aux.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/3_inv_fit.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/4_scores.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/4_scores_aux.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/5_graphs.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/6_ineq.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/7_counterf.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/7_counterf_graphs.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/7_counterf_tabs.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/7_counterf_seqdec.R")
+library(here)
+
+read_chunk(here("codes/R/1_load.R"))
+read_chunk(here("codes/R/2_efa.R"))
+read_chunk(here("codes/R/3_inv_main.R"))
+read_chunk(here("codes/R/3_inv_aux.R"))
+read_chunk(here("codes/R/3_inv_fit.R"))
+read_chunk(here("codes/R/4_scores.R"))
+read_chunk(here("codes/R/4_scores_aux.R"))
+read_chunk(here("codes/R/5_graphs.R"))
+read_chunk(here("codes/R/6_ineq.R"))
+read_chunk(here("codes/R/7_counterf.R"))
+read_chunk(here("codes/R/7_counterf_graphs.R"))
+read_chunk(here("codes/R/7_counterf_tabs.R"))
+read_chunk(here("codes/R/7_counterf_seqdec.R"))
 
 @
 

@@ -1,6 +1,4 @@
-
 ## ---- PREAMBLE
-rm(list=ls())         # Clear all objects from memory 
 set.seed(42)
 
 library(nFactors)
@@ -22,10 +20,11 @@ library(xtable)
 library(cowplot)
 library(tikzDevice)
 library(gtools)
+library(here)
 
 
-dir_data  <- c("/Users/giacomomason/Documents/Projects/CohortStudies/rdata/")
-dir_syntax  <- c("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/syntax/")
+dir_data  <- here("rdata/")
+dir_syntax  <- here("codes/R/syntax/")
 
 # define printfit function
 printfit <- function(m) {

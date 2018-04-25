@@ -250,30 +250,12 @@ Our aim is to assess whether the two scales can be used to derive measures of no
 The second step to our invariance analysis seeks to justify a common latent factor structure across the two cohorts. The Rutter scale is constructed to measure two latent constructs: anti-social (externalising problems), and neurotic (internalising problems) behaviours. To validate these constructs in our new scale, we carry out exploratory factor analysis based on the matrix of pairwise tetrachoric correlations between the item responses. Various methods to assess the optimal number of factors underlying these items give inconsistent results, ranging from 1 (Velicer MAP) to 7 or even 8 (BIC). I choose to conduct analyses with two factors as suggested by the theory and by the Very Simple Structure method.
 
 For ease of interpretation, I choose to rescale the factor loadings using \emph{oblimin} rotation: this method allows the underlying factors to be correlated to each other. From the results of the exploratory FA and IRT analysis with 2 factors, the pattern that seems to emerge is consistent with the theoretical constructs of externalising (EXT) and internalising (INT) behaviour problems.
-% 
-% <<BCSEFA>>=
-% @
-% 
-% <<BCSEFARES, dependson='BCSEFA', echo=T, results='markup'>>=
-% @
-
-
 
 The five-factor structure at the basis of the full SDQ has been validated in many contexts \citep{Stone2010}; however, lower-dimensional structures have been also suggested \citep{Dickey2004}, and recent research has shown that there are some benefits to using broader subscales that correspond to the externalising and internalising factors in Rutter \citep{Goodman2010}. To assess whether the two-factor conceptualisation suggested by the theory is valid in our ``reduced" 11-item scale, we conduct exploratory factor analysis (EFA) on the new 11-item scale separately for each cohort sample. Different methodologies for quantifying the optimal number of factors produce inconclusive results, but both Velicer MAP and very simple structure (VSS) seem to indicate that a two-factor structure is suitable. An EFA model with two factors, employing the usual cutoff of .3 for the loadings, delivers a neat and sensible separation between items, as shown in the second column of \autoref{tab:comm}. Thus, our two-factor structure seems justifiable on both theoretical and empirical grounds.
 
 
-% 
-% <<MCSEFA>>=
-% @
-% 
-% # <<MCSEFARES, dependson='BCSEFA', echo=T, results='markup'>>=
-% # @
-% 
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
-
 
 
 <<MEANTABLE>>=
@@ -784,6 +766,49 @@ cfp.seqdec.int
 
 \clearpage
 \begin{appendices}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Exploratory Factor Analysis}
+
+
+<<BCSEFA>>=
+@
+
+<<MCSEFA>>=
+@
+
+<<BCSEFARES, dependson='BCSEFA', results='markup'>>=
+@
+
+<<MCSEFARES, dependson='BCSEFA', results='markup'>>=
+@
+
+\begin{table}[ht]
+\caption{Number of factors} \label{tab:nfac}
+<<EFATAB, dependson='MCSEFARES', results='asis'>>=
+# combine results
+efatab <- cbind(efatab.bcs,efatab.mcs)
+colnames(efatab) <- c("BCS All", "BCS M", "BCS F", "MCS All", "MCS M", "MCS F")
+
+print(xtable(efatab,
+                    align="L{.25\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}",
+                    digits = 0
+                    ), 
+             size="\\small",
+             include.rownames=T,
+             include.colnames=T,
+             booktabs = T,
+             sanitize.text.function = function(x){x},
+             tabular.environment = "tabular", width = ".8\\textwidth",
+             floating = FALSE
+)
+@
+\end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
 \section{Estimated model parameters}
 
 <<FUN_GETPARS>>=

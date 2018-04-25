@@ -41,11 +41,13 @@ efatab.bcs <- cbind(
 )
 rownames(efatab.bcs) <- c("Optimal Coordinates", "Acceleration Factor", "Parallel Analysis", "Kaiser", 
                           "VSS Compl. 1", "VSS Compl. 2", "Velicer MAP")
-efatab.bcs
 
 # FACTOR ANALYSIS loadings
+cat("\n\n ----------------------- \n BCS Loadings - Males and Females")
 bcsfa$loadings
+cat("\n\n ----------------------- \n BCS Loadings - Males")
 bcsfa.m$loadings
+cat("\n\n ----------------------- \n BCS Loadings - Females")
 bcsfa.f$loadings
 
 ## ---- BCSREL
@@ -95,11 +97,13 @@ efatab.mcs <- cbind(
   
 rownames(efatab.mcs) <- c("Optimal Coordinates", "Acceleration Factor", "Parallel Analysis", "Kaiser", 
                           "VSS Compl. 1", "VSS Compl. 2", "Velicer MAP")
-efatab.mcs
 
 # FACTOR ANALYSIS
+cat("\n\n ----------------------- \n MCS Loadings - Males and Females")
 mcsfa$loadings
+cat("\n\n ----------------------- \n MCS Loadings - Males")
 mcsfa.m$loadings
+cat("\n\n ----------------------- \n MCS Loadings - Females")
 mcsfa.f$loadings
 
 ## ---- MCSREL

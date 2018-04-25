@@ -297,7 +297,7 @@ for (g in c(1,2)) {                   # males/females
 }
 
 
-
+rm(mcskeepb, ncats, ncomm, t, t2, X.all, X.allg, means)
 
 
 

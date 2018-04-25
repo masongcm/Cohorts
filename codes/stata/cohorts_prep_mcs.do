@@ -412,17 +412,7 @@ keep if country == 1
 keep if sentry == 1 // only those who entered in sweep 1
 keep if relmain == 3 // only natural children
 
-
-local covarstokeep country region sex bwt smkpr gestaw mothageb scl10 region incq faminc_real faminc_infl ysch_moth5 ysch_fath5 numch5
-
-/* SAVE COMPLETE 5y FILE */
-preserve
-egen ncmiss=rowmiss(mcs5_sdq*)
-drop if ncmiss >21
-keep mcsid sentry pttype2 mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5 `covarstokeep'
-saveold "$rdata/mcs5yeng.dta", replace version(12)
-restore
-
+sort mcsid
 
 /*
 selection probability by stratum (ENG)
@@ -435,6 +425,7 @@ Ethnic: 			0.112			5.38			18.59
 /* advantaged ------------------------- */
 preserve
 keep if pttype2==1
+gen rwtd=1
 tempfile adv
 save `adv'
 restore
@@ -449,7 +440,8 @@ di `toselect'
 
 gen rand = uniform()
 sort rand
-keep in 1/`toselect'
+gen rwtd = 0
+replace rwtd = 1 in 1/`toselect'
 
 tempfile disadv
 save `disadv'
@@ -465,39 +457,41 @@ di `toselect'
 
 gen rand = uniform()
 sort rand
-keep in 1/`toselect'
+gen rwtd = 0
+replace rwtd = 1 in 1/`toselect'
 
 tempfile ethn
 save `ethn'
 restore
 
-
 use `adv', clear
 append using `disadv'
 append using `ethn'
-saveold "$rdata/mcseng_rwt.dta", replace version(12)
+
 
 ****************************
 /* SAVE FILES for R */
 
+local covarstokeep country region sex bwt smkpr gestaw mothageb scl10 region incq faminc_real faminc_infl ysch_moth5 ysch_fath5 numch5
 
 /* SAVE 5y FILE */
 preserve
 egen ncmiss=rowmiss(mcs5_sdq*)
 drop if ncmiss >21
-keep mcsid sentry pttype2 mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5 `covarstokeep'
+keep mcsid sentry pttype2 mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5 rwtd `covarstokeep'
+saveold "$rdata/mcs5yeng.dta", replace version(12)
+keep if rwtd==1
 saveold "$rdata/mcs5yeng_rwt.dta", replace version(12)
 restore
 
-****************************
-/* SAVE 11Y FILE for R */
 
-
-/* SAVE 10y FILE */
+/* SAVE 11y FILE */
 preserve
 egen ncmiss=rowmiss(mcs11_sdq*)
 drop if ncmiss >21
-keep mcsid sentry pttype2 mcs11_sdq* mcs11_ws* age*11 `covarstokeep'
+keep mcsid sentry pttype2 mcs11_sdq* mcs11_ws* age*11 rwtd `covarstokeep'
+saveold "$rdata/mcs11yeng.dta", replace version(12)
+keep if rwtd==1
 saveold "$rdata/mcs11yeng_rwt.dta", replace version(12)
 restore
 

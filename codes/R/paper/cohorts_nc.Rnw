@@ -548,6 +548,18 @@ The model can be used to investigate how inequality of noncognitive skills has c
 \textbf{REVIEW} We can derive scores for $\theta^{EXT}$ and $\theta^{INT}$ directly, and plot them against socioeconomic measures observed in the data. Our main socioeconomic indicator is a measure of weekly total family net income in the prices of the interview year.\footnote{This measure is harmonised across cohorts and derived as part of CLOSER, which is funded by the ESRC.} Using the estimated parameters for the model with invariant thresholds and loadings (but non-invariant intercepts), I compute the scores for each individual in the sample (using the Empirical Bayes modal approach). In \autoref{fig:meanci}, we can see that the gradient in noncognitive skills along family income quintiles is more pronounced in the MCS cohort.
 %In particular, a male five-year old at the top quintile of the income distribution in 1975 has a better score by \Sexpr{regcoeffs[1,3]} in the externalising dimension and \Sexpr{regcoeffs[1,4]} in the internalising dimension, compared to a child at the bottom quintile. In 2005, the differences amount to \Sexpr{regcoeffs[3,3]} and \Sexpr{regcoeffs[3,4]}, respectively.
 
+<<INCINEQ_STATS, dependson="FA_SCORES_MAIN", results="markup">>=
+tb <- data.frame(
+  aggregate(scores2plot$faminc_infl, by=list(scores2plot$cohort), FUN = function(x) quantile(x, c(.1, .25, .75, .9), na.rm=T))
+)
+tb$d9010 <- tb$x[,4]/tb$x[,1]
+tb$d7525 <- tb$x[,3]/tb$x[,2]
+
+cat("Quantile differences in income by cohort")
+tb
+@
+
+
 \clearpage
 \begin{figure}
 \begin{center}

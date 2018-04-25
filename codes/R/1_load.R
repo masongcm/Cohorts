@@ -177,12 +177,12 @@ items.c$INT.RAWr <- residuals(lm(INT.RAW ~ age, data=items.c, na.action = na.exc
 # FINAL CLEANING/RECODING
 # recode social class for plots
 items.c$scl10b <- NA
-items.c$scl10b[items.c$scl10 %in% c("I", "II")] <- 5
-items.c$scl10b[items.c$scl10 %in% c("IIINM")] <- 4
-items.c$scl10b[items.c$scl10 %in% c("IIIM")] <- 3
-items.c$scl10b[items.c$scl10 %in% c("IV", "V")] <- 2
-items.c$scl10b[items.c$scl10 %in% c("other")] <- 1
-items.c$scl10b <- factor(items.c$scl10b, labels = c("oth","IV V","IIIM","IIINM","I II"))
+items.c$scl10b[items.c$scl10 %in% c("I", "II")] <- 4
+items.c$scl10b[items.c$scl10 %in% c("IIINM")] <- 3
+items.c$scl10b[items.c$scl10 %in% c("IIIM")] <- 2
+items.c$scl10b[items.c$scl10 %in% c("IV", "V")] <- 1
+items.c$scl10b[items.c$scl10 %in% c("other")] <- 5
+items.c$scl10b <- factor(items.c$scl10b, labels = c("IV V","IIIM","IIINM","I II","oth"))
 
 # convert to factor
 items.c$smkpr <- factor(items.c$smkpr)

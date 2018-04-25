@@ -225,68 +225,78 @@ for (i in 1:length(items)) items[[i]] <- items[[i]][order(items[[i]][,"cohortsex
 ## ---- MEANTABLE
 # table of mean values of items
 
-ncomm <- 11                             # number of common items
+ncomm <- 11                           # number of common items
 ncats <- c(3,3,3,3,2,2,3,3,3,3,2)     # number of categories per item
 
-means <- matrix(NA, ncomm, 7)
-colnames(means) <- c("num", "BCS_ca", "BCS_sa", "BCS_a", "MCS_ca", "MCS_sa", "MCS_a")
+means <- list()
+X.allg <- list()
+meantab <- list()
+means[[1]] <- matrix(NA, ncomm, 7)    # males
+means[[2]] <- matrix(NA, ncomm, 7)    # females
+X.allg[[1]] <- X.all[X.all$sex==1,]
+X.allg[[2]] <- X.all[X.all$sex==2,]
 
-for (i in 1:ncomm) {
-  means[i,1] <- i
-  t <- table(X.all$cohort, X.all[,grep("X[0-9]", names(X.all))][,i]) # ith column of item-only matrix
-  t2 <- 100*prop.table(t, 1)                           # convert to row percentages
+for (g in c(1,2)) {                   # males/females
+  colnames(means[[g]]) <- c("num", "BCS_ca", "BCS_sa", "BCS_a", "MCS_ca", "MCS_sa", "MCS_a")
   
-  if (ncats[i] == 3) { # 3-category items
-    means[i,2] <- t2[1,1]
-    means[i,3] <- t2[1,2]
-    means[i,5] <- t2[2,1]
-    means[i,6] <- t2[2,2]
+  for (i in 1:ncomm) {                # items
+    means[[g]][i,1] <- i
+    t <- table(X.allg[[g]]$cohort, X.allg[[g]][,grep("X[0-9]", names(X.allg[[g]]))][,i]) # ith column of item-only matrix
+    t2 <- 100*prop.table(t, 1)                           # convert to row percentages
+    
+    if (ncats[i] == 3) { # 3-category items
+      means[[g]][i,2] <- t2[1,1]
+      means[[g]][i,3] <- t2[1,2]
+      means[[g]][i,5] <- t2[2,1]
+      means[[g]][i,6] <- t2[2,2]
+    }
+    if (ncats[i] == 2) { # binary items
+      means[[g]][i,4] <- t2[1,1]
+      means[[g]][i,7] <- t2[2,1]
+    }
   }
   
-  if (ncats[i] == 2) { # binary items
-    means[i,4] <- t2[1,1]
-    means[i,7] <- t2[2,1]
-  }
-
+  # table with means
+  meantab[[g]]      <- data.frame(row.names = paste("Item", seq(1,ncomm)))
+  meantab[[g]]$num  <- seq(1,ncomm)     # item number
+  meantab[[g]]$fac  <- c(rep("EXT", 6), rep("INT", 5))                                            # factor
+  meantab[[g]]$cats <- as.character(ncats)                                                       # number of categories
+  
+  meantab[[g]]$bcs.text <- c(
+    "Very restless. Often running about or jumping up and down. Hardly ever still",
+    "Is squirmy or fidgety",
+    "Frequently fights other children + \\newline Bullies other children",
+    "Cannot settle to anything for more than a few moments",
+    "Has temper tantrums",
+    "Is often disobedient",
+    "Often worried, worries about many things",
+    "Tends to be fearful or afraid of new things or new situations",
+    "Tends to do things on his/her own – rather solitary",
+    "Often appears miserable, unhappy, tearful or distressed",
+    "Complains of headaches + \\newline Complains of stomach-ache or has vomited"
+  )
+  meantab[[g]]$bcs.num <- c("1", "2", "4 \\newline 19", "15", "D", "14", "6", "16", "7", "9", "A \\newline B")   # BCS item numbers
+  meantab[[g]] <- merge(meantab[[g]], means[[g]][,c("num", "BCS_ca", "BCS_sa", "BCS_a")], by="num")                  # merge matrix of means for BCS
+  
+  meantab[[g]]$mcs.text <- c(
+    "Restless, overactive, cannot stay still for long",
+    "Constantly fidgeting or squirming",
+    "Often fights with other children or bullies them",
+    "Easily distracted, concentration wanders",
+    "Often has temper tantrums or hot tempers",
+    "(+) Generally obedient, usually does what adults request",
+    "Many worries, often seems worried",
+    "Nervous or clingy in new situations, easily loses confidence",
+    "Rather solitary, tends to play alone",
+    "Often unhappy, down-hearted or tearful",
+    "Often complains of head- aches, stomach-ache or sickness"
+  )
+  meantab[[g]]$mcs.num <- c("2", "10", "12", "15", "5", "7", "8", "16", "6", "13", "3")    # MCS item numbers
+  meantab[[g]] <- merge(meantab[[g]], means[[g]][,c("num", "MCS_ca", "MCS_sa", "MCS_a")], by="num")                  # merge matrix of means for BCS
+  
 }
 
-# table with means
-meantab <- data.frame(row.names = paste("Item", seq(1,ncomm)))
-meantab$num <- seq(1,ncomm)     # item number
-meantab$fac <- c(rep("EXT", 6), rep("INT", 5))                                            # factor
-meantab$cats <- as.character(ncats)                                                       # number of categories
 
-meantab$bcs.text <- c(
-  "Very restless. Often running about or jumping up and down. Hardly ever still",
-  "Is squirmy or fidgety",
-  "Frequently fights other children + \\newline Bullies other children",
-  "Cannot settle to anything for more than a few moments",
-  "Has temper tantrums",
-  "Is often disobedient",
-  "Often worried, worries about many things",
-  "Tends to be fearful or afraid of new things or new situations",
-  "Tends to do things on his/her own – rather solitary",
-  "Often appears miserable, unhappy, tearful or distressed",
-  "Complains of headaches + \\newline Complains of stomach-ache or has vomited"
-)
-meantab$bcs.num <- c("1", "2", "4 \\newline 19", "15", "D", "14", "6", "16", "7", "9", "A \\newline B")   # BCS item numbers
-meantab <- merge(meantab, means[,c("num", "BCS_ca", "BCS_sa", "BCS_a")], by="num")                  # merge matrix of means for BCS
-
-meantab$mcs.text <- c(
-  "Restless, overactive, cannot stay still for long",
-  "Constantly fidgeting or squirming",
-  "Often fights with other children or bullies them",
-  "Easily distracted, concentration wanders",
-  "Often has temper tantrums or hot tempers",
-  "(+) Generally obedient, usually does what adults request",
-  "Many worries, often seems worried",
-  "Nervous or clingy in new situations, easily loses confidence",
-  "Rather solitary, tends to play alone",
-  "Often unhappy, down-hearted or tearful",
-  "Often complains of head- aches, stomach-ache or sickness"
-)
-meantab$mcs.num <- c("2", "10", "12", "15", "5", "7", "8", "16", "6", "13", "3")    # MCS item numbers
-meantab <- merge(meantab, means[,c("num", "MCS_ca", "MCS_sa", "MCS_a")], by="num")                  # merge matrix of means for BCS
 
 
 

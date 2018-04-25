@@ -285,11 +285,11 @@ The five-factor structure at the basis of the full SDQ has been validated in man
 \begin{table}[ht]
 \centering
 \footnotesize
-\caption{Item Commonalities}\label{tab:comm}
-<<MEANTABLE_RES, dependson="MEANTABLE", results='asis'>>=
+\caption{Item Commonalities -- Males}\label{tab:comm_m}
+<<MEANTABLE_RES_M, dependson="MEANTABLE", results='asis'>>=
 require(xtable)
 
-table <- meantab
+table <- meantab[[1]]
 
 print(xtable(table,
                                   # item num        Factor          Num cats        BCS text        BCS num           BCS Certain     BCS Somewhat    BCS Applies             MCS text          MCS num         
@@ -322,6 +322,47 @@ print(xtable(table,
 \end{table}
 \end{landscape}
 
+\clearpage
+\begin{landscape}
+\begin{table}[ht]
+\centering
+\footnotesize
+\caption{Item Commonalities -- Females}\label{tab:comm_f}
+<<MEANTABLE_RES_F, dependson="MEANTABLE", results='asis'>>=
+require(xtable)
+
+table <- meantab[[2]]
+
+print(xtable(table,
+                                  # item num        Factor          Num cats        BCS text        BCS num           BCS Certain     BCS Somewhat    BCS Applies             MCS text          MCS num         
+                    align="L{0cm}C{.04\\textwidth}C{.05\\textwidth}C{.05\\textwidth}L{.3\\textwidth}C{.03\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}L{.3\\textwidth}C{.03\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
+                    digits = 1
+                    ), 
+             size="\\small",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0)),
+                              command = c(
+                              # header
+                                    paste(" & & &
+                                              \\multicolumn{5}{c}{\\textbf{BCS}} &
+                                              \\multicolumn{5}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){4-8}  \\cmidrule(lr){9-13} 
+                                            Item & Factor & N. categ &
+                                              Text & & Cert. Applies & Somet. Applies & Applies &
+                                              Text & & Cert. True & Somet. True & True \\\\ \\midrule
+                                          "
+                                            , sep="")
+                                    )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = ".8\\textwidth",
+             floating = FALSE
+)
+
+@
+\end{table}
+\end{landscape}
 
 
 

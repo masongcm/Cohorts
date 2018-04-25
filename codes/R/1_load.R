@@ -21,6 +21,7 @@ library(cowplot)
 library(tikzDevice)
 library(gtools)
 library(here)
+library(rio)
 
 
 dir_data  <- here("rdata/")
@@ -38,7 +39,7 @@ auxvars <- c("faminc_real", "faminc_infl", "incq", "ysch_moth5", "ysch_fath5", "
              "sex", "bwt", "smkpr", "scl10", "gestaw", "region","mothageb")
 
 # BCS -------------------------------------------
-bcs5data <- read.dta(paste(dir_data, "bcs5yeng.dta", sep=""), convert.factors = F) # all BCS data
+bcs5data <- read.dta(paste0(dir_data, "bcs5yeng.dta"), convert.factors = F) # all BCS data
 bcs5rutb <- bcs5data[,grep("bcs5_rutb", names(bcs5data), value=TRUE)]                 # BINARY Rutter items only
 bcs5rutc <- bcs5data[,grep("bcs5_rutc", names(bcs5data), value=TRUE)]                 # 3CAT Rutter items only
 
@@ -80,20 +81,21 @@ for (i in 1:ncol(bcs5rutc)) bcs5rutcf[,i] <- as.ordered(bcs5rutc[,i])
 
 # auxiliary variables
 bcs5aux <- cbind(bcs5data[,c("bcsid", auxvars, "hinvq00")],
-                cog1 = bcs5data$epvt_z,
-                cog2 = bcs5data$hfd_z,
-                cog3 = bcs5data$copy_z
-                )
+                 cog1 = bcs5data$epvt_z,
+                 cog2 = bcs5data$hfd_z,
+                 cog3 = bcs5data$copy_z
+)
 names(bcs5aux)[names(bcs5aux)=="bcsid"] <- "id"
+bcs5aux$rwtd <- 1
 
 # MCS -------------------------------------------
-mcs5data <- read.dta(paste(dir_data, "mcs5yeng_rwt.dta", sep=""), convert.factors = F) # all MCS data
+mcs5data <- read.dta(paste(dir_data, "mcs5yeng.dta", sep=""), convert.factors = F) # all MCS data
 # social class 
 mcs5data$scl10 <- factor(mcs5data$scl10, labels = c("I", "II", "IIINM", "IIIM", "IV", "V", "other"))
 
 # items to keep (binary version)
 mcskeepb <- c(2,3,5,6,7,8,10,12,13,14,15,16,18,19,22,23,24)  # excluding prosocial scale (itm 1 4 9 17 20)
-                                                             # & three positively worded items (itm 11 21 25)
+# & three positively worded items (itm 11 21 25)
 mcs5sdqb <- mcs5data[,paste("mcs5_sdqb", mcskeepb, sep="")]         # BINARY SDQ items only      
 
 # version with factor (3cat)
@@ -102,32 +104,32 @@ for (i in 1:ncol(mcs5sdqb)) mcs5sdqbf[,i] <- as.ordered(mcs5sdqb[,i])
 
 # items to keep (3cat version)
 mcs5sdqc <- mcs5data[,c("mcs5_sdqc2", 
-                     "mcs5_sdqb3",  # binary (for comparability)
-                     "mcs5_sdqb5",  # binary (for comparability)
-                     "mcs5_sdqc6",
-                     "mcs5_sdqb7",  # binary (for comparability)
-                     "mcs5_sdqc8",
-                     "mcs5_sdqc10",
-                     "mcs5_sdqc12",
-                     "mcs5_sdqc13",
-                     "mcs5_sdqb14", # binary (for comparability)
-                     "mcs5_sdqc15",
-                     "mcs5_sdqc16",
-                     "mcs5_sdqc18",
-                     "mcs5_sdqc19",
-                     "mcs5_sdqc22",
-                     "mcs5_sdqc23",
-                     "mcs5_sdqc24")]
+                        "mcs5_sdqb3",  # binary (for comparability)
+                        "mcs5_sdqb5",  # binary (for comparability)
+                        "mcs5_sdqc6",
+                        "mcs5_sdqb7",  # binary (for comparability)
+                        "mcs5_sdqc8",
+                        "mcs5_sdqc10",
+                        "mcs5_sdqc12",
+                        "mcs5_sdqc13",
+                        "mcs5_sdqb14", # binary (for comparability)
+                        "mcs5_sdqc15",
+                        "mcs5_sdqc16",
+                        "mcs5_sdqc18",
+                        "mcs5_sdqc19",
+                        "mcs5_sdqc22",
+                        "mcs5_sdqc23",
+                        "mcs5_sdqc24")]
 
 # version with factor (3cat)
 mcs5sdqcf <- mcs5sdqc
 for (i in 1:ncol(mcs5sdqc)) mcs5sdqcf[,i] <- as.ordered(mcs5sdqc[,i])                    
 
 # add SES and cognitive data
-mcs5aux <- cbind(mcs5data[,c("mcsid", auxvars)],
-                cog1 = mcs5data$nvoc_bastz,
-                cog2 = mcs5data$psim_bastz,
-                cog3 = mcs5data$patc_bastz
+mcs5aux <- cbind(mcs5data[,c("mcsid", auxvars, "rwtd")],
+                 cog1 = mcs5data$nvoc_bastz,
+                 cog2 = mcs5data$psim_bastz,
+                 cog3 = mcs5data$patc_bastz
 )
 names(mcs5aux)[names(mcs5aux)=="mcsid"] <- "id"
 # add empty column with hinvq00 to match BCS
@@ -154,8 +156,8 @@ X.all <- data.frame(rbind(Xtemp.bcs, Xtemp.mcs))
 
 # assemble final data
 items.c <- X.all[,c(grep("X", names(X.all), value=T), 
-                "id", "cohort", auxvars, "hinvq00",
-                "cog1", "cog2", "cog3")]
+                    "id", "cohort", auxvars, "hinvq00", "rwtd",
+                    "cog1", "cog2", "cog3")]
 colnames(items.c)[colnames(items.c) == "ageint5"] <- "age"
 items.c$sex <- factor(items.c$sex)
 levels(items.c$sex) = c("M", "F")
@@ -189,6 +191,12 @@ items.c$smkpr <- factor(items.c$smkpr)
 items.c$region <- factor(items.c$region)
 items.c$incq <- ordered(items.c$incq)
 
+# save dataset
+export(items.c[,!names(items.c) %in% c("INT.RAW", "EXT.RAW", "INT.RAWr", "EXT.RAWr")], paste0(dir_data,"cohorts_all.dta"))
+
+# KEEP ONLY REWEIGHTED SAMPLE
+items.c2 <- items.c
+items.c <- items.c[items.c$rwtd==1,]
 
 # MODEL LIST
 # 1 (MAIN) : separate gender groups, no age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)

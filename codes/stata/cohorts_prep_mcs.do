@@ -223,67 +223,6 @@ merge 1:1 mcsid using `mcsscl11y', gen(mcs_merge_scl11)
 
 
 ********************************************************************************
-// REWEIGHT SAMPLE (ENGLAND)
-********************************************************************************
-keep if country == 1
-keep if sentry == 1 // only those who entered in sweep 1
-keep if relmain == 3 // only natural children
-
-/*
-selection probability by stratum (ENG)
-					Raw			Normalised		% to select
-Advantaged: 		0.0208			1				100
-Disadvantaged: 		0.0383			1.84			54.35
-Ethnic: 			0.112			5.38			18.59
-*/
-
-/* advantaged ------------------------- */
-preserve
-keep if pttype2==1
-tempfile adv
-save `adv'
-restore
-
-/* disadvantaged ---------------------- */
-preserve
-keep if pttype2==2
-/* how many to select */
-count 
-local toselect = floor(r(N)*0.5435)
-di `toselect'
-
-gen rand = uniform()
-sort rand
-keep in 1/`toselect'
-
-tempfile disadv
-save `disadv'
-restore
-
-/* ethnic ---------------------- */
-preserve
-keep if pttype2==3
-/* how many to select */
-count 
-local toselect = floor(r(N)*0.1859)
-di `toselect'
-
-gen rand = uniform()
-sort rand
-keep in 1/`toselect'
-
-tempfile ethn
-save `ethn'
-restore
-
-
-use `adv', clear
-append using `disadv'
-append using `ethn'
-saveold "$rdata/mcseng_rwt.dta", replace version(12)
-
-
-********************************************************************************
 // CLEAN 11Y SURVEY
 ********************************************************************************
 
@@ -462,16 +401,85 @@ forvalues i=1(1)25 {
 
 
 
-****************************
-/* SAVE FILES for R */
+********************************************************************************
+// REWEIGHT SAMPLE (ENGLAND)
+********************************************************************************
 
 * SAMPLE SELECTION
-
 keep if cmpsex00 == 2		// keep only interviews with mother
 drop if region > 9			// drop interviews not in England
+keep if country == 1
+keep if sentry == 1 // only those who entered in sweep 1
+keep if relmain == 3 // only natural children
 
 
 local covarstokeep country region sex bwt smkpr gestaw mothageb scl10 region incq faminc_real faminc_infl ysch_moth5 ysch_fath5 numch5
+
+/* SAVE COMPLETE 5y FILE */
+preserve
+egen ncmiss=rowmiss(mcs5_sdq*)
+drop if ncmiss >21
+keep mcsid sentry pttype2 mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5 `covarstokeep'
+saveold "$rdata/mcs5yeng.dta", replace version(12)
+restore
+
+
+/*
+selection probability by stratum (ENG)
+					Raw			Normalised		% to select
+Advantaged: 		0.0208			1				100
+Disadvantaged: 		0.0383			1.84			54.35
+Ethnic: 			0.112			5.38			18.59
+*/
+
+/* advantaged ------------------------- */
+preserve
+keep if pttype2==1
+tempfile adv
+save `adv'
+restore
+
+/* disadvantaged ---------------------- */
+preserve
+keep if pttype2==2
+/* how many to select */
+count 
+local toselect = floor(r(N)*0.5435)
+di `toselect'
+
+gen rand = uniform()
+sort rand
+keep in 1/`toselect'
+
+tempfile disadv
+save `disadv'
+restore
+
+/* ethnic ---------------------- */
+preserve
+keep if pttype2==3
+/* how many to select */
+count 
+local toselect = floor(r(N)*0.1859)
+di `toselect'
+
+gen rand = uniform()
+sort rand
+keep in 1/`toselect'
+
+tempfile ethn
+save `ethn'
+restore
+
+
+use `adv', clear
+append using `disadv'
+append using `ethn'
+saveold "$rdata/mcseng_rwt.dta", replace version(12)
+
+****************************
+/* SAVE FILES for R */
+
 
 /* SAVE 5y FILE */
 preserve

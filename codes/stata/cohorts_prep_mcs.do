@@ -39,14 +39,27 @@ foreach x of local mainrcodes {
 lab val relmain LABF
 
 // marital status
-recode amfcin00 (-9/-1=.) (2 3 = 1) (1 4 5 6 = 0), gen(marr)
+recode amfcin00 (-9/-1=.) (2 3 = 0) (1 4 5 6 = 1), gen(singlem)
+
+// maternal malaise
+
+recode 	amtire00 amdepr00 amworr00 amrage00 ///
+		amscar00 amupse00 amkeyd00 amnerv00 amhera00 ///
+		(-9/-1=.) (2=0)
+
+local mlq "amtire00 amdepr00 amworr00 amrage00 amscar00 amupse00 amkeyd00 amnerv00 amhera00"
+gen malaise=0
+foreach v of local mlq {
+	replace malaise = malaise + `v'
+}
 
 lab var sex			"CM sex"
 lab var smkpr		"Smoked during pregnancy (main resp)"
-lab var marr		"Married (main resp)"
+lab var singlem		"Single mother (main resp)"
 lab var relmain		"CM relationship to main respondent"
+lab var malaise		"Mother malaise (0y)"
 
-keep mcsid sex smkpr amlfte00 aplfte00 marr relmain
+keep mcsid sex smkpr amlfte00 aplfte00 singlem relmain malaise
 tempfile mcsdem1
 save `mcsdem1'
 
@@ -59,14 +72,16 @@ recode ADC06EA0 (-9/-1=.) (1=0) (2/6=1), gen(ethn)
 recode ADBWGTA0 (-8 -1 = .), gen(bwt)
 replace bwt = bwt*1000
 recode AMDAGB00 (-2=.), gen(mothageb)
+gen teenm = mothageb<20 if mothageb!=.
 gen gestaw = floor(ADGESTA0/7) if ADGESTA0>0
 
 lab var ethn 			"Nonwhite ethnicity"
 lab var bwt				"CM Birthweight (g)"
 lab var gestaw			"Gestational age (weeks)"
 lab var mothageb		"Age at CM birth (main resp)"
+lab var teenm			"Teen mother"
 
-keep mcsid region ethn bwt gestaw mothageb
+keep mcsid region ethn bwt gestaw mothageb teenm
 tempfile mcsdem2
 save `mcsdem2'
 
@@ -108,6 +123,28 @@ lab var numch5		"Number other children in HH at 5"
 keep mcsid hnvq_main hnvq_part numch5
 tempfile mcs5d
 save `mcs5d'
+
+******************************************************************
+*mother highest qual at 5
+use "$mcsraw/S1/mcs1_parent_interview.dta", clear
+keep mcsid amacqu00 amvcqu00
+gen highed_moth5 = 0 if amacqu00!=. & amvcqu00!=.
+replace highed_moth5 = 1 if inlist(amacqu00,1,2) | amvcqu00==1
+
+merge 1:1 mcsid using "$mcsraw/S2/mcs2_parent_interview.dta", keepusing(bmacqu00 bmvcqu00) nogen
+replace highed_moth5 = 1 if inlist(bmacqu00,1,2) | bmvcqu00==1
+
+merge 1:1 mcsid using "$mcsraw/S3/mcs3_parent_interview.dta", keepusing(cmacqu0? cmvcqu0?) nogen
+local let "a b c d e f g"
+foreach l of local let {
+	replace highed_moth5 = 1 if inlist(cmacqu0`l',1,2,3)
+	cap replace highed_moth5 = 1 if cmvcqu0`l' ==1
+}
+lab var highed_moth5	"Mother HE degree (5y)"
+keep mcsid highed_moth5
+tempfile mcsmeduc
+save `mcsmeduc'
+
 
 *SKILLS AT 5	 ***************************************************************
 
@@ -212,7 +249,8 @@ save `mcsscl11y'
 use `mcslong', clear
 merge 1:1 mcsid using `mcsdem1', nogen
 merge 1:1 mcsid using `mcsdem2', nogen
-merge 1:1 mcsid using `mcsdem3', gen(mcs_merge_educ)
+merge 1:1 mcsid using `mcsdem3', gen(mcs_merge_dem)
+merge 1:1 mcsid using `mcsmeduc', gen(mcs_merge_meduc)
 merge 1:1 mcsid using `mcssdq5y', gen(mcs_merge_sdq5)
 merge 1:1 mcsid using `mcscog5y', gen(mcs_merge_cog5)
 merge 1:1 mcsid using `mcs5d', gen(mcs_merge_der5)
@@ -472,7 +510,9 @@ append using `ethn'
 ****************************
 /* SAVE FILES for R */
 
-local covarstokeep country region sex bwt smkpr gestaw mothageb scl10 region incq faminc_real faminc_infl ysch_moth5 ysch_fath5 numch5
+local covarstokeep country region sex bwt smkpr gestaw mothageb singlem teenm ///
+					ysch_moth5 ysch_fath5 numch5 highed_moth5 ///
+					scl10 incq faminc_real faminc_infl
 
 /* SAVE 5y FILE */
 preserve

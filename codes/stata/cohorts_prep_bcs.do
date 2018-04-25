@@ -11,17 +11,21 @@ rename a0255 sex
 recode a0278 (-3/-2=.), gen(bwt)
 recode a0043b (-3=.) (1/3=0) (4/6=1), gen(smkpr)
 rename a0005a mothageb
+gen teenm = mothageb<20 if mothageb!=.
 rename a0166 parity
 recode a0195b (-3 -2 = .), gen(gestaw)
+recode a0012 (-2=.) (1 3 4 5 = 1) (2 = 0), gen(singlem)
 
 lab var sex				"CM sex"
 lab var bwt				"CM Birthweight (g)"
 lab var parity			"Parity"
 lab var mothageb		"Mother age at CM birth"
+lab var teenm			"Teen mother"
 lab var smkpr			"Smoked during pregnancy"
 lab var gestaw			"Gestational age (weeks)"
+lab var singlem			"Single mother"
 
-keep bcsid sex bwt smkpr mothageb parity gestaw
+keep bcsid sex bwt smkpr mothageb teenm parity gestaw singlem
 tempfile bcsdem1
 save `bcsdem1'
 
@@ -41,14 +45,13 @@ use "$bcsraw/1975/f699b.dta", clear
 
 recode e245 (-3 -2 = .) (1 2 = 0) (3/7=1), gen(ethn)
 
-rename e189a	educ_moth5
-rename e189b	educ_fath5
-recode educ_moth5 educ_fath5 (-3 -2 -1 8 =.)
-
+// parental education
 rename e195		ysch_moth5
 rename e196		ysch_fath5
 recode ysch_moth5 ysch_fath5 (-3 -2 -1 =.)
+recode e189a (-3/-1 = .) (7=1) (1/6 8 =0), gen(highed_moth5)
 
+// date interview
 recode e271 (-3=.)
 tostring e271, gen(datestr)
 
@@ -62,22 +65,35 @@ gen ageint5 = dateint5 - dateb
 
 gen numch5 = e006 + e007 if e007!=-1 & e006!=-1
 
-lab var ageint5		"Age at 5y interview (months)"
-lab var ethn		"Nonwhite ethnicity"
-lab var ysch_fath5	"Father years of schooling (5y)"
-lab var ysch_moth5	"Mother years of schooling (5y)"
-lab var numch5		"Number other children in HH at 5"
+lab var ageint5			"Age at 5y interview (months)"
+lab var ethn			"Nonwhite ethnicity"
+lab var ysch_fath5		"Father years of schooling (5y)"
+lab var ysch_moth5		"Mother years of schooling (5y)"
+lab var highed_moth5	"Mother HE degree (5y)"
+lab var numch5			"Number other children in HH at 5"
 
-keep bcsid ethn ageint5 *_moth5 *_fath5 numch5
+keep bcsid ethn ageint5 *_moth5 *_fath5 numch5 highed_moth5
 tempfile bcsdem3
 save `bcsdem3'
 
 
+
+
 *SKILLS at 5	 ***************************************************************
 
-* 5 Year Survey - Rutter (parental module)
+* 5 Year Survey - Rutter (parental module), maternal malaise
 use "$bcsraw/1975/f699a.dta", clear
-keep bcsid d025-d043 d006-d009
+keep bcsid d025-d043 d006-d009 d045-d064
+
+// maternal malaise score
+recode d045 d046 d048 d052 d055 d057 d059 d063 d064 (-3=.) (2=0)
+local mlq "d045 d046 d048 d052 d055 d057 d059 d063 d064"
+gen malaise5=0
+foreach v of local mlq {
+	replace malaise5 = malaise5 + `v'
+}
+lab var malaise5	"Mother malaise (5y)"
+
 tempfile bcsrutter5y
 save `bcsrutter5y'
 
@@ -292,7 +308,9 @@ foreach x in epvt_z copy_z hfd_z {
 /* SAVE 10Y FILE for R */
 
 
-local covarstokeep country region sex bwt smkpr gestaw mothageb scl10 region incq faminc_real faminc_infl ysch_moth5 ysch_fath5 numch5
+local covarstokeep country region sex bwt smkpr gestaw mothageb teenm singlem ///
+						ysch_moth5 ysch_fath5 numch5 malaise5 highed_moth5 ///
+						scl10 incq faminc_real faminc_infl
 
 preserve
 * SAMPLE SELECTION

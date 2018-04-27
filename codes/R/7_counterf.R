@@ -1,7 +1,7 @@
 #######################################################################################################
 ## ---- DEC_VARS
 # select variables for decomposition
-decvars <- c("region","faminc_infl","scl10b","ysch_moth5","mothageb","numch5")
+decvars <- c("region","faminc10_infl","scl10b","mysch5","mothageb","numch5")
 
 # formulas
 form.ext <- as.formula(paste("EXT ~ ", paste0(decvars, collapse = '+')))

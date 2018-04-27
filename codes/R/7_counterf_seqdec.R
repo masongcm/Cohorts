@@ -64,7 +64,7 @@ makecfdecplots <- function(flst, titles = NA) {
 # MAKE COUNTERFACTUALS (without inference)
 
 # sequence of decomposition variables
-decseq <- list("faminc_real", "scl10b", "ysch_moth5", paste0(c("mothageb", "numch5"), collapse = "+"))
+decseq <- list("faminc10_real", "scl10b", "mysch5", paste0(c("mothageb", "numch5"), collapse = "+"))
 
 # allocate
 lcf.ext.m <- list()

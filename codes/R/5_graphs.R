@@ -64,7 +64,7 @@ plot_grid(box.ext.bcs, box.int.bcs, box.ext.mcs, box.int.mcs, ncol=2, align="h")
 # aggregate mean income
 semean <- function(x) sqrt(var(x,na.rm=TRUE)/length(na.omit(x)))
 meaninc <- data.frame(
-  aggregate(scores2plot$faminc_real, 
+  aggregate(scores2plot$faminc10_real, 
             by = list(scores2plot$cohort, scores2plot$incq), 
             FUN=function(x) c(m = mean(x, na.rm=T), se = semean(x) )))
 meaninc <- cbind(meaninc[1:2], as.matrix(meaninc$x))
@@ -101,10 +101,10 @@ addopts <- function(x) {
   return(x)
 }
 
-ineq.ext.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$incq)), aes(x=as.factor(incq), y=EXT, colour=cohort)) + ggtitle("Males Externalising")
-ineq.ext.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$incq)), aes(x=as.factor(incq), y=EXT, colour=cohort)) + ggtitle("Females Externalising")
-ineq.int.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$incq)), aes(x=as.factor(incq), y=INT, colour=cohort)) + ggtitle("Males Internalising")
-ineq.int.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$incq)), aes(x=as.factor(incq), y=INT, colour=cohort)) + ggtitle("Females Internalising")
+ineq.ext.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$incq10)), aes(x=as.factor(incq10), y=EXT, colour=cohort)) + ggtitle("Males Externalising")
+ineq.ext.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$incq10)), aes(x=as.factor(incq10), y=EXT, colour=cohort)) + ggtitle("Females Externalising")
+ineq.int.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$incq10)), aes(x=as.factor(incq10), y=INT, colour=cohort)) + ggtitle("Males Internalising")
+ineq.int.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$incq10)), aes(x=as.factor(incq10), y=INT, colour=cohort)) + ggtitle("Females Internalising")
 
 ineqlist <- list(ineq.ext.m, ineq.ext.f, ineq.int.m, ineq.int.f) 
 ineqlist <- lapply(ineqlist, addopts) # apply options to all graphs
@@ -164,10 +164,10 @@ require(gridExtra)
 inc.lims <- c(0, 2.0)
 
 # loess plot of scores on income
-l.inc.ext.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc_real, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Males Externalising")
-l.inc.ext.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc_real, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Females Externalising")
-l.inc.int.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc_real, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Males Internalising")
-l.inc.int.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc_real, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Females Internalising")
+l.inc.ext.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc10_real, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Males Externalising")
+l.inc.ext.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc10_real, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Females Externalising")
+l.inc.int.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc10_real, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Males Internalising")
+l.inc.int.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc10_real, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Females Internalising")
 
 l.inc <- list(l.inc.ext.m, l.inc.ext.f, l.inc.int.m, l.inc.int.f)
 l.inc <- lapply(l.inc, 
@@ -185,9 +185,9 @@ theme_dens <- theme(axis.line.x=element_blank(),axis.text.x=element_blank(),
                     legend.position = "none")
 addopts_dens <- function(x) x + ylab("Density") + xlab("") + scale_y_reverse() + coord_cartesian(xlim = inc.lims) + theme_dens
 
-dens.m <- ggplot(subset(scores2plot, sex=="M"), aes(x=faminc_real, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1)
+dens.m <- ggplot(subset(scores2plot, sex=="M"), aes(x=faminc10_real, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1)
 dens.m <- addopts_dens(dens.m)
-dens.f <- ggplot(subset(scores2plot, sex=="F"), aes(x=faminc_real, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1)
+dens.f <- ggplot(subset(scores2plot, sex=="F"), aes(x=faminc10_real, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1)
 dens.f <- addopts_dens(dens.f)
 
 # EXT plots
@@ -209,10 +209,10 @@ ploess.real.int <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
 inc.lims <- c(0, 2.0)
 
 # loess plot of scores on income
-l.inc.ext.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc_infl, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Males Externalising")
-l.inc.ext.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc_infl, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Females Externalising")
-l.inc.int.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc_infl, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Males Internalising")
-l.inc.int.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc_infl, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Females Internalising")
+l.inc.ext.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc10_infl, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Males Externalising")
+l.inc.ext.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc10_infl, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Females Externalising")
+l.inc.int.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc10_infl, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Males Internalising")
+l.inc.int.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc10_infl, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Females Internalising")
 
 l.inc <- list(l.inc.ext.m, l.inc.ext.f, l.inc.int.m, l.inc.int.f)
 l.inc <- lapply(l.inc, 
@@ -230,9 +230,9 @@ theme_dens <- theme(axis.line.x=element_blank(),axis.text.x=element_blank(),
                     legend.position = "none")
 addopts_dens <- function(x) x + ylab("Density") + xlab("") + scale_y_reverse() + coord_cartesian(xlim = inc.lims) + theme_dens
 
-dens.m <- ggplot(subset(scores2plot, sex=="M"), aes(x=faminc_infl, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1)
+dens.m <- ggplot(subset(scores2plot, sex=="M"), aes(x=faminc10_infl, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1)
 dens.m <- addopts_dens(dens.m)
-dens.f <- ggplot(subset(scores2plot, sex=="F"), aes(x=faminc_infl, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1)
+dens.f <- ggplot(subset(scores2plot, sex=="F"), aes(x=faminc10_infl, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1)
 dens.f <- addopts_dens(dens.f)
 
 # EXT plots
@@ -250,10 +250,10 @@ ploess.infl.int <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
 ## ---- FACLOESS_INC_INFL
 
 # loess plot of scores on income
-l.inc.ext.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc_infl, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Males Externalising")
-l.inc.ext.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc_infl, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Females Externalising")
-l.inc.int.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc_infl, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Males Internalising")
-l.inc.int.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc_infl, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Females Internalising")
+l.inc.ext.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc10_infl, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Males Externalising")
+l.inc.ext.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc10_infl, y=EXT, group=cohort, fill=cohort, colour=cohort) ) + ylab("EXT") + ggtitle("Females Externalising")
+l.inc.int.m <- ggplot(data=subset(scores2plot, sex=="M"), aes(x=faminc10_infl, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Males Internalising")
+l.inc.int.f <- ggplot(data=subset(scores2plot, sex=="F"), aes(x=faminc10_infl, y=INT, group=cohort, fill=cohort, colour=cohort) ) + ylab("INT") + ggtitle("Females Internalising")
 l.inc <- list(l.inc.ext.m, l.inc.ext.f, l.inc.int.m, l.inc.int.f)
 l.inc <- lapply(l.inc, 
                 function(x) x + theme(legend.position="none") + labs(list(fill="", colour = "")) +

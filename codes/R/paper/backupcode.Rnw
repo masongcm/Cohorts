@@ -1,4 +1,12 @@
 
+% <<FA_INV_AUX, dependson='LOAD_DATA'>>=
+% # robustness models
+% @
+
+% <<FA_SCORES_AUX, dependson='FA_INV_AUX'>>=
+% # produce scores for robustness models
+% @
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Tables for additional fit indices
 

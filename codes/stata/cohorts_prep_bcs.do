@@ -9,23 +9,58 @@
 use "$bcsraw/1970_birth/bcs7072a.dta", clear
 rename a0255 sex
 recode a0278 (-3/-2=.), gen(bwt)
+gen lowbwt = bwt<2500 if bwt!=.
 recode a0043b (-3=.) (1/3=0) (4/6=1), gen(smkpr)
 rename a0005a mothageb
 gen teenm = mothageb<20 if mothageb!=.
 rename a0166 parity
+rename a0163 nprevpreg
+gen firstb = parity==0 if parity!=.
+rename a0169 nprevst
+rename a0167 nprevms
+
 recode a0195b (-3 -2 = .), gen(gestaw)
+gen preterm = gestaw<37 if gestaw!=.
 recode a0012 (-2=.) (1 3 4 5 = 1) (2 = 0), gen(singlem)
 
-lab var sex				"CM sex"
-lab var bwt				"CM Birthweight (g)"
+recode a0017 (-2=.) (1/17=1) (18 19=0), gen(mempl)
+replace mempl = 1 if mempl==. & a0019==1
+replace mempl = 0 if mempl==. & a0019==2
+
+recode a0262 (-3/-1 = .) (7=1) (1/6 8 = 0), gen(caesbirth)
+
+recode a0317 (-3/-1 = .) (1 2 = 1) (3 = 0), gen(jaundice)
+recode a0288 (-3 -2 = .) (2 = 0), gen(preecl)
+replace preecl = 1 if a0293==12
+replace preecl = 1 if a0228==1
+recode a0261a (-3 -2 = .) (2=0), gen(meconm)
+
+gen mheight = a0197/100 if a0197>0
+
+lab var sex				"Sex"
+lab var bwt				"Birthweight (g)"
+lab var lowbwt			"Low birthweight (<2500g)"
 lab var parity			"Parity"
+lab var nprevpreg		"Num previous pregnancies"
+lab var nprevst			"Num previous stillbirths"
+lab var nprevms			"Num previous miscarriages"
+lab var firstb			"First born"
 lab var mothageb		"Mother age at CM birth"
 lab var teenm			"Teen mother"
 lab var smkpr			"Smoked during pregnancy"
 lab var gestaw			"Gestational age (weeks)"
+lab var preterm			"Preterm (<37w)"
 lab var singlem			"Single mother"
+lab var mempl			"Mother employment before pregnancy"
+lab var caesbirth		"Caesarean birth"
+lab var mheight			"Mother height (m)"
+lab var jaundice		"Jaundiced baby"
+lab var preecl			"Eclampsia during labor, signs of pre-eclampsia, eclamptic fits"
+lab var meconm			"Meconium"
 
-keep bcsid sex bwt smkpr mothageb teenm parity gestaw singlem
+
+keep bcsid sex bwt lowbwt smkpr mothageb teenm parity firstb nprevpreg nprevst nprevms ///
+				gestaw preterm singlem mempl caesbirth jaundice preecl mecon mheight
 tempfile bcsdem1
 save `bcsdem1'
 
@@ -46,10 +81,10 @@ use "$bcsraw/1975/f699b.dta", clear
 recode e245 (-3 -2 = .) (1 2 = 0) (3/7=1), gen(ethn)
 
 // parental education
-rename e195		ysch_moth5
-rename e196		ysch_fath5
-recode ysch_moth5 ysch_fath5 (-3 -2 -1 =.)
-recode e189a (-3/-1 = .) (7=1) (1/6 8 =0), gen(highed_moth5)
+rename e195		mysch5
+rename e196		fysch5
+recode mysch5 fysch5 (-3 -2 -1 =.)
+recode e189a (-3/-1 = .) (6 7=1) (15 8 =0), gen(mhied5)
 
 // date interview
 recode e271 (-3=.)
@@ -67,15 +102,14 @@ gen numch5 = e006 + e007 if e007!=-1 & e006!=-1
 
 lab var ageint5			"Age at 5y interview (months)"
 lab var ethn			"Nonwhite ethnicity"
-lab var ysch_fath5		"Father years of schooling (5y)"
-lab var ysch_moth5		"Mother years of schooling (5y)"
-lab var highed_moth5	"Mother HE degree (5y)"
+lab var fysch5		"Father years of schooling (5y)"
+lab var mysch5		"Mother years of schooling (5y)"
+lab var mhied5	"Mother HE degree (5y)"
 lab var numch5			"Number other children in HH at 5"
 
-keep bcsid ethn ageint5 *_moth5 *_fath5 numch5 highed_moth5
+keep bcsid ethn ageint5 ?ysch5 numch5 mhied5
 tempfile bcsdem3
 save `bcsdem3'
-
 
 
 
@@ -157,11 +191,11 @@ save `bcsnvq30y'
 
 *INCOME	 ******************************************************************
 use "$data/SEPdata/create37_BCS1980.dta", clear // income
-rename q_bu_net_total_p incq
-gen faminc_real 	= bu_net_total_p
-replace faminc_real = faminc_real/adjBCS/1000
-gen faminc_infl 	= bu_net_total_p
-replace faminc_infl = faminc_infl/inflBCS/1000
+rename q_bu_net_total_p incq10
+gen faminc10_real 	= bu_net_total_p
+replace faminc10_real = faminc10_real/adjBCS/1000
+gen faminc10_infl 	= bu_net_total_p
+replace faminc10_infl = faminc10_infl/inflBCS/1000
 tempfile bcsinc10y
 save `bcsinc10y'
 
@@ -263,7 +297,7 @@ lab var bcs10_rutD "(bin) Has temper tantrums (that is, complete loss of temper 
 ********************************************************************************
 // 5Y SURVEY
 ********************************************************************************
-
+qui {
 * RUTTER RECODING
 * apply label
 lab def rutbcs -3 "Not Stated" 1 "Does Not Apply" 2 "Applies Somewhat" 3 "Certainly Applies"
@@ -303,14 +337,17 @@ foreach x in epvt_z copy_z hfd_z {
 	drop `x'
 	rename `x'z `x'
 	}
+} //qui
 	
 ****************************
 /* SAVE 10Y FILE for R */
 
 
-local covarstokeep country region sex bwt smkpr gestaw mothageb teenm singlem ///
-						ysch_moth5 ysch_fath5 numch5 malaise5 highed_moth5 ///
-						scl10 incq faminc_real faminc_infl
+local covarstokeep country region ///
+					sex smkpr singlem mempl nprevst caesbirth preecl ///
+					ethn bwt lowbwt gestaw preterm mothageb teenm parity firstb mheight ///
+					mysch5 fysch5 numch5 mhied5 ///
+					scl10 incq10 faminc10_real faminc10_infl
 
 preserve
 * SAMPLE SELECTION

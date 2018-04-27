@@ -22,6 +22,27 @@ gen smkpr = smkprepreg
 replace smkpr = 0 if inlist(amcich00,0,96) & inlist(amwhch00,1,2)  
 // gave up, less than 1/day, changed in 1st/2nd month
 
+recode amwkpr00 (-9/-1=.) (2=0), gen(mempl) // paid job when pregnant
+gen ymendlastjob = ym(amjeyr00, amjemt00) if inrange(amjeyr00,0,2002) & inrange(amjemt00,1,12)
+gen ymconc = ym(ahcdbya0,ahcdbma0)-9 
+replace mempl = 1 if (ymconc - ymendlastjob)<12 // employed in year before pregnancy
+
+// still births
+local lets "a b c d e f g h i"
+gen nprevst = 0
+foreach l of local lets {
+	replace nprevst = nprevst+1 if amlive`l'0 == 2
+}
+
+recode amdewm0a (-9/-1=.) (5 6 = 1) (1/4 51/95 = 0), gen(caesbirth)
+
+egen jaundice = anymatch(amwrbmaa amwrbmab amwrbmac amwrbmad amwrbmae amwrbmaf amwrbmag), values(4)
+replace jaundice=. if amwrbmaa <0
+
+egen preecl = anymatch(amilwm0a amilwm0b amilwm0c amilwm0d amilwm0e amilwm0f amilwm0g), values(5)
+replace preecl=. if amilpr00 <0
+
+/*
 // relationship of main respondent
 rename ahprelaa ahprela1
 rename ahprelab ahprela2
@@ -37,6 +58,9 @@ foreach x of local mainrcodes {
 	replace relmain = ahprela`x' if ampnum00==`x'
 }
 lab val relmain LABF
+lab var relmain		"CM relationship to main respondent"
+
+*/
 
 // marital status
 recode amfcin00 (-9/-1=.) (2 3 = 0) (1 4 5 6 = 1), gen(singlem)
@@ -56,10 +80,14 @@ foreach v of local mlq {
 lab var sex			"CM sex"
 lab var smkpr		"Smoked during pregnancy (main resp)"
 lab var singlem		"Single mother (main resp)"
-lab var relmain		"CM relationship to main respondent"
 lab var malaise		"Mother malaise (0y)"
+lab var mempl		"Mother employment before pregnancy"
+lab var nprevst		"Num previous stillbirths"
+lab var caesbirth	"Caesarean birth"
+lab var jaundice	"Jaundiced baby"
+lab var preecl		"Raised blood pressure, eclampsia /preeclampsia, or toxaemia"
 
-keep mcsid sex smkpr amlfte00 aplfte00 singlem relmain malaise
+keep mcsid amlfte00 aplfte00 amotcn00 sex smkpr singlem malaise mempl nprevst caesbirth preecl
 tempfile mcsdem1
 save `mcsdem1'
 
@@ -71,17 +99,36 @@ rename ADREGN00 region
 recode ADC06EA0 (-9/-1=.) (1=0) (2/6=1), gen(ethn)
 recode ADBWGTA0 (-8 -1 = .), gen(bwt)
 replace bwt = bwt*1000
+gen lowbwt = bwt<2500 if bwt!=.
 recode AMDAGB00 (-2=.), gen(mothageb)
 gen teenm = mothageb<20 if mothageb!=.
 gen gestaw = floor(ADGESTA0/7) if ADGESTA0>0
+gen preterm = gestaw<37 if gestaw!=.
+
+// total num of biological siblings (in HH, not in HH)
+merge 1:1 mcsid using `mcsdem1', keepusing(amotcn00)
+gen parity = ADOTHS00 
+replace parity= parity + amotcn00 if amotcn00 >0 
+gen firstb = parity==0 // no natural siblings
+
+recode AMHGTM00 (-1=.), gen(mheight)
+recode AMWGBK00 (-8/-1=.), gen(mweight) // before CM born
+recode AMDBMIB0 (-8/-1=.), gen(mbmi) // before CM born
 
 lab var ethn 			"Nonwhite ethnicity"
-lab var bwt				"CM Birthweight (g)"
+lab var bwt				"Birthweight (g)"
+lab var lowbwt			"Low birthweight (<2500g)"
 lab var gestaw			"Gestational age (weeks)"
+lab var preterm			"Preterm (<37w)"
 lab var mothageb		"Age at CM birth (main resp)"
 lab var teenm			"Teen mother"
+lab var parity			"Parity"
+lab var firstb			"First born"
+lab var mheight			"Mother height (m)"
+lab var mweight			"Mother weight (kg)"
+lab var mbmi			"Mother BMI"
 
-keep mcsid region ethn bwt gestaw mothageb teenm
+keep mcsid region ethn bwt lowbwt gestaw preterm mothageb teenm parity firstb mheight mweight mbmi
 tempfile mcsdem2
 save `mcsdem2'
 
@@ -97,16 +144,16 @@ gen lfte_fath = aplfte00
 replace lfte_fath = cplfte00 if cplfte00!=.
 recode lfte_moth lfte_fath (0=.) // still in FTE to missing
 
-gen ysch_moth5 = lfte_moth-15	// years continued school after 15
-gen ysch_fath5 = lfte_fath-15
-recode ysch_moth5 ysch_fath5 (-15/-1 = 0) // put to 0 everyone who had less than 15 years education
+gen mysch5 = lfte_moth-15	// years continued school after 15
+gen fysch5 = lfte_fath-15
+recode mysch5 fysch5 (-15/-1 = 0) // put to 0 everyone who had less than 15 years education
 
 gen ageint5 = floor(chcagea0/30.42)
 lab var ageint5		"Age at 5y interview (months)"
-lab var ysch_fath5	"Father years of schooling (5y)"
-lab var ysch_moth5	"Mother years of schooling (5y)"
+lab var fysch5		"Father years of schooling (5y)"
+lab var mysch5		"Mother years of schooling (5y)"
 
-keep mcsid ageint5 ysch_*
+keep mcsid ageint5 ?ysch5
 tempfile mcsdem3
 save `mcsdem3'
 
@@ -114,36 +161,25 @@ save `mcsdem3'
 * 5y derived 
 use "$mcsraw/S3/mcs3_derived_variables.dta", clear
 rename _all, lower
+recode cmdres00 (-1=.) (2/max=0), gen(naturalmother5)
 rename cmdnvq00 hnvq_main
+recode hnvq_main (-1=.) (1/3=0) (4 5 = 1) (95=.) (96 = 0), gen(mhied5)
 rename cpdnvq00 hnvq_part
 gen numch5 = cdtots00-1
 
-lab var numch5		"Number other children in HH at 5"
+recode cmwgtk00 (-8/-1 = .), gen(mweight5)
+recode cmhgtm00 (-8/-1 = .), gen(mheight5)
+recode cmdbmi00 (-8/-1 = .), gen(mbmi5)
 
-keep mcsid hnvq_main hnvq_part numch5
+lab var numch5			"Number other children in HH at 5"
+lab var mhied5	"Mother HE degree, NVQ4-5 (5y)"
+lab var mheight5		"Mother height (5y) (m)"
+lab var mweight5		"Mother weight (5y) (kg)"
+lab var mbmi5			"Mother BMI (5y)"
+
+keep mcsid hnvq_main hnvq_part numch5 naturalmother5 mhied5 mweight5 mheight5 mbmi5
 tempfile mcs5d
 save `mcs5d'
-
-******************************************************************
-*mother highest qual at 5
-use "$mcsraw/S1/mcs1_parent_interview.dta", clear
-keep mcsid amacqu00 amvcqu00
-gen highed_moth5 = 0 if amacqu00!=. & amvcqu00!=.
-replace highed_moth5 = 1 if inlist(amacqu00,1,2) | amvcqu00==1
-
-merge 1:1 mcsid using "$mcsraw/S2/mcs2_parent_interview.dta", keepusing(bmacqu00 bmvcqu00) nogen
-replace highed_moth5 = 1 if inlist(bmacqu00,1,2) | bmvcqu00==1
-
-merge 1:1 mcsid using "$mcsraw/S3/mcs3_parent_interview.dta", keepusing(cmacqu0? cmvcqu0?) nogen
-local let "a b c d e f g"
-foreach l of local let {
-	replace highed_moth5 = 1 if inlist(cmacqu0`l',1,2,3)
-	cap replace highed_moth5 = 1 if cmvcqu0`l' ==1
-}
-lab var highed_moth5	"Mother HE degree (5y)"
-keep mcsid highed_moth5
-tempfile mcsmeduc
-save `mcsmeduc'
 
 
 *SKILLS AT 5	 ***************************************************************
@@ -156,7 +192,7 @@ gen dateb = ym(chcdbya0, chcdbma0)
 format datesdq5 dateb %tm
 gen agesdq5 = datesdq5 - dateb
 
-keep mcsid agesdq5 cmcrel00 cmpsex00 cmsdpfa0-cmsdtea0
+keep mcsid agesdq5 cmsdpfa0-cmsdtea0
 tempfile mcssdq5y
 save `mcssdq5y'
 
@@ -214,11 +250,11 @@ save `mcssdq11y'
 		
 *INCOME	 ******************************************************************
 use "$data/SEPdata/create37_MCS2012.dta", clear
-rename q_bu_net_total_p incq
-gen faminc_real 	= bu_net_total_p
-replace faminc_real = faminc_real/adjMCS/1000
-gen faminc_infl 	= bu_net_total_p
-replace faminc_infl = faminc_infl/inflMCS/1000
+rename q_bu_net_total_p incq10
+gen faminc10_real 	= bu_net_total_p
+replace faminc10_real = faminc10_real/adjMCS/1000
+gen faminc10_infl 	= bu_net_total_p
+replace faminc10_infl = faminc10_infl/inflMCS/1000
 tempfile mcsinc11y
 save `mcsinc11y'	
 
@@ -250,7 +286,6 @@ use `mcslong', clear
 merge 1:1 mcsid using `mcsdem1', nogen
 merge 1:1 mcsid using `mcsdem2', nogen
 merge 1:1 mcsid using `mcsdem3', gen(mcs_merge_dem)
-merge 1:1 mcsid using `mcsmeduc', gen(mcs_merge_meduc)
 merge 1:1 mcsid using `mcssdq5y', gen(mcs_merge_sdq5)
 merge 1:1 mcsid using `mcscog5y', gen(mcs_merge_cog5)
 merge 1:1 mcsid using `mcs5d', gen(mcs_merge_der5)
@@ -263,6 +298,8 @@ merge 1:1 mcsid using `mcsscl11y', gen(mcs_merge_scl11)
 ********************************************************************************
 // CLEAN 11Y SURVEY
 ********************************************************************************
+
+qui {
 
 * VERBAL SIMILARITIES RECODING
 // generate correct answers for each item
@@ -329,7 +366,7 @@ forvalues i=34(1)37 {
 // clear up
 drop ecq????? consecfail?? correct_*
 
-
+} //qui
 
 * SDQ RECODING
 * rename
@@ -415,6 +452,7 @@ foreach v of varlist mcs*_sdq* {
 // RECODE ALL SDQ
 ********************************************************************************
 
+qui{
 * recode to binary and positive
 local pos "1 4 7 9 11 14 17 20 21 25"
 foreach i of local pos  {
@@ -436,7 +474,7 @@ forvalues i=1(1)25 {
 	cap 	lab var mcs5_sdqc`i' 	"(3cat) `lab'"
 	cap 	lab var mcs11_sdqc`i' 	"(3cat) `lab'"
 }
-
+} //qui
 
 
 ********************************************************************************
@@ -444,11 +482,10 @@ forvalues i=1(1)25 {
 ********************************************************************************
 
 * SAMPLE SELECTION
-keep if cmpsex00 == 2		// keep only interviews with mother
+keep if naturalmother5 == 1	// keep only interviews with natural mother
 drop if region > 9			// drop interviews not in England
 keep if country == 1
 keep if sentry == 1 // only those who entered in sweep 1
-keep if relmain == 3 // only natural children
 
 sort mcsid
 
@@ -510,9 +547,11 @@ append using `ethn'
 ****************************
 /* SAVE FILES for R */
 
-local covarstokeep country region sex bwt smkpr gestaw mothageb singlem teenm ///
-					ysch_moth5 ysch_fath5 numch5 highed_moth5 ///
-					scl10 incq faminc_real faminc_infl
+local covarstokeep country region ///
+					sex smkpr singlem malaise mempl nprevst caesbirth preecl ///
+					ethn bwt lowbwt gestaw preterm mothageb teenm parity firstb mheight mweight mbmi ///
+					mysch5 fysch5 mhied5 numch5 mweight5 mheight5 mbmi5 ///
+					scl10 incq10 faminc10_real faminc10_infl
 
 /* SAVE 5y FILE */
 preserve

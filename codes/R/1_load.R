@@ -35,9 +35,11 @@ printfit <- function(m) {
 ## ---- LOAD_DATA
 
 # auxiliary variables to retain
-auxvars <- c("sex", "bwt", "smkpr", "gestaw", "region","mothageb", "singlem", "teenm",
-             "ysch_moth5", "ysch_fath5", "numch5", "ageint5","highed_moth5",
-             "faminc_real", "faminc_infl", "incq", "scl10"
+auxvars <- c("sex", "region",
+             "bwt", "lowbwt", "parity", "nprevst", "caesbirth", "smkpr", "gestaw", "preterm", 
+             "mothageb", "teenm", "singlem", "mheight", "mempl",
+             "mysch5", "fysch5", "numch5", "ageint5", "mhied5",
+             "faminc10_real", "faminc10_infl", "incq10", "scl10"
              )
 
 # BCS -------------------------------------------
@@ -189,8 +191,8 @@ items.c$scl10b[items.c$scl10 %in% c("other")] <- 5
 items.c$scl10b <- factor(items.c$scl10b, labels = c("IV V","IIIM","IIINM","I II","oth"))
 
 # convert to factor
-items.c$smkpr <- factor(items.c$smkpr)
-items.c$region <- factor(items.c$region)
+facnms <- c("smkpr", "region", "lowbwt", "caesbirth", "preterm", "teenm", "singlem", "mempl", "mhied5")
+items.c[,facnms] <- lapply(items.c[,facnms] , factor)
 items.c$incq <- ordered(items.c$incq)
 
 # save dataset
@@ -307,7 +309,7 @@ for (g in c(1,2)) {                   # males/females
 }
 
 
-rm(mcskeepb, ncats, ncomm, t, t2, X.all, X.allg, means)
+rm(mcskeepb, ncats, ncomm, t, t2, X.all, X.allg, means, facnms)
 
 
 

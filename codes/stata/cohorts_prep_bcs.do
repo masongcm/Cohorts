@@ -84,7 +84,8 @@ recode e245 (-3 -2 = .) (1 2 = 0) (3/7=1), gen(ethn)
 rename e195		mysch5
 rename e196		fysch5
 recode mysch5 fysch5 (-3 -2 -1 =.)
-recode e189a (-3/-1 = .) (6 7=1) (15 8 =0), gen(mhied5)
+recode e189a (-3/-1 = .) (6 7=1) (1/5 8 =0), gen(mhied5)
+replace mhied5=0 if mhied5==. & e193==0 // no additional years of FT education after school
 
 // date interview
 recode e271 (-3=.)
@@ -102,9 +103,9 @@ gen numch5 = e006 + e007 if e007!=-1 & e006!=-1
 
 lab var ageint5			"Age at 5y interview (months)"
 lab var ethn			"Nonwhite ethnicity"
-lab var fysch5		"Father years of schooling (5y)"
-lab var mysch5		"Mother years of schooling (5y)"
-lab var mhied5	"Mother HE degree (5y)"
+lab var fysch5			"Father years of schooling (5y)"
+lab var mysch5			"Mother years of schooling (5y)"
+lab var mhied5			"Mother HE degree (5y)"
 lab var numch5			"Number other children in HH at 5"
 
 keep bcsid ethn ageint5 ?ysch5 numch5 mhied5

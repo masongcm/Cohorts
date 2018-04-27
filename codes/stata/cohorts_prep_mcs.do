@@ -98,8 +98,8 @@ rename MCSID mcsid
 rename ADREGN00 region
 recode ADC06EA0 (-9/-1=.) (1=0) (2/6=1), gen(ethn)
 recode ADBWGTA0 (-8 -1 = .), gen(bwt)
-replace bwt = bwt*1000
-gen lowbwt = bwt<2500 if bwt!=.
+replace bwt = bwt
+gen lowbwt = bwt<2.5 if bwt!=.
 recode AMDAGB00 (-2=.), gen(mothageb)
 gen teenm = mothageb<20 if mothageb!=.
 gen gestaw = floor(ADGESTA0/7) if ADGESTA0>0
@@ -116,7 +116,7 @@ recode AMWGBK00 (-8/-1=.), gen(mweight) // before CM born
 recode AMDBMIB0 (-8/-1=.), gen(mbmi) // before CM born
 
 lab var ethn 			"Nonwhite ethnicity"
-lab var bwt				"Birthweight (g)"
+lab var bwt				"Birthweight (kg)"
 lab var lowbwt			"Low birthweight (<2500g)"
 lab var gestaw			"Gestational age (weeks)"
 lab var preterm			"Preterm (<37w)"

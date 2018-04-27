@@ -9,7 +9,8 @@
 use "$bcsraw/1970_birth/bcs7072a.dta", clear
 rename a0255 sex
 recode a0278 (-3/-2=.), gen(bwt)
-gen lowbwt = bwt<2500 if bwt!=.
+replace bwt = bwt/1000
+gen lowbwt = bwt<2.5 if bwt!=.
 recode a0043b (-3=.) (1/3=0) (4/6=1), gen(smkpr)
 rename a0005a mothageb
 gen teenm = mothageb<20 if mothageb!=.
@@ -38,7 +39,7 @@ recode a0261a (-3 -2 = .) (2=0), gen(meconm)
 gen mheight = a0197/100 if a0197>0
 
 lab var sex				"Sex"
-lab var bwt				"Birthweight (g)"
+lab var bwt				"Birthweight (kg)"
 lab var lowbwt			"Low birthweight (<2500g)"
 lab var parity			"Parity"
 lab var nprevpreg		"Num previous pregnancies"

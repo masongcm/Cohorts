@@ -1,13 +1,3 @@
-#######################################################################################################
-## ---- DEC_VARS
-# select variables for decomposition
-decvars <- c("region","faminc10_infl","scl10b","mysch5","mothageb","numch5")
-
-# formulas
-form.ext <- as.formula(paste("EXT ~ ", paste0(decvars, collapse = '+')))
-form.int <- as.formula(paste("INT ~ ", paste0(decvars, collapse = '+')))
-
-
 ## ---- COUNTERF
 library(Counterfactual)
 

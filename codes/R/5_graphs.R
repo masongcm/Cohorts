@@ -19,12 +19,60 @@ ggplot(aged, aes(x=age, y=dens, fill=cohort)) +
 
 ############################################################################################
 ## ---- FACDENS
+# Kolmogorov-Smirnov test
+ksp <- list()
+for (g in c("M", "F")) {
+  for (f in c("EXT","INT")) {
+    cs1 <- paste0("BCS.",g)
+    cs2 <- paste0("MCS.",g)
+    pval <- round(ks.test(scores2plot[scores2plot$cohortsex==cs1,f],
+                                  scores2plot[scores2plot$cohortsex==cs2,f]
+    )$p.value,3)
+    if (pval>.0001) ksp[[paste0(f,".",g)]] <- toString(pval)
+    else ksp[[paste0(f,".",g)]] <- "<0.0001"
+  }
+}
+# graph x axis boundaries
+maxx <- max(scores2plot[names(scores2plot) %in% c("EXT","INT")]) +.05
+minx <- min(scores2plot[names(scores2plot) %in% c("EXT","INT")]) -.05
+
+# common options
+addopts.dens <- function(x) {
+  x <- x +
+    theme(
+      axis.title.y=element_blank(),
+      legend.position="none"
+    ) +
+    scale_x_continuous(name = "Quantile", breaks = seq(-3.5,1.5,.5)) +
+    coord_cartesian(xlim = c(minx, maxx), ylim = c(0,.62)) +
+    scale_fill_discrete("") + # remove fill guide title
+    scale_colour_discrete(guide=FALSE) +  # remove colour legend
+    geom_density(alpha = 0.1) # PLOTS
+  return(x)
+}
+
 # densities of factor scores
-pdext.ebm.m <- ggplot(subset(scores2plot, sex=="M"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1) + ggtitle("EXT Scores (Males)")
-pdint.ebm.m <- ggplot(subset(scores2plot, sex=="M"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1) + ggtitle("INT Scores (Males)")
-pdext.ebm.f <- ggplot(subset(scores2plot, sex=="F"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1) + ggtitle("EXT Scores (Females)")
-pdint.ebm.f <- ggplot(subset(scores2plot, sex=="F"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + geom_density(alpha = 0.1) + ggtitle("INT Scores (Females)")
-plot_grid(pdext.ebm.m, pdext.ebm.f, pdint.ebm.m, pdint.ebm.f, ncol=2, align="h")
+pdext.ebm.m <- ggplot(subset(scores2plot, sex=="M"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("EXT Scores (Males)")
+pdint.ebm.m <- ggplot(subset(scores2plot, sex=="M"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("INT Scores (Males)")
+pdext.ebm.f <- ggplot(subset(scores2plot, sex=="F"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("EXT Scores (Females)")
+pdint.ebm.f <- ggplot(subset(scores2plot, sex=="F"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("INT Scores (Females)")
+denslist <- list(pdext.ebm.m, pdint.ebm.m, pdext.ebm.f, pdint.ebm.f) 
+denslist <- lapply(denslist, addopts.dens) # apply options to all graphs
+# add KS pvalue
+for (p in 1:4) {
+  denslist[[p]] <- denslist[[p]] + 
+    annotate("text", x = minx+.5, y = .5, label = "KS p-value") + 
+    annotate("text", x = minx+.5, y = .45, label = ksp[[p]])
+}
+pcol <- plot_grid( denslist[[1]], denslist[[2]], denslist[[3]], denslist[[4]],
+                   align = 'vh',
+                   hjust = -1,
+                   nrow = 2
+)
+# add legend
+legend_b <- get_legend(denslist[[1]] + theme(legend.position="bottom"))
+p <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
+p
 
 ############################################################################################
 ## ---- FACLOESS_AGE

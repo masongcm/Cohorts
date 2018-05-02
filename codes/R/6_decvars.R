@@ -15,6 +15,3 @@ decvars <- unname(unlist(decvarslist))
 # decomposition sequence
 decseq <- lapply(decvarslist, FUN = function(x) paste0(x, collapse="+"))
 
-# formulas
-form.ext <- as.formula(paste("EXT ~ ", paste0(decvars, collapse = '+')))
-form.int <- as.formula(paste("INT ~ ", paste0(decvars, collapse = '+')))

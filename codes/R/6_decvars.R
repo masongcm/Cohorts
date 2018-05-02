@@ -15,3 +15,6 @@ decvars <- unname(unlist(decvarslist))
 # decomposition sequence
 decseq <- lapply(decvarslist, FUN = function(x) paste0(x, collapse="+"))
 
+# final data for analysis and decomposition
+finaldata <- scores2plot[complete.cases(scores2plot[,decvars]),]
+

@@ -144,11 +144,12 @@ read_chunk(here("codes/R/3_inv_fit.R"))
 read_chunk(here("codes/R/4_scores.R"))
 read_chunk(here("codes/R/4_scores_aux.R"))
 read_chunk(here("codes/R/5_graphs.R"))
-read_chunk(here("codes/R/6_ineq.R"))
+read_chunk(here("codes/R/6_decvars.R"))
 read_chunk(here("codes/R/7_counterf.R"))
 read_chunk(here("codes/R/7_counterf_graphs.R"))
 read_chunk(here("codes/R/7_counterf_tabs.R"))
 read_chunk(here("codes/R/7_counterf_seqdec.R"))
+read_chunk(here("codes/R/getpars.R"))
 
 @
 
@@ -476,25 +477,18 @@ The overall fit of the configural model is satisfactory according to widely acce
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-<<FA_INV_MAIN, dependson="LOAD_DATA">>=
+<<FA_INV_MAIN>>=
 # main models only
 @
 
-% % <<FA_INV_AUX, dependson='LOAD_DATA'>>=
-% % # robustness models
-% % @
-
-<<FA_FIT, dependson='FA_INV_MAIN'>>=
+<<FA_FIT>>=
 # assemble fit indices into matrices
 @
 
-<<FA_SCORES_MAIN, dependson='FA_INV_MAIN'>>=
+<<FA_SCORES_MAIN>>=
 # produce scores for main models
 @
 
-% % <<FA_SCORES_AUX, dependson='FA_INV_AUX'>>=
-% % # produce scores for robustness models
-% % @
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -533,7 +527,7 @@ print(xtable(table,
 
 \clearpage
 \begin{figure}
-<<FACDENS, dependson="FA_SCORES_MAIN", dev='tikz', fig.height=10, fig.width=10, out.width='1\\linewidth'>>=
+<<FACDENS, dev='tikz', fig.height=10, fig.width=10, out.width='1\\linewidth'>>=
 @
 \caption{Density of Scored Factors}
 {\scriptsize \emph{Notes}: The figure shows estimated kernel densities of the scored factors separately by cohort.  \par}
@@ -546,17 +540,40 @@ print(xtable(table,
 The model can be used to investigate how inequality of noncognitive skills has changed between the two cohorts.
 
 \textbf{REVIEW} We can derive scores for $\theta^{EXT}$ and $\theta^{INT}$ directly, and plot them against socioeconomic measures observed in the data. Our main socioeconomic indicator is a measure of weekly total family net income in the prices of the interview year.\footnote{This measure is harmonised across cohorts and derived as part of CLOSER, which is funded by the ESRC.} Using the estimated parameters for the model with invariant thresholds and loadings (but non-invariant intercepts), I compute the scores for each individual in the sample (using the Empirical Bayes modal approach). In \autoref{fig:meanci}, we can see that the gradient in noncognitive skills along family income quintiles is more pronounced in the MCS cohort.
-%In particular, a male five-year old at the top quintile of the income distribution in 1975 has a better score by \Sexpr{regcoeffs[1,3]} in the externalising dimension and \Sexpr{regcoeffs[1,4]} in the internalising dimension, compared to a child at the bottom quintile. In 2005, the differences amount to \Sexpr{regcoeffs[3,3]} and \Sexpr{regcoeffs[3,4]}, respectively.
 
-<<INCINEQ_STATS, dependson="FA_SCORES_MAIN", results="markup">>=
+<<INEQ_STATS, dependson="FA_SCORES_MAIN", results="markup">>=
+
+# income 
 tb <- data.frame(
-  aggregate(scores2plot$faminc_infl, by=list(scores2plot$cohort), FUN = function(x) quantile(x, c(.1, .25, .75, .9), na.rm=T))
+  aggregate(scores2plot$faminc10_infl, by=list(scores2plot$cohort), FUN = function(x) quantile(x, c(.1, .25, .75, .9), na.rm=T))
 )
 tb$d9010 <- tb$x[,4]/tb$x[,1]
 tb$d7525 <- tb$x[,3]/tb$x[,2]
-
 cat("Quantile differences in income by cohort")
 tb
+
+
+tb.ext <- data.frame(
+  aggregate(scores2plot$EXT, by=list(scores2plot$cohortsex), FUN = function(x) quantile(x, c(.1, .25, .5, .75, .9), na.rm=T))
+)
+tb.ext$d9010 <- abs(tb.ext$x[,"90%"]-tb.ext$x[,"10%"])
+tb.ext$d9010 <- abs(tb.ext$x[,"75%"]-tb.ext$x[,"25%"])
+tb.ext$d5010 <- abs(tb.ext$x[,"50%"]-tb.ext$x[,"10%"])
+tb.ext$d9050 <- abs(tb.ext$x[,"90%"]-tb.ext$x[,"50%"])
+cat("\n Quantile differences in EXT by cohort/gender")
+tb.ext
+
+tb.int <- data.frame(
+  aggregate(scores2plot$INT, by=list(scores2plot$cohortsex), FUN = function(x) quantile(x, c(.1, .25, .5, .75, .9), na.rm=T))
+)
+tb.int$d9010 <- abs(tb.int$x[,"90%"]-tb.int$x[,"10%"])
+tb.int$d9010 <- abs(tb.int$x[,"75%"]-tb.int$x[,"25%"])
+tb.int$d5010 <- abs(tb.int$x[,"50%"]-tb.int$x[,"10%"])
+tb.int$d9050 <- abs(tb.int$x[,"90%"]-tb.int$x[,"50%"])
+cat("\n Quantile differences in INT by cohort/gender")
+tb.int
+
+
 @
 
 
@@ -569,13 +586,13 @@ tb
 \caption{Evolution of income inequality }
 {\scriptsize \emph{Notes}:  \par}
 \end{figure}
-
-\begin{figure}
-<<FACINEQ, dependson="FA_SCORES_MAIN", dev='tikz', fig.height=12, fig.width=10, out.width='1\\linewidth'>>=
-@
-\caption{Mean scores across income quintiles}\label{fig:meanci}
-{\scriptsize \emph{Notes}: The figure plots the mean and its 95\% confidence interval across the quintiles in the income distribution. \par}
-\end{figure}
+% 
+% \begin{figure}
+% <<FACINEQ, dependson="FA_SCORES_MAIN", dev='tikz', fig.height=12, fig.width=10, out.width='1\\linewidth'>>=
+% @
+% \caption{Mean scores across income quintiles}\label{fig:meanci}
+% {\scriptsize \emph{Notes}: The figure plots the mean and its 95\% confidence interval across the quintiles in the income distribution. \par}
+% \end{figure}
 
 \begin{figure}
 <<FACINEQ_SC, dependson="FA_SCORES_MAIN", dev='tikz', fig.height=12, fig.width=10, out.width='1\\linewidth'>>=
@@ -588,85 +605,51 @@ tb
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
 
-<<DEC_VARS>>=
-# define variables for decomposition
+<<FORMULAS>>=
+# define variables and formulas for regression and decomposition
 @
-% 
-% !!!!!!!!!! THIS BREAKS CACHING !!!!!!!!!!!!!!!!!!!!!
-% <<DEC_IQR, dependson="DEC_VARS">>=
-% # decompose SD and IQRs
-% @
-% 
-% Compare inequality statistics of original vs residualised scores
-% <<DEC_RES, dependson='DEC_IQR', echo=T, results='markup'>>=
-% iqs.orig
-% iqs.resid
-% @
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{table}
-\caption{Quantifying the gradient -- males}
-\centering
-<<FA_REGS_REAL_M, dependson='DEC_VARS', results='asis'>>=
-# regress scores on income
-library(dplyr)
-library(stargazer)
-
-r.ext.m.bcs <- lm(form.ext, data=subset(scores2plot, sex=="M" & cohort=="BCS"))
-r.ext.m.mcs <- lm(form.ext, data=subset(scores2plot, sex=="M" & cohort=="MCS"))
-r.int.m.bcs <- lm(form.int, data=subset(scores2plot, sex=="M" & cohort=="BCS"))
-r.int.m.mcs <- lm(form.int, data=subset(scores2plot, sex=="M" & cohort=="MCS"))
-
-stargazer(r.ext.m.bcs, r.ext.m.mcs , r.int.m.bcs, r.int.m.mcs, #r.ext.f.bcs, r.ext.f.mcs , r.int.f.bcs, r.int.f.mcs,
-          column.labels=c("BCS M","MCS M","BCS M","MCS M"), #,"BCS F","MCS F","BCS F","MCS F"),
-          dep.var.caption = "", multicolumn = FALSE,
-          omit=c("Constant", paste0("region", c(2:9))),
-          # covariate.labels=c(
-          #                    "Income Q2",
-          #                    "Income Q3",
-          #                    "Income Q4",
-          #                    "Income Q5"
-          #                    ),
-          no.space=TRUE,
-          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
-          notes = "All estimates control for Government Office Region of birth.",
-          float=FALSE    # needs begin table outside it
-)
-@
-\end{table}
-
-\begin{table}
-\caption{Quantifying the gradient -- females}
-\centering
-<<FA_REGS_REAL_F, dependson='DEC_VARS', results='asis'>>=
-# regress scores on income
-library(dplyr)
-library(stargazer)
-
-r.ext.m.bcs <- lm(form.ext, data=subset(scores2plot, sex=="F" & cohort=="BCS"))
-r.ext.m.mcs <- lm(form.ext, data=subset(scores2plot, sex=="F" & cohort=="MCS"))
-r.int.m.bcs <- lm(form.int, data=subset(scores2plot, sex=="F" & cohort=="BCS"))
-r.int.m.mcs <- lm(form.int, data=subset(scores2plot, sex=="F" & cohort=="MCS"))
-
-stargazer(r.ext.m.bcs, r.ext.m.mcs , r.int.m.bcs, r.int.m.mcs, #r.ext.f.bcs, r.ext.f.mcs , r.int.f.bcs, r.int.f.mcs,
-          column.labels=c("BCS F","MCS F","BCS F","MCS F"), #,"BCS F","MCS F","BCS F","MCS F"),
-          dep.var.caption = "", multicolumn = FALSE,
-          omit=c("Constant", paste0("region", c(2:9))),
-          # covariate.labels=c(
-          #                    "Income Q2",
-          #                    "Income Q3",
-          #                    "Income Q4",
-          #                    "Income Q5"
-          #                    ),
-          no.space=TRUE,
-          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
-          notes = "All estimates control for Government Office Region of birth.",
-          float=FALSE    # needs begin table outside it
-)
-@
-\end{table}
-
+% 
+% \begin{table}
+% \caption{Quantifying the gradient}
+% \centering
+% \resizebox{\textwidth}{!}{
+% <<FA_REGS_REAL_M, results='asis'>>=
+% # regress scores on income
+% library(stargazer)
+% 
+% decvars_reg <- c(decvars, "cohort") # add cohort
+% interact_reg <- paste0(decvars_reg[! decvars_reg %in% c("cohort")], "*cohort")
+% 
+% form_ext_reg <- as.formula(paste("EXT ~ ", paste0(decvars2, collapse = '+')))
+% form.ext2i <- as.formula(paste("EXT ~ ", paste0(c(decvars2, interact2), collapse = '+')))
+% form.int2 <- as.formula(paste("INT ~ ", paste0(decvars2, collapse = '+')))
+% form.int2i <- as.formula(paste("INT ~ ", paste0(c(decvars2, interact2), collapse = '+')))
+% 
+% r.ext.m  <- lm(form.ext2,  data=subset(scores2plot, sex=="M"))
+% r.exti.m <- lm(form.ext2i, data=subset(scores2plot, sex=="M"))
+% r.ext.f  <- lm(form.ext2,  data=subset(scores2plot, sex=="F"))
+% r.exti.f <- lm(form.ext2i, data=subset(scores2plot, sex=="F"))
+% r.int.m  <- lm(form.int2,  data=subset(scores2plot, sex=="M"))
+% r.inti.m <- lm(form.int2i, data=subset(scores2plot, sex=="M"))
+% r.int.f  <- lm(form.int2,  data=subset(scores2plot, sex=="F"))
+% r.inti.f <- lm(form.int2i, data=subset(scores2plot, sex=="F"))
+% 
+% stargazer(r.ext.m, r.exti.m, r.ext.f, r.exti.f, r.int.m, r.inti.m, r.int.f, r.inti.f,
+%           column.labels=c("M","M","F","F","M","M","F","F"), #,"BCS F","MCS F","BCS F","MCS F"),
+%           dep.var.caption = "", multicolumn = FALSE,
+%           #omit=c("Constant", paste0("region", c(2:9))),
+%           no.space=TRUE,
+%           omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+%           notes = "All estimates control for Government Office Region of birth.",
+%           single.row=TRUE,
+%           float=FALSE    # needs begin table outside it
+% )
+% @
+% }
+% \end{table}
 
 \clearpage
 \subsection{Decomposition of inequality}
@@ -691,52 +674,52 @@ $$F_{(\theta^{EXT}_{MCS} \mid X_{MCS})} - F_{(\theta^{EXT}_{BCS} \mid X_{BCS})} 
   \left[ F_{(\theta^{EXT}_{BCS} \mid X_{MCS})} - F_{(\theta^{EXT}_{BCS} \mid X_{BCS})} \right]$$
 
 
-
-<<COUNTERF, dependson="FA_SCORES_MAIN">>=
-# perform counterfactuals
-@
-
-<<COUNTERF_PREP_PLOTS, dependson='COUNTERF'>>=
-# prepare counterfactual plots
-@
-
-\begin{landscape}
-\begin{figure}
-<<COUNTERF_EXT, dependson='COUNTERF_PREP_PLOTS', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
-cfp.ext
-@
-\caption{Counterfactual decomposition -- externalising skills}\label{fig:counterf_ext}
-{\scriptsize \emph{Notes}: \par}
-\end{figure}
-\end{landscape}
-
-\begin{landscape}
-\begin{figure}
-<<COUNTERF_INT, dependson='COUNTERF_PREP_PLOTS', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
-cfp.int
-@
-\caption{Counterfactual decomposition -- internalising skills}\label{fig:counterf_int}
-{\scriptsize \emph{Notes}: \par}
-\end{figure}
-\end{landscape}
-
-<<COUNTERF_PREP_TAB, dependson='COUNTERF'>>=
-# prepare counterfactual tables
-@
-
-<<COUNTERF_INEQ, dependson='COUNTERF_PREP_TABS', results='markup'>>=
-cat("Males EXT")
-print(iqdecomp(logitcf.ext.m))
-
-cat("Males INT")
-print(iqdecomp(logitcf.int.m))
-
-cat("Females EXT")
-print(iqdecomp(logitcf.ext.f))
-
-cat("Females INT")
-print(iqdecomp(logitcf.int.f))
-@
+% 
+% <<COUNTERF, dependson="FA_SCORES_MAIN">>=
+% # perform counterfactuals
+% @
+% 
+% <<COUNTERF_PREP_PLOTS, dependson='COUNTERF'>>=
+% # prepare counterfactual plots
+% @
+% 
+% \begin{landscape}
+% \begin{figure}
+% <<COUNTERF_EXT, dependson='COUNTERF_PREP_PLOTS', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
+% cfp.ext
+% @
+% \caption{Counterfactual decomposition -- externalising skills}\label{fig:counterf_ext}
+% {\scriptsize \emph{Notes}: \par}
+% \end{figure}
+% \end{landscape}
+% 
+% \begin{landscape}
+% \begin{figure}
+% <<COUNTERF_INT, dependson='COUNTERF_PREP_PLOTS', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
+% cfp.int
+% @
+% \caption{Counterfactual decomposition -- internalising skills}\label{fig:counterf_int}
+% {\scriptsize \emph{Notes}: \par}
+% \end{figure}
+% \end{landscape}
+% 
+% <<COUNTERF_PREP_TAB, dependson='COUNTERF'>>=
+% # prepare counterfactual tables
+% @
+% 
+% <<COUNTERF_INEQ, dependson='COUNTERF_PREP_TABS', results='markup'>>=
+% cat("Males EXT")
+% print(iqdecomp(logitcf.ext.m))
+% 
+% cat("Males INT")
+% print(iqdecomp(logitcf.int.m))
+% 
+% cat("Females EXT")
+% print(iqdecomp(logitcf.ext.f))
+% 
+% cat("Females INT")
+% print(iqdecomp(logitcf.int.f))
+% @
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % COUNTERFACTUAL DECOMPOSITIONS
@@ -806,7 +789,7 @@ colnames(efatab) <- c("BCS All", "BCS M", "BCS F", "MCS All", "MCS M", "MCS F")
 print(xtable(efatab,
                     align="L{.25\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}",
                     digits = 0
-                    ), 
+                    ),
              size="\\small",
              include.rownames=T,
              include.colnames=T,
@@ -831,7 +814,6 @@ print(xtable(efatab,
 \caption{Estimated loadings and thresholds} \label{tab:allpars}
 \resizebox{\textwidth}{!}{
 <<RES_FA_PAR, dependson="FA_FIT", results='asis'>>=
-source("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/getpars.R")
 
 table <- getmeaspars(finalmod, groups = 4, mode = "tl")
 
@@ -892,7 +874,6 @@ print.xtable(xtable(table,
 \centering
 <<RES_FA_LV, dependson="FA_FIT", results='asis'>>=
 require(xtable)
-source("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/getpars.R")
 
 lvtab <- getlvpars(finalmod, groups = 4)
 table <- rbind(lvtab$Males,lvtab$Females)
@@ -927,7 +908,60 @@ print.xtable(xtable(table,
 @
 \end{table}
 
+\clearpage
+\section{Summary statistics}
+\begin{table}[ht]
+\caption{Summary statistics} \label{tab:lvpars}
+\centering
+<<SUMSTATS, results='asis'>>=
+require(dummies)
 
+datacompl <- scores2plot[complete.cases(scores2plot[,decvars2]),] # complete cases
+# expand dummies
+datasum <- cbind(
+  datacompl[,c("EXT","INT","cohortsex")], 
+  dummy.data.frame(datacompl[,c(decvars2)], sep = "")
+)
+
+# statistics by group
+sumtab <- data.frame(
+  aggregate(datasum, by=list(datasum$cohortsex), FUN = function(x) c(mn = mean(x, na.rm=T)))
+)
+
+# drop unused factors and variables
+sumtab <- sumtab[, substring(names(sumtab), nchar(names(sumtab))) != "0"]
+sumtab <- sumtab[, ! names(sumtab) %in% c("EXT","INT","cohortsex","cohortBCS","cohortMCS")]
+group <- sumtab$Group.1
+sumtabt <- as.data.frame(t(sumtab[,-1]))
+colnames(sumtabt) <- group
+# rownames to var
+sumtabt$var <- rownames(sumtabt)
+# reorder columns
+sumtabt <- sumtabt[c("var", "BCS.M", "MCS.M", "BCS.F", "MCS.F")]
+
+# table
+print.xtable(xtable(sumtabt,
+                    align="L{0cm}L{3cm}C{1.2cm}C{2cm}C{2cm}C{2cm}",
+                    digits = 3
+                    ),
+             size="\\small",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0)),
+                              command = c(
+                              # header
+                                   "& \\multicolumn{2}{c}{\\textbf{Males}} & \\multicolumn{2}{c}{\\textbf{Females}} \\\\ \\cmidrule(lr){2-3} \\cmidrule(lr){4-5}
+                                    & BCS & MCS & BCS & MCS \\\\"
+                                    )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabularx", width = "\\textwidth",
+             floating = FALSE
+)
+
+@
+\end{table}
 
 \end{appendices}
 

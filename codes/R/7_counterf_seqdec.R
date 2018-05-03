@@ -1,4 +1,5 @@
 ## ---- COUNTERF_SEQDEC_PREP
+require(Counterfactual)
 
 # function to make sequential counterfactual decomposition plots
 # arguments: 
@@ -37,7 +38,7 @@ makecfdecplots <- function(flst, titles = NA) {
         plot.title = element_text(hjust = 1, face = "italic"),
         legend.position="none"
       ) +
-      scale_x_continuous(name = "Quantile", breaks = seq(.1,.9,.1)) +
+      scale_x_continuous(name = "Quantile", breaks = seq(.1,.9,.2)) +
       coord_cartesian(ylim = c(miny, maxy)) +
       labs(list(colour="")) +
       geom_smooth(se=F) + geom_line() # PLOTS
@@ -59,12 +60,12 @@ makecfdecplots <- function(flst, titles = NA) {
 }
 
 
+# ESTIMATE COUNTERFACTUALS (without inference)
 
-
-# MAKE COUNTERFACTUALS (without inference)
-
-# sequence of decomposition variables
-decseq <- list("faminc10_real", "scl10b", "mysch5", paste0(c("mothageb", "numch5"), collapse = "+"))
+# numeric cohort
+finaldata$cohn <- as.numeric(finaldata$cohort)-1
+# decide how many quantiles
+quants <- seq(.04,.9,.02)
 
 # allocate
 lcf.ext.m <- list()
@@ -74,22 +75,22 @@ lcf.int.f <- list()
 
 for (j in 1:length(decseq)) {
   lcf.ext.m[[j]] <- counterfactual(as.formula(paste("EXT ~ ", paste0(decseq[1:j], collapse = '+')))
-                                   , data = subset(scores2plot, sex=='M'),
+                                   , data = subset(finaldata, sex=='M'),
                                    group = cohn, treatment=TRUE, decomposition=TRUE, 
                                    method = "logit", quantiles = quants,
                                    nreg=100, noboot = T)
   lcf.ext.f[[j]] <- counterfactual(as.formula(paste("EXT ~ ", paste0(decseq[1:j], collapse = '+')))
-                                   , data = subset(scores2plot, sex=='F'),
+                                   , data = subset(finaldata, sex=='F'),
                                    group = cohn, treatment=TRUE, decomposition=TRUE, 
                                    method = "logit", quantiles = quants,
                                    nreg=100, noboot = T)
   lcf.int.m[[j]] <- counterfactual(as.formula(paste("INT ~ ", paste0(decseq[1:j], collapse = '+')))
-                                   , data = subset(scores2plot, sex=='M'),
+                                   , data = subset(finaldata, sex=='M'),
                                    group = cohn, treatment=TRUE, decomposition=TRUE, 
                                    method = "logit", quantiles = quants,
                                    nreg=100, noboot = T)
   lcf.int.f[[j]] <- counterfactual(as.formula(paste("INT ~ ", paste0(decseq[1:j], collapse = '+')))
-                                   , data = subset(scores2plot, sex=='F'),
+                                   , data = subset(finaldata, sex=='F'),
                                    group = cohn, treatment=TRUE, decomposition=TRUE, 
                                    method = "logit", quantiles = quants,
                                    nreg=100, noboot = T)
@@ -97,26 +98,26 @@ for (j in 1:length(decseq)) {
 
 ## ---- COUNTERF_SEQDEC_PLOT
 # MAKE PLOTS
-plist.ext.m <- makecfdecplots(lcf.ext.m, titles = c("Real income", "Social class", "Maternal education", "Demographics"))
-plist.ext.f <- makecfdecplots(lcf.ext.f, titles = c("Real income", "Social class", "Maternal education", "Demographics"))
-plist.int.m <- makecfdecplots(lcf.int.m, titles = c("Real income", "Social class", "Maternal education", "Demographics"))
-plist.int.f <- makecfdecplots(lcf.int.f, titles = c("Real income", "Social class", "Maternal education", "Demographics"))
+plist.ext.m <- makecfdecplots(lcf.ext.m, titles = c("Social Class", "Maternal Education", "Maternal Charact.", "Pregnancy", "Birth"))
+plist.ext.f <- makecfdecplots(lcf.ext.f, titles = c("Social Class", "Maternal Education", "Maternal Charact.", "Pregnancy", "Birth"))
+plist.int.m <- makecfdecplots(lcf.int.m, titles = c("Social Class", "Maternal Education", "Maternal Charact.", "Pregnancy", "Birth"))
+plist.int.f <- makecfdecplots(lcf.int.f, titles = c("Social Class", "Maternal Education", "Maternal Charact.", "Pregnancy", "Birth"))
 
 # EXT PLOTS
 # arrange the plots in a single column
-cfp.seqdec.ext <- plot_grid( plist.ext.m[[1]],plist.ext.m[[2]],plist.ext.m[[3]],plist.ext.m[[4]],plist.ext.m[[5]],plist.ext.m[[6]],
-                             plist.ext.f[[1]],plist.ext.f[[2]],plist.ext.f[[3]],plist.ext.f[[4]],plist.ext.f[[5]],plist.ext.f[[6]],
+cfp.seqdec.ext <- plot_grid( plist.ext.m[[1]],plist.ext.m[[2]],plist.ext.m[[3]],plist.ext.m[[4]],plist.ext.m[[5]],plist.ext.m[[6]],plist.ext.m[[7]],
+                             plist.ext.f[[1]],plist.ext.f[[2]],plist.ext.f[[3]],plist.ext.f[[4]],plist.ext.f[[5]],plist.ext.f[[6]],plist.ext.f[[7]],
                              align = 'vh',
                              hjust = -1,
                              nrow = 2,
-                             labels = c("A) Males", rep("",5),"B) Females", rep("",5)), label_size = 17
+                             labels = c("A) Males", rep("",1+length(decseq)),"B) Females", rep("",1+length(decseq))), label_size = 17
 )
 # INT PLOTS
 # arrange the plots in a single column
-cfp.seqdec.int <- plot_grid( plist.int.m[[1]],plist.int.m[[2]],plist.int.m[[3]],plist.int.m[[4]],plist.int.m[[5]],plist.int.m[[6]],
-                             plist.int.f[[1]],plist.int.f[[2]],plist.int.f[[3]],plist.int.f[[4]],plist.int.f[[5]],plist.int.f[[6]],
+cfp.seqdec.int <- plot_grid( plist.int.m[[1]],plist.int.m[[2]],plist.int.m[[3]],plist.int.m[[4]],plist.int.m[[5]],plist.int.m[[6]],plist.int.m[[7]],
+                             plist.int.f[[1]],plist.int.f[[2]],plist.int.f[[3]],plist.int.f[[4]],plist.int.f[[5]],plist.int.f[[6]],plist.int.f[[7]],
                              align = 'vh',
                              hjust = -1,
                              nrow = 2,
-                             labels = c("A) Males", rep("",5),"B) Females", rep("",5)), label_size = 17
+                             labels = c("A) Males", rep("",1+length(decseq)),"B) Females", rep("",1+length(decseq))), label_size = 17
 )

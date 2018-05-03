@@ -533,6 +533,14 @@ print(xtable(table,
 {\scriptsize \emph{Notes}: The figure shows estimated kernel densities of the scored factors separately by cohort.  \par}
 \end{figure}
 
+\clearpage
+\begin{figure}
+<<RAWHIST, dev='tikz', fig.height=10, fig.width=10, out.width='1\\linewidth'>>=
+@
+\caption{Frequency of Raw Scores}
+{\scriptsize \emph{Notes}: The figure shows frequencies of raw (sum) scores separately by cohort.  \par}
+\end{figure}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage

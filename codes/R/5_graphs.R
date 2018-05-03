@@ -17,8 +17,48 @@ ggplot(aged, aes(x=age, y=dens, fill=cohort)) +
   theme(legend.position = c(0.9, 0.2)) +
   geom_hline(aes(yintercept=0))
 
+
+############################################################################################
+## ---- RAWHIST
+# histograms for raw scores
+
+# common options
+addopts.raw <- function(x) {
+  x <- x +
+    theme(
+      axis.title.y=element_blank(),
+      legend.position="none"
+    ) +
+    scale_x_continuous(name = "Raw score", breaks = seq(0,10,1)) +
+    scale_fill_discrete("") + # remove fill guide title
+    scale_colour_discrete(guide=FALSE) +  # remove colour legend
+    geom_bar(position="dodge", aes(y = ..prop..)) # PLOTS
+  return(x)
+}
+
+rawext.m <- ggplot(subset(scores2plot, sex=="M"),aes(x=EXT.RAW, fill=cohort)) + ggtitle("EXT Scores (Males)") + coord_cartesian(ylim = c(0,.25))
+rawint.m <- ggplot(subset(scores2plot, sex=="M"),aes(x=INT.RAW, fill=cohort)) + ggtitle("INT Scores (Males)") + coord_cartesian(ylim = c(0,.4))
+rawext.f <- ggplot(subset(scores2plot, sex=="F"),aes(x=EXT.RAW, fill=cohort)) + ggtitle("EXT Scores (Females)") + coord_cartesian(ylim = c(0,.25))
+rawint.f <- ggplot(subset(scores2plot, sex=="F"),aes(x=INT.RAW, fill=cohort)) + ggtitle("INT Scores (Females)") + coord_cartesian(ylim = c(0,.4))
+rawlist <- list(rawext.m, rawint.m, rawext.f, rawint.f) 
+rawlist <- lapply(rawlist, addopts.raw) # apply options to all graphs
+
+pcol <- plot_grid( rawlist[[1]], rawlist[[2]], rawlist[[3]], rawlist[[4]],
+                   align = 'vh',
+                   hjust = -1,
+                   nrow = 2
+)
+
+# add legend
+legend_b <- get_legend(rawlist[[1]] + theme(legend.position="bottom"))
+p <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
+p
+
+
 ############################################################################################
 ## ---- FACDENS
+# densities of scored factors
+
 # Kolmogorov-Smirnov test
 ksp <- list()
 for (g in c("M", "F")) {

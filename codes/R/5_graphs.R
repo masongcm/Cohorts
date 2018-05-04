@@ -213,9 +213,28 @@ p
 ## ---- FACINEQ_SC
 # MEAN/CI plot of scores by social class
 
+# get mean by cohortsex to rescale
+scoreslowclass <- scores2plot[scores2plot$scl10b=="IV V",]
+meansfac <- aggregate(scoreslowclass[,c("EXT","INT")], by=list(scoreslowclass$cohortsex), FUN = function(x) mean(x, na.rm=T))
+rownames(meansfac) <- meansfac$Group.1
+meansfac <- meansfac[,-1]
+
+# rescale scores so that mean in lowest level is 0
+scores2plot$EXTdsc <- NA
+scores2plot$INTdsc <- NA
+for (c in c("BCS","MCS")) {
+  for (f in c("EXT","INT")) {
+    for (g in c("M","F")) {
+      cs <- paste0(c,".",g)
+      fd <- paste0(f,"dsc")
+      scores2plot[scores2plot$cohortsex==cs,fd] <- scores2plot[scores2plot$cohortsex==cs,f]-meansfac[cs,f]
+    }
+  }
+}
+
 #common options
 addopts <- function(x) {
-  x <- x + xlab("Parental Social Class at 10") + ylab("Factor score") +
+  x <- x + xlab("Parental Social Class at 10") + ylab("Factor score (IV V = 0)") +
     coord_cartesian(ylim = c(-.4, .5)) +
     stat_summary(geom="errorbar", fun.data=mean_cl_normal, width=.2, position=position_dodge(.5)) +
     stat_summary(fun.y=mean, geom="point", size=4, aes(colour=cohort), position=position_dodge(.5)) +
@@ -223,10 +242,10 @@ addopts <- function(x) {
   return(x)
 }
 
-ineq.ext.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$scl10b)), aes(x=as.factor(scl10b), y=EXT, colour=cohort)) + ggtitle("Males Externalising")
-ineq.ext.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$scl10b)), aes(x=as.factor(scl10b), y=EXT, colour=cohort)) + ggtitle("Females Externalising")
-ineq.int.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$scl10b)), aes(x=as.factor(scl10b), y=INT, colour=cohort)) + ggtitle("Males Internalising")
-ineq.int.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$scl10b)), aes(x=as.factor(scl10b), y=INT, colour=cohort)) + ggtitle("Females Internalising")
+ineq.ext.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$scl10b)), aes(x=as.factor(scl10b), y=EXTdsc, colour=cohort)) + ggtitle("Males Externalising")
+ineq.ext.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$scl10b)), aes(x=as.factor(scl10b), y=EXTdsc, colour=cohort)) + ggtitle("Females Externalising")
+ineq.int.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$scl10b)), aes(x=as.factor(scl10b), y=INTdsc, colour=cohort)) + ggtitle("Males Internalising")
+ineq.int.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$scl10b)), aes(x=as.factor(scl10b), y=INTdsc, colour=cohort)) + ggtitle("Females Internalising")
 
 ineqlist <- list(ineq.ext.m, ineq.ext.f, ineq.int.m, ineq.int.f) 
 ineqlist <- lapply(ineqlist, addopts) # apply options to all graphs
@@ -242,6 +261,62 @@ legend_b <- get_legend(ineqlist[[1]] + theme(legend.position="bottom"))
 p <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
 p
 
+############################################################################################
+## ---- FACINEQ_YS
+# MEAN/CI plot of scores by maternal years of schooling
+
+scores2plot$mysch5b <- cut(scores2plot$mysch5, c(-1,0,2,5,15))
+levels(scores2plot$mysch5b) <- c("Compuls.", "C - C+2", "C+3 - C+5", ">C+5")
+
+# get mean by cohortsex to rescale
+scoreslowschool <- scores2plot[scores2plot$mysch5b=="Compuls.",]
+meansfac <- aggregate(scoreslowschool[,c("EXT","INT")], by=list(scoreslowschool$cohortsex), FUN = function(x) mean(x, na.rm=T))
+rownames(meansfac) <- meansfac$Group.1
+meansfac <- meansfac[,-1]
+
+# rescale scores so that mean in lowest level is 0
+scores2plot$EXTdys <- NA
+scores2plot$INTdys <- NA
+for (c in c("BCS","MCS")) {
+  for (f in c("EXT","INT")) {
+    for (g in c("M","F")) {
+      cs <- paste0(c,".",g)
+      fd <- paste0(f,"dys")
+      scores2plot[scores2plot$cohortsex==cs,fd] <- scores2plot[scores2plot$cohortsex==cs,f]-meansfac[cs,f]
+    }
+  }
+}
+
+
+#common options
+addopts <- function(x) {
+  x <- x + xlab("Maternal years of schooling at 5") +
+    scale_y_continuous(name = "Factor score (Compuls.=0)", breaks = seq(-.2,.8,.2)) +
+    coord_cartesian(ylim = c(-.2, .8)) +
+    stat_summary(geom="errorbar", fun.data=mean_cl_normal, width=.2, position=position_dodge(.5)) +
+    stat_summary(fun.y=mean, geom="point", size=4, aes(colour=cohort), position=position_dodge(.5)) +
+    labs(list(colour="")) + theme(legend.position="none")
+  return(x)
+}
+
+ineq.ext.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$mysch5b)), aes(x=as.factor(mysch5b), y=EXTdys, colour=cohort)) + ggtitle("Males Externalising")
+ineq.ext.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$mysch5b)), aes(x=as.factor(mysch5b), y=EXTdys, colour=cohort)) + ggtitle("Females Externalising")
+ineq.int.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$mysch5b)), aes(x=as.factor(mysch5b), y=INTdys, colour=cohort)) + ggtitle("Males Internalising")
+ineq.int.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$mysch5b)), aes(x=as.factor(mysch5b), y=INTdys, colour=cohort)) + ggtitle("Females Internalising")
+
+ineqlist <- list(ineq.ext.m, ineq.ext.f, ineq.int.m, ineq.int.f) 
+ineqlist <- lapply(ineqlist, addopts) # apply options to all graphs
+
+# arrange the plots in a single column
+pcol <- plot_grid( ineqlist[[1]],ineqlist[[2]],ineqlist[[3]],ineqlist[[4]],
+                   align = 'vh',
+                   hjust = -1,
+                   nrow = 2
+)
+# add the legend underneath the row we made earlier. Give it 10% of the height of one plot (via rel_heights).
+legend_b <- get_legend(ineqlist[[1]] + theme(legend.position="bottom"))
+p <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
+p
 
 ############################################################################################
 ## ---- LOESS_REAL

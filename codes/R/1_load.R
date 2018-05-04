@@ -1,6 +1,7 @@
 ## ---- PREAMBLE
 set.seed(42)
 
+library(knitr)
 library(nFactors)
 library(polycor)
 library(random.polychor.pa)
@@ -12,10 +13,8 @@ library(cowplot)
 library(tikzDevice)
 library(lavaan)
 library(semTools)
-library(difR)
 library(np)
 library(gdata)
-library(knitr)
 library(xtable)
 library(cowplot)
 library(tikzDevice)
@@ -23,6 +22,7 @@ library(gtools)
 library(here)
 library(rio)
 library(Counterfactual)
+library(dummies)
 
 
 dir_data  <- here("rdata/")

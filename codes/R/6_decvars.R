@@ -9,6 +9,9 @@ decvarslist$mch <- c("mothageb", "teenm", "mheight", "singlem", "mempl")
 decvarslist$prg <- c("parity", "firstb", "nprevst", "smkpr")
 decvarslist$bth <- c("caesbirth", "gestaw", "preterm", "bwt", "lowbwt")
 
+# names of the groups
+decvarsgroups <- c("Social Class", "Maternal Education", "Maternal Charact.", "Pregnancy", "Birth")
+
 # make into vector
 decvars <- unname(unlist(decvarslist))
 

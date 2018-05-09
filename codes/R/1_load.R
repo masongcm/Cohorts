@@ -36,10 +36,10 @@ printfit <- function(m) {
 ## ---- LOAD_DATA
 
 # auxiliary variables to retain
-auxvars <- c("sex", "region",
+auxvars <- c("sex", "region", "ethn",
              "bwt", "lowbwt", "parity", "firstb", "nprevst", "caesbirth", "smkpr", "gestaw", "preterm", 
              "mothageb", "teenm", "singlem", "mheight", "mempl",
-             "mysch5", "fysch5", "numch5", "ageint5", "mhied5",
+             "mysch5", "fysch5", "numch5", "ageint5", "mhied5", "mempl5",
              "faminc10_real", "faminc10_infl", "incq10", "scl10"
              )
 
@@ -191,10 +191,15 @@ items.c$scl10b[items.c$scl10 %in% c("IV", "V")] <- 1
 items.c$scl10b[items.c$scl10 %in% c("other")] <- 5
 items.c$scl10b <- factor(items.c$scl10b, labels = c("IV V","IIIM","IIINM","I II","oth"))
 
+# recode years of schooling for plots
+items.c$mysch5b <- cut(items.c$mysch5, c(-1,0,2,5,15))
+levels(items.c$mysch5b) <- c("Compuls.", "C - C+2", "C+3 - C+5", ">C+5")
+
 # convert to factor
-facnms <- c("smkpr", "region", "lowbwt", "caesbirth", "preterm", "firstb", "teenm", "singlem", "mempl", "mhied5")
+facnms <- c("smkpr", "region", "lowbwt", "caesbirth", "preterm", "firstb", "teenm", "singlem", "mempl", "mempl5", "mhied5")
 items.c[,facnms] <- lapply(items.c[,facnms] , factor)
 items.c$incq10 <- ordered(items.c$incq10)
+levels(items.c$mempl5) <- c("Unemployed", "Empl./Education")
 
 # save dataset
 export(items.c[,!names(items.c) %in% c("INT.RAW", "EXT.RAW", "INT.RAWr", "EXT.RAWr")], paste0(dir_data,"cohorts_all.dta"))

@@ -4,8 +4,8 @@
 # select variables for decomposition, in groups
 decvarslist <- list()
 decvarslist$ses <- c("scl10b")
-decvarslist$med <- c("mysch5", "mhied5")
-decvarslist$mch <- c("mothageb", "teenm", "mheight", "singlem", "mempl")
+decvarslist$med <- c("mysch5b")
+decvarslist$mch <- c("mothageb", "teenm", "mheight", "singlem", "mempl", "ethn")
 decvarslist$prg <- c("parity", "firstb", "nprevst", "smkpr")
 decvarslist$bth <- c("caesbirth", "gestaw", "preterm", "bwt", "lowbwt")
 

@@ -199,7 +199,7 @@ levels(items.c$mysch5b) <- c("Compuls.", "C - C+2", "C+3 - C+5", ">C+5")
 facnms <- c("smkpr", "region", "lowbwt", "caesbirth", "preterm", "firstb", "teenm", "singlem", "mempl", "mempl5", "mhied5")
 items.c[,facnms] <- lapply(items.c[,facnms] , factor)
 items.c$incq10 <- ordered(items.c$incq10)
-levels(items.c$mempl5) <- c("Unemployed", "Empl./Education")
+levels(items.c$mempl5) <- c("Unempl./At home", "Empl./Education")
 
 # save dataset
 export(items.c[,!names(items.c) %in% c("INT.RAW", "EXT.RAW", "INT.RAWr", "EXT.RAWr")], paste0(dir_data,"cohorts_all.dta"))

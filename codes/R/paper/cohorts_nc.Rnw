@@ -538,7 +538,7 @@ print(xtable(table,
 <<RAWHIST, dev='tikz', fig.height=10, fig.width=10, out.width='1\\linewidth'>>=
 @
 \caption{Frequency of Raw Scores}
-{\scriptsize \emph{Notes}: The figure shows frequencies of raw (sum) scores separately by cohort.  \par}
+{\scriptsize \emph{Notes}: The figure shows frequencies of raw (sum) scores separately by cohort. Raw scores are obtained using the same 11 items in the CFA model, building a categorical index. Children for which each behaviour ``certainly applies/true" are assigned zero points, one point for ``somewhat applies/true" and two points for ``does not apply/not true". For binary items, one point is assigned for ``true". The raw scores are the sum of the points across the 11 behaviours considered, six for EXT and five for INT. \par}
 \end{figure}
 
 
@@ -594,6 +594,11 @@ tb.int
 \caption{Evolution of income inequality }
 {\scriptsize \emph{Notes}:  \par}
 \end{figure}
+
+<<FACINEQ_DEMEAN>>=
+# function for demeaning
+@
+
 % 
 % \begin{figure}
 % <<FACINEQ, dependson="FA_SCORES_MAIN", dev='tikz', fig.height=12, fig.width=10, out.width='1\\linewidth'>>=
@@ -606,7 +611,21 @@ tb.int
 <<FACINEQ_SC, dependson="FA_SCORES_MAIN", dev='tikz', fig.height=12, fig.width=10, out.width='1\\linewidth'>>=
 @
 \caption{Mean scores across social class}\label{fig:meanci_sc}
-{\scriptsize \emph{Notes}: The figure plots the mean and its 95\% confidence interval across the quintiles in the income distribution. \par}
+{\scriptsize \emph{Notes}: The figure plots the mean and its 95\% confidence interval across harmonised social class of the cohort member's family at 10 years of age. \par}
+\end{figure}
+
+\begin{figure}
+<<FACINEQ_YS, dependson="FA_SCORES_MAIN", dev='tikz', fig.height=12, fig.width=10, out.width='1\\linewidth'>>=
+@
+\caption{Mean scores across maternal schooling}\label{fig:meanci_ys}
+{\scriptsize \emph{Notes}: The figure plots the mean and its 95\% confidence interval across grouped years of schooling of the cohort member's mother at 5 years of age. \par}
+\end{figure}
+
+\begin{figure}
+<<FACINEQ_ME, dependson="FA_SCORES_MAIN", dev='tikz', fig.height=12, fig.width=10, out.width='1\\linewidth'>>=
+@
+\caption{Mean scores across maternal employment}\label{fig:meanci_me}
+{\scriptsize \emph{Notes}: The figure plots the mean and its 95\% confidence interval by employment status of the cohort member's mother at 5 years of age. \par}
 \end{figure}
 
 
@@ -922,13 +941,12 @@ print.xtable(xtable(table,
 \caption{Summary statistics} \label{tab:lvpars}
 \centering
 <<SUMSTATS, results='asis'>>=
-require(dummies)
 
-datacompl <- scores2plot[complete.cases(scores2plot[,decvars2]),] # complete cases
+datacompl <- scores2plot[complete.cases(scores2plot[,decvars]),] # complete cases
 # expand dummies
 datasum <- cbind(
   datacompl[,c("EXT","INT","cohortsex")], 
-  dummy.data.frame(datacompl[,c(decvars2)], sep = "")
+  dummy.data.frame(datacompl[,c(decvars)], sep = "")
 )
 
 # statistics by group

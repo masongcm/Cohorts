@@ -8,9 +8,7 @@ keep mcsid sentry country pttype2 weight1 weight2
 tempfile mcslong
 save `mcslong'
 
-
-*Demographics ******************************************************************
-
+********************************************************************************
 *birth parent interview (sex and parental education)
 use "$mcsraw/S1/mcs1_parent_interview.dta", clear
 rename ahcsexa0 sex
@@ -144,14 +142,14 @@ gen lfte_fath = aplfte00
 replace lfte_fath = cplfte00 if cplfte00!=.
 recode lfte_moth lfte_fath (0=.) // still in FTE to missing
 
-gen mysch5 = lfte_moth-15	// years continued school after 15
-gen fysch5 = lfte_fath-15
-recode mysch5 fysch5 (-15/-1 = 0) // put to 0 everyone who had less than 15 years education
+gen mysch5 = lfte_moth	// age left FTE
+gen fysch5 = lfte_fath
+recode mysch5 fysch5 (1/15 = 15) // put to 15 everyone under 15
 
 gen ageint5 = floor(chcagea0/30.42)
 lab var ageint5		"Age at 5y interview (months)"
-lab var fysch5		"Father years of schooling (5y)"
-lab var mysch5		"Mother years of schooling (5y)"
+lab var fysch5		"Age Father left FTE (5y)"
+lab var mysch5		"Age Mother left FTE (5y)"
 
 keep mcsid ageint5 ?ysch5
 tempfile mcsdem3
@@ -166,18 +164,20 @@ rename cmdnvq00 hnvq_main
 recode hnvq_main (-1=.) (1/3=0) (4 5 = 1) (95=.) (96 = 0), gen(mhied5)
 rename cpdnvq00 hnvq_part
 gen numch5 = cdtots00-1
+recode cmdact00 (-8/-1=.) (1 2 5 6 8 = 1) (3 4 7 9 =0), gen(mempl5)
 
 recode cmwgtk00 (-8/-1 = .), gen(mweight5)
 recode cmhgtm00 (-8/-1 = .), gen(mheight5)
 recode cmdbmi00 (-8/-1 = .), gen(mbmi5)
 
-lab var numch5			"Number other children in HH at 5"
-lab var mhied5	"Mother HE degree, NVQ4-5 (5y)"
+lab var numch5			"Number other children in HH (5y)"
+lab var mhied5			"Mother HE degree, NVQ4-5 (5y)"
 lab var mheight5		"Mother height (5y) (m)"
 lab var mweight5		"Mother weight (5y) (kg)"
 lab var mbmi5			"Mother BMI (5y)"
+lab var mempl5			"Mother in work/education (5y)"
 
-keep mcsid hnvq_main hnvq_part numch5 naturalmother5 mhied5 mweight5 mheight5 mbmi5
+keep mcsid hnvq_main hnvq_part numch5 naturalmother5 mhied5 mweight5 mheight5 mbmi5 mempl5
 tempfile mcs5d
 save `mcs5d'
 
@@ -550,7 +550,7 @@ append using `ethn'
 local covarstokeep country region ///
 					sex smkpr singlem malaise mempl nprevst caesbirth preecl ///
 					ethn bwt lowbwt gestaw preterm mothageb teenm parity firstb mheight mweight mbmi ///
-					mysch5 fysch5 mhied5 numch5 mweight5 mheight5 mbmi5 ///
+					mysch5 fysch5 mhied5 numch5 mweight5 mheight5 mbmi5 mempl5 ///
 					scl10 incq10 faminc10_real faminc10_infl
 
 /* SAVE 5y FILE */

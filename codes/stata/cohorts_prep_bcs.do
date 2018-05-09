@@ -3,8 +3,7 @@
 ***** PREP BCS 70 DATA		                ************************************
 ********************************************************************************
 
-*Demographics ******************************************************************
-
+********************************************************************************
 /* birth data (sex, country, region) */
 use "$bcsraw/1970_birth/bcs7072a.dta", clear
 rename a0255 sex
@@ -65,6 +64,8 @@ keep bcsid sex bwt lowbwt smkpr mothageb teenm parity firstb nprevpreg nprevst n
 tempfile bcsdem1
 save `bcsdem1'
 
+********************************************************************************
+// Derived
 use "$bcsraw/1970_birth/bcs1derived.dta", clear
 rename BCSID bcsid
 rename BD1CNTRY country 
@@ -76,6 +77,7 @@ keep bcsid country region
 tempfile bcsdem2
 save `bcsdem2'
 
+********************************************************************************
 /* 5y data (age at interview, parental education, and ethnicity) */
 use "$bcsraw/1975/f699b.dta", clear
 
@@ -87,6 +89,11 @@ rename e196		fysch5
 recode mysch5 fysch5 (-3 -2 -1 =.)
 recode e189a (-3/-1 = .) (6 7=1) (1/5 8 =0), gen(mhied5)
 replace mhied5=0 if mhied5==. & e193==0 // no additional years of FT education after school
+replace mysch5 = mysch5+15 // age left FTE
+replace fysch5 = fysch5+15
+
+// maternal employment/FTE
+recode e205 (-3/-1=.) (1=0) (2/8=1), gen(mempl5)
 
 // date interview
 recode e271 (-3=.)
@@ -104,12 +111,14 @@ gen numch5 = e006 + e007 if e007!=-1 & e006!=-1
 
 lab var ageint5			"Age at 5y interview (months)"
 lab var ethn			"Nonwhite ethnicity"
-lab var fysch5			"Father years of schooling (5y)"
-lab var mysch5			"Mother years of schooling (5y)"
+lab var fysch5			"Age Father left FTE (5y)"
+lab var mysch5			"Age Mother left FTE (5y)"
 lab var mhied5			"Mother HE degree (5y)"
-lab var numch5			"Number other children in HH at 5"
+lab var numch5			"Number other children in HH (5y)"
+lab var mempl5			"Mother in work/education (5y)"
 
-keep bcsid ethn ageint5 ?ysch5 numch5 mhied5
+
+keep bcsid ethn ageint5 ?ysch5 numch5 mhied5 mempl5
 tempfile bcsdem3
 save `bcsdem3'
 
@@ -180,6 +189,32 @@ keep bcsid agemint10 agetest10 ///
 tempfile bcsall10y
 save `bcsall10y'
 
+
+*BEHAVIOURS AT 16	 ***********************************************************
+/*
+use "$bcsraw/1986/bcs7016x.dta", clear
+recode f44 (-2 -1 =.) (1/4 =1), gen(smktry16a)
+recode gh1 (-2 -1 =.) (1=0) (2/4 =1), gen(smktry16b)
+gen smktry16 =  smktry16a
+replace smktry16 = smktry16b if smktry16==.
+recode f56 (-2 -1 =.) (1/max=1), gen(drink16)
+recode gf2 (-2 -1 =.) (1/3=1) (4=0), gen(porn16)
+egen hadsex16 = anymatch(hb9_2 hb9_3 hb9_4 hb9_5 hb9_6 hb9_8 hb9_9), values(1)
+replace hadsex16 = . if hb9_2==-1
+egen drugtry16 = anymatch(q31_3 q31_5 q31_7 q31_9 q31_11 q31_13 q31_15), values(2 3 4 5) 
+replace drugtry16 = . if q31_3==-1
+
+
+lab var smktry16		"Tried smoking"
+lab var drink16			"Drink in past week"
+lab var porn16			"Porn in past month"
+lab var hadsex16		"Had sex"
+
+
+//hd1 -- How often in past year drank alcohol?
+//hd14 -- Have you ever been really drunk?
+//jb13 -- Absent school since Sept 85 but not ill
+*/
 *QUALIFICATIONS AT 30	 *******************************************************
 
 * 10 Year Survey
@@ -245,11 +280,13 @@ local i = 1
 foreach v of local similitems {
 	local lab: variable label `v'
 	if substr("`lab'", -4,4)=="NAME" {
+	qui {
 		gen bcs10_ws`i'=`v'
 		lab var bcs10_ws`i' "BAS WS: Item `i'"
 		recode bcs10_ws`i' (min/-1=.) (2=0) (9=0)	// assume missing response is wrong
 		local i=`i'+1
 		drop `v'								// drop unused variable
+	}
 	}
 	else drop `v'
 }
@@ -348,7 +385,7 @@ foreach x in epvt_z copy_z hfd_z {
 local covarstokeep country region ///
 					sex smkpr singlem mempl nprevst caesbirth preecl ///
 					ethn bwt lowbwt gestaw preterm mothageb teenm parity firstb mheight ///
-					mysch5 fysch5 numch5 mhied5 ///
+					mysch5 fysch5 numch5 mhied5 mempl5 ///
 					scl10 incq10 faminc10_real faminc10_infl
 
 preserve

@@ -599,6 +599,6 @@ lab var drugtry14		"Tried drugs (14)"
 lab var stole14			"Ever stole anything (14)"
 lab var selfharm14		"Self harmed in past year (14)"
 
-keep mcsid smktry14 alctry14 hadsex14 drugtry14 stole14 selfharm14 
+keep mcsid age14 smktry14 alctry14 hadsex14 drugtry14 stole14 selfharm14 
 
 saveold "$rdata/mcs14outc.dta", replace version(12)

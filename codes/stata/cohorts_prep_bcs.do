@@ -190,31 +190,6 @@ tempfile bcsall10y
 save `bcsall10y'
 
 
-*BEHAVIOURS AT 16	 ***********************************************************
-/*
-use "$bcsraw/1986/bcs7016x.dta", clear
-recode f44 (-2 -1 =.) (1/4 =1), gen(smktry16a)
-recode gh1 (-2 -1 =.) (1=0) (2/4 =1), gen(smktry16b)
-gen smktry16 =  smktry16a
-replace smktry16 = smktry16b if smktry16==.
-recode f56 (-2 -1 =.) (1/max=1), gen(drink16)
-recode gf2 (-2 -1 =.) (1/3=1) (4=0), gen(porn16)
-egen hadsex16 = anymatch(hb9_2 hb9_3 hb9_4 hb9_5 hb9_6 hb9_8 hb9_9), values(1)
-replace hadsex16 = . if hb9_2==-1
-egen drugtry16 = anymatch(q31_3 q31_5 q31_7 q31_9 q31_11 q31_13 q31_15), values(2 3 4 5) 
-replace drugtry16 = . if q31_3==-1
-
-
-lab var smktry16		"Tried smoking"
-lab var drink16			"Drink in past week"
-lab var porn16			"Porn in past month"
-lab var hadsex16		"Had sex"
-
-
-//hd1 -- How often in past year drank alcohol?
-//hd14 -- Have you ever been really drunk?
-//jb13 -- Absent school since Sept 85 but not ill
-*/
 *QUALIFICATIONS AT 30	 *******************************************************
 
 * 10 Year Survey
@@ -411,6 +386,39 @@ saveold "$rdata/bcs5yeng.dta", replace version(12)
 restore
 
 
+*BEHAVIOURS AT 16	 ***********************************************************
+
+use "$bcsraw/1986/bcs7016x.dta", clear
+recode f44 (-2 -1 =.) (1/4 =1), gen(smktry16a)
+recode gh1 (-2 -1 =.) (1=0) (2/4 =1), gen(smktry16b)
+gen smktry16 =  smktry16a
+replace smktry16 = smktry16b if smktry16==.
+recode f56 (-2 -1 =.) (1/max=1), gen(alcoh16)
+recode hd1 (-2 -1 =.) (7=0) (1/6=1), gen(alctry16)
+recode gf2 (-2 -1 =.) (1/3=1) (4=0), gen(porn16)
+egen hadsex16 = anymatch(hb9_2 hb9_3 hb9_4 hb9_5 hb9_6 hb9_8 hb9_9), values(1)
+replace hadsex16 = . if hb9_2==-1
+egen drugtry16 = anymatch(q31_3 q31_5 q31_7 q31_9 q31_11 q31_13 q31_15), values(2 3 4 5) 
+replace drugtry16 = . if q31_3==-1
+recode hd14 (-2 -1=.) (1 6=0) (2/5=1), gen(drunk16)
+recode jc13 (-2 -1=.) (2=0), gen(read16)
+recode q22_1 (-2 -1=.) (6=0) (1/5=1), gen(propdam16)
+recode q22_7 (-2 -1=.) (6=0) (1/5=1), gen(shplift16)
+
+lab var smktry16		"Tried smoking (16)"
+lab var alctry16		"Tried alcohol (16)"
+lab var alcoh16			"Alcohol in past week (16)"
+lab var drunk16			"Ever been drunk (16)"
+lab var porn16			"Porn in past month (16)"
+lab var hadsex16		"Had sex (16)"
+lab var drugtry16		"Tried drugs (16)"
+lab var read16			"Read book for pleasure in past week (16)"
+lab var propdam16		"Damaged other's property in past year (16)"
+lab var shplift16		"Shoplifted >5£ in past year (16)"
+
+keep bcsid smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16
+
+saveold "$rdata/bcs16outc.dta", replace version(12)
 
 
 

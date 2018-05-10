@@ -577,4 +577,28 @@ restore
 
 
 
+***************************************************************
+// behaviours at 14-15
+use "$mcsraw/S6/mcs6_cm_interview.dta", clear
+rename _all, lower
 
+rename fccage00 age14
+recode fcalcd00 (-9/-1=.) (2=0), gen(alctry14)
+recode fcsmok00 (-9/-1=.) (1=0) (2/6=1), gen(smktry14)
+gen hadsex14 = 0 if inlist(fchhnd00,1,2)
+replace hadsex14 =1 if fcsexx00==1
+gen drugtry14 = 0 if fccanb00>0
+replace drugtry14 = 1 if fccanb00==1 | fcotdr00==1
+recode fcstln00 (-9/-1=.) (2=0), gen(stole14)
+recode fcharm00 (-9/-1=.) (2=0), gen(selfharm14)
+
+lab var smktry14		"Tried smoking (14)"
+lab var alctry14		"Tried alcohol (14)"
+lab var hadsex14		"Had sex (14)"
+lab var drugtry14		"Tried drugs (14)"
+lab var stole14			"Ever stole anything (14)"
+lab var selfharm14		"Self harmed in past year (14)"
+
+keep mcsid smktry14 alctry14 hadsex14 drugtry14 stole14 selfharm14 
+
+saveold "$rdata/mcs14outc.dta", replace version(12)

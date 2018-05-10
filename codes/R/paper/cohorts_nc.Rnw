@@ -144,11 +144,12 @@ read_chunk(here("codes/R/3_inv_fit.R"))
 read_chunk(here("codes/R/4_scores.R"))
 read_chunk(here("codes/R/4_scores_aux.R"))
 read_chunk(here("codes/R/5_graphs.R"))
-read_chunk(here("codes/R/6_decvars.R"))
+read_chunk(here("codes/R/6_selectvars.R"))
 read_chunk(here("codes/R/7_counterf.R"))
 read_chunk(here("codes/R/7_counterf_graphs.R"))
 read_chunk(here("codes/R/7_counterf_tabs.R"))
 read_chunk(here("codes/R/7_counterf_seqdec.R"))
+read_chunk(here("codes/R/8_regs.R"))
 read_chunk(here("codes/R/getpars.R"))
 
 @
@@ -599,14 +600,6 @@ tb.int
 # function for demeaning
 @
 
-% 
-% \begin{figure}
-% <<FACINEQ, dependson="FA_SCORES_MAIN", dev='tikz', fig.height=12, fig.width=10, out.width='1\\linewidth'>>=
-% @
-% \caption{Mean scores across income quintiles}\label{fig:meanci}
-% {\scriptsize \emph{Notes}: The figure plots the mean and its 95\% confidence interval across the quintiles in the income distribution. \par}
-% \end{figure}
-
 \begin{figure}
 <<FACINEQ_SC, dependson="FA_SCORES_MAIN", dev='tikz', fig.height=12, fig.width=10, out.width='1\\linewidth'>>=
 @
@@ -632,51 +625,207 @@ tb.int
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
 
-<<FORMULAS>>=
+<<SELECTVARS>>=
 # define variables and formulas for regression and decomposition
 @
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
-% \begin{table}
-% \caption{Quantifying the gradient}
-% \centering
-% \resizebox{\textwidth}{!}{
-% <<FA_REGS_REAL_M, results='asis'>>=
-% # regress scores on income
-% library(stargazer)
-% 
-% decvars_reg <- c(decvars, "cohort") # add cohort
-% interact_reg <- paste0(decvars_reg[! decvars_reg %in% c("cohort")], "*cohort")
-% 
-% form_ext_reg <- as.formula(paste("EXT ~ ", paste0(decvars2, collapse = '+')))
-% form.ext2i <- as.formula(paste("EXT ~ ", paste0(c(decvars2, interact2), collapse = '+')))
-% form.int2 <- as.formula(paste("INT ~ ", paste0(decvars2, collapse = '+')))
-% form.int2i <- as.formula(paste("INT ~ ", paste0(c(decvars2, interact2), collapse = '+')))
-% 
-% r.ext.m  <- lm(form.ext2,  data=subset(scores2plot, sex=="M"))
-% r.exti.m <- lm(form.ext2i, data=subset(scores2plot, sex=="M"))
-% r.ext.f  <- lm(form.ext2,  data=subset(scores2plot, sex=="F"))
-% r.exti.f <- lm(form.ext2i, data=subset(scores2plot, sex=="F"))
-% r.int.m  <- lm(form.int2,  data=subset(scores2plot, sex=="M"))
-% r.inti.m <- lm(form.int2i, data=subset(scores2plot, sex=="M"))
-% r.int.f  <- lm(form.int2,  data=subset(scores2plot, sex=="F"))
-% r.inti.f <- lm(form.int2i, data=subset(scores2plot, sex=="F"))
-% 
-% stargazer(r.ext.m, r.exti.m, r.ext.f, r.exti.f, r.int.m, r.inti.m, r.int.f, r.inti.f,
-%           column.labels=c("M","M","F","F","M","M","F","F"), #,"BCS F","MCS F","BCS F","MCS F"),
-%           dep.var.caption = "", multicolumn = FALSE,
-%           #omit=c("Constant", paste0("region", c(2:9))),
-%           no.space=TRUE,
-%           omit.stat= c("rsq", "f", "ser", "aic", "ll"),
-%           notes = "All estimates control for Government Office Region of birth.",
-%           single.row=TRUE,
-%           float=FALSE    # needs begin table outside it
-% )
-% @
-% }
-% \end{table}
+
+<<REGRESSIONS, dependson="SELECTVARS">>=
+# run all regression models
+@
+
+\begin{table}
+\caption{Quantifying the gradient -- Males externalising}
+\centering
+\resizebox{\textwidth}{!}{
+<<REGS_EXT_M, results='asis', dependson="REGRESSIONS">>=
+library(stargazer)
+stargazer(r.ext$BCS.M[[1]], r.ext$BCS.M[[2]], r.ext$BCS.M[[3]], r.ext$MCS.M[[1]], r.ext$MCS.M[[2]], r.ext$MCS.M[[3]],
+          column.labels=c("BCS","BCS","BCS","MCS","MCS","MCS"),
+          dep.var.caption = "", multicolumn = FALSE,
+          #omit=c("Constant", paste0("region", c(2:9))),
+          no.space=TRUE,
+          omit.stat= c("f", "ser", "aic", "ll"),
+          #notes = "All estimates control for Government Office Region of birth.",
+          single.row=TRUE,
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{table}
+
+\begin{table}
+\caption{Quantifying the gradient -- Females externalising}
+\centering
+\resizebox{\textwidth}{!}{
+<<REGS_EXT_F, results='asis', dependson="REGRESSIONS">>=
+library(stargazer)
+stargazer(r.ext$BCS.F[[1]], r.ext$BCS.F[[2]], r.ext$BCS.F[[3]], r.ext$MCS.F[[1]], r.ext$MCS.F[[2]], r.ext$MCS.F[[3]],
+          column.labels=c("BCS","BCS","BCS","MCS","MCS","MCS"),
+          dep.var.caption = "", multicolumn = FALSE,
+          #omit=c("Constant", paste0("region", c(2:9))),
+          no.space=TRUE,
+          omit.stat= c("f", "ser", "aic", "ll"),
+          #notes = "All estimates control for Government Office Region of birth.",
+          single.row=TRUE,
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{table}
+
+\begin{table}
+\caption{Quantifying the gradient -- Males internalising}
+\centering
+\resizebox{\textwidth}{!}{
+<<REGS_INT_M, results='asis', dependson="REGRESSIONS">>=
+library(stargazer)
+stargazer(r.int$BCS.M[[1]], r.int$BCS.M[[2]], r.int$BCS.M[[3]], r.int$MCS.M[[1]], r.int$MCS.M[[2]], r.ext$MCS.M[[3]],
+          column.labels=c("BCS","BCS","BCS","MCS","MCS","MCS"),
+          dep.var.caption = "", multicolumn = FALSE,
+          #omit=c("Constant", paste0("region", c(2:9))),
+          no.space=TRUE,
+          omit.stat= c("f", "ser", "aic", "ll"),
+          #notes = "All estimates control for Government Office Region of birth.",
+          single.row=TRUE,
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{table}
+
+\begin{table}
+\caption{Quantifying the gradient -- Females internalising}
+\centering
+\resizebox{\textwidth}{!}{
+<<REGS_INT_F, results='asis', dependson="REGRESSIONS">>=
+library(stargazer)
+stargazer(r.int$BCS.F[[1]], r.int$BCS.F[[2]], r.int$BCS.F[[3]], r.int$MCS.F[[1]], r.int$MCS.F[[2]], r.int$MCS.F[[3]],
+          column.labels=c("BCS","BCS","BCS","MCS","MCS","MCS"),
+          dep.var.caption = "", multicolumn = FALSE,
+          #omit=c("Constant", paste0("region", c(2:9))),
+          no.space=TRUE,
+          omit.stat= c("f", "ser", "aic", "ll"),
+          #notes = "All estimates control for Government Office Region of birth.",
+          single.row=TRUE,
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{table}
+
+\begin{landscape}
+\begin{table}
+\caption{Effect of behavioural skills on adolescent outcomes -- BCS males}
+\centering
+\resizebox{24cm}{!}{
+<<REGS_OUTC_BCS_M, results='asis', dependson="REGRESSIONS">>=
+library(stargazer)
+# get mean dependent vars
+dvmeans <- colMeans(bcsoutc[bcsoutc$sex=="F",bcsoutcvars], na.rm = T)
+dvmeans <- round(unlist(lapply(dvmeans, function(x) rep(x,2))),3)
+
+stargazer(bcsoutcmod_m_uc[[1]], bcsoutcmod_m_c[[1]],
+          bcsoutcmod_m_uc[[2]], bcsoutcmod_m_c[[2]],
+          bcsoutcmod_m_uc[[3]], bcsoutcmod_m_c[[3]],
+          bcsoutcmod_m_uc[[4]], bcsoutcmod_m_c[[4]],
+          bcsoutcmod_m_uc[[5]], bcsoutcmod_m_c[[5]],
+          bcsoutcmod_m_uc[[6]], bcsoutcmod_m_c[[6]],
+          add.lines = list(c("Mean Dep Var", dvmeans)),
+          no.space=TRUE,
+          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+          single.row=T,
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{table}
+\end{landscape}
+
+\begin{landscape}
+\begin{table}
+\caption{Effect of behavioural skills on adolescent outcomes -- MCS males}
+\centering
+\resizebox{24cm}{!}{
+<<REGS_OUTC_MCS_M, results='asis', dependson="REGRESSIONS">>=
+library(stargazer)
+# get mean dependent vars
+dvmeans <- colMeans(mcsoutc[mcsoutc$sex=="F",mcsoutcvars], na.rm = T)
+dvmeans <- round(unlist(lapply(dvmeans, function(x) rep(x,2))),3)
+
+stargazer(mcsoutcmod_m_uc[[1]], mcsoutcmod_m_c[[1]],
+          mcsoutcmod_m_uc[[2]], mcsoutcmod_m_c[[2]],
+          mcsoutcmod_m_uc[[3]], mcsoutcmod_m_c[[3]],
+          mcsoutcmod_m_uc[[4]], mcsoutcmod_m_c[[4]],
+          mcsoutcmod_m_uc[[5]], mcsoutcmod_m_c[[5]],
+          add.lines = list(c("Mean Dep Var", dvmeans)),
+          no.space=TRUE,
+          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+          single.row=T,
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{table}
+\end{landscape}
+
+\begin{landscape}
+\begin{table}
+\caption{Effect of behavioural skills on adolescent outcomes -- BCS females}
+\centering
+\resizebox{24cm}{!}{
+<<REGS_OUTC_BCS_F, results='asis', dependson="REGRESSIONS">>=
+library(stargazer)
+# get mean dependent vars
+dvmeans <- colMeans(bcsoutc[bcsoutc$sex=="F",bcsoutcvars], na.rm = T)
+dvmeans <- round(unlist(lapply(dvmeans, function(x) rep(x,2))),3)
+
+stargazer(bcsoutcmod_f_uc[[1]], bcsoutcmod_f_c[[1]],
+          bcsoutcmod_f_uc[[2]], bcsoutcmod_f_c[[2]],
+          bcsoutcmod_f_uc[[3]], bcsoutcmod_f_c[[3]],
+          bcsoutcmod_f_uc[[4]], bcsoutcmod_f_c[[4]],
+          bcsoutcmod_f_uc[[5]], bcsoutcmod_f_c[[5]],
+          bcsoutcmod_f_uc[[6]], bcsoutcmod_f_c[[6]],
+          add.lines = list(c("Mean Dep Var", dvmeans)),
+          no.space=TRUE,
+          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+          single.row=T,
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{table}
+\end{landscape}
+
+\begin{landscape}
+\begin{table}
+\caption{Effect of behavioural skills on adolescent outcomes -- MCS females}
+\centering
+\resizebox{24cm}{!}{
+<<REGS_OUTC_MCS_F, results='asis', dependson="REGRESSIONS">>=
+library(stargazer)
+# get mean dependent vars
+dvmeans <- colMeans(mcsoutc[mcsoutc$sex=="F",mcsoutcvars], na.rm = T)
+dvmeans <- round(unlist(lapply(dvmeans, function(x) rep(x,2))),3)
+
+stargazer(mcsoutcmod_f_uc[[1]], mcsoutcmod_f_c[[1]],
+          mcsoutcmod_f_uc[[2]], mcsoutcmod_f_c[[2]],
+          mcsoutcmod_f_uc[[3]], mcsoutcmod_f_c[[3]],
+          mcsoutcmod_f_uc[[4]], mcsoutcmod_f_c[[4]],
+          mcsoutcmod_f_uc[[5]], mcsoutcmod_f_c[[5]],
+          add.lines = list(c("Mean Dep Var", dvmeans)),
+          no.space=TRUE,
+          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
+          single.row=T,
+          float=FALSE    # needs begin table outside it
+)
+@
+}
+\end{table}
+\end{landscape}
+
 
 \clearpage
 \subsection{Decomposition of inequality}
@@ -751,8 +900,12 @@ $$F_{(\theta^{EXT}_{MCS} \mid X_{MCS})} - F_{(\theta^{EXT}_{BCS} \mid X_{BCS})} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % COUNTERFACTUAL DECOMPOSITIONS
 
+<<COUNTERF_SEQDEC_ESTIM, dependson="SELECTVARS">>=
+# estimate sequential decompositions
+@
+
 <<COUNTERF_SEQDEC_PREP>>=
-# data for decomposition plots
+# extract data
 @
 
 <<COUNTERF_SEQDEC_PLOT>>=
@@ -761,7 +914,7 @@ $$F_{(\theta^{EXT}_{MCS} \mid X_{MCS})} - F_{(\theta^{EXT}_{BCS} \mid X_{BCS})} 
 
 \begin{landscape}
 \begin{figure}
-<<COUNTERF_SEQDEC_EXT, dependson='COUNTERF_SEQDEC_PREP', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
+<<COUNTERF_SEQDEC_EXT, dependson='COUNTERF_SEQDEC_PLOT', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
 cfp.seqdec.ext
 @
 \caption{Counterfactual sequential decomposition -- externalising skills}\label{fig:counterf_seq_ext}
@@ -771,7 +924,7 @@ cfp.seqdec.ext
 
 \begin{landscape}
 \begin{figure}
-<<COUNTERF_SEQDEC_INT, dependson='COUNTERF_SEQDEC_PREP', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
+<<COUNTERF_SEQDEC_INT, dependson='COUNTERF_SEQDEC_PLOT', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
 cfp.seqdec.int
 @
 \caption{Counterfactual sequential decomposition -- internalising skills}\label{fig:counterf_seq_int}
@@ -792,7 +945,6 @@ cfp.seqdec.int
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Exploratory Factor Analysis}
-
 
 <<BCSEFA>>=
 @

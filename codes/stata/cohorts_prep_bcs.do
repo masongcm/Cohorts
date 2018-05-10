@@ -388,6 +388,14 @@ restore
 
 *BEHAVIOURS AT 16	 ***********************************************************
 
+use "$bcsraw/1986/bcs4derived.dta", clear
+rename _all, lower
+gen age16 = floor(bd4age)
+replace age16 = 98 if age16==-1 // missing age, use factor
+keep bcsid age16
+tempfile bcs16age
+save `bcs16age'
+
 use "$bcsraw/1986/bcs7016x.dta", clear
 recode f44 (-2 -1 =.) (1/4 =1), gen(smktry16a)
 recode gh1 (-2 -1 =.) (1=0) (2/4 =1), gen(smktry16b)
@@ -420,6 +428,7 @@ egen tokeep = rownonmiss(smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugt
 drop if tokeep==0
 keep bcsid smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16
 
+merge 1:1 bcsid using `bcs16age', nogen keep(3)
 
 saveold "$rdata/bcs16outc.dta", replace version(12)
 

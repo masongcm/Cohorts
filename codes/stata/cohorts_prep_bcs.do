@@ -416,7 +416,10 @@ lab var read16			"Read book for pleasure in past week (16)"
 lab var propdam16		"Damaged other's property in past year (16)"
 lab var shplift16		"Shoplifted >5£ in past year (16)"
 
+egen tokeep = rownonmiss(smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16)
+drop if tokeep==0
 keep bcsid smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16
+
 
 saveold "$rdata/bcs16outc.dta", replace version(12)
 

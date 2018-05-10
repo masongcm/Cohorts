@@ -1,5 +1,5 @@
 #######################################################################################################
-## ---- FORMULAS
+## ---- SELECTVARS
 
 # select variables for decomposition, in groups
 decvarslist <- list()

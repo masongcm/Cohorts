@@ -220,8 +220,8 @@ scores2plot <- demean(scores2plot, "scl10b", "IV V", "dsc")
 # common options for dotCI
 addopts_main <- function(x) {
   x <- x + xlab("Family social class at 10") +
-    scale_y_continuous(name = "Factor score (IV V = 0)", breaks = seq(-.2,.8,.2)) +
-    coord_cartesian(ylim = c(-.2, .8)) +
+    scale_y_continuous(name = "Factor score (IV V = 0)", breaks = seq(-.4,.4,.2)) +
+    coord_cartesian(ylim = c(-.4, .4)) +
     stat_summary(geom="errorbar", fun.data=mean_cl_normal, width=.2, position=position_dodge(.5)) +
     stat_summary(fun.y=mean, geom="point", size=4, aes(colour=cohort), position=position_dodge(.5)) +
     labs(list(colour="")) + theme(legend.position="none")
@@ -279,13 +279,13 @@ library(gridExtra)
 library(ggpubr)
 
 # demean scores for lowest level
-scores2plot <- demean(scores2plot, "mysch5b", "Compuls.", "dys")
+scores2plot <- demean(scores2plot, "mysch5b", "15", "dys")
 
 # DOTCI
 # common options for dotCI
 addopts_main <- function(x) {
-  x <- x + xlab("Maternal employment at 5") +
-    scale_y_continuous(name = "Factor score (Unemployed = 0)", breaks = seq(-.2,.8,.2)) +
+  x <- x + xlab("Age mother left FTE") +
+    scale_y_continuous(name = "Factor score (Left at 15 = 0)", breaks = seq(-.2,.8,.2)) +
     coord_cartesian(ylim = c(-.2, .8)) +
     stat_summary(geom="errorbar", fun.data=mean_cl_normal, width=.2, position=position_dodge(.5)) +
     stat_summary(fun.y=mean, geom="point", size=4, aes(colour=cohort), position=position_dodge(.5)) +
@@ -347,7 +347,7 @@ library(ggpubr)
 scores2plot <- demean(scores2plot, "mempl5", "Unempl./At home", "dme")
 
 #common options
-addopts <- function(x) {
+addopts_main <- function(x) {
   x <- x + xlab("Maternal employment at 5") +
     scale_y_continuous(name = "Factor score (Unemployed = 0)", breaks = seq(-.4,.4,.2)) +
     coord_cartesian(ylim = c(-.4, .4)) +

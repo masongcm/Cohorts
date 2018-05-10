@@ -94,7 +94,7 @@ makecfdecplots <- function(flst, titles = NA, kbwt = 0.1) {
     x <- x +
       theme(
         axis.title.y=element_blank(),axis.line.y=element_blank(),axis.ticks.y=element_blank(),axis.text.y=element_blank(),
-        plot.title = element_text(margin=margin(t=10), face = "italic"),
+        plot.title = element_text(margin=margin(t=15), face = "italic"), # italic title inside graph
         legend.position="none"
       ) +
       scale_x_continuous(name = "Quantile", breaks = seq(.1,.9,.2)) +

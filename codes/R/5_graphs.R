@@ -213,6 +213,9 @@ library(grid)
 library(gridExtra)
 library(ggpubr)
 
+# reorder social class to have "other" on the LHS (scl10c)
+scores2plot$scl10c <- factor(scores2plot$scl10b, levels(scores2plot$scl10b)[c(5,1:4)])
+
 # demean scores for lowest class
 scores2plot <- demean(scores2plot, "scl10b", "IV V", "dsc")
 
@@ -227,20 +230,21 @@ addopts_main <- function(x) {
     labs(list(colour="")) + theme(legend.position="none")
   return(x)
 }
-ineq.ext.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$scl10b)), aes(x=scl10b, y=EXTdsc, colour=cohort)) + ggtitle("Males Externalising")
-ineq.ext.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$scl10b)), aes(x=scl10b, y=EXTdsc, colour=cohort)) + ggtitle("Females Externalising")
-ineq.int.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$scl10b)), aes(x=scl10b, y=INTdsc, colour=cohort)) + ggtitle("Males Internalising")
-ineq.int.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$scl10b)), aes(x=scl10b, y=INTdsc, colour=cohort)) + ggtitle("Females Internalising")
+ineq.ext.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$scl10c)), aes(x=scl10c, y=EXTdsc, colour=cohort)) + ggtitle("Males Externalising")
+ineq.ext.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$scl10c)), aes(x=scl10c, y=EXTdsc, colour=cohort)) + ggtitle("Females Externalising")
+ineq.int.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$scl10c)), aes(x=scl10c, y=INTdsc, colour=cohort)) + ggtitle("Males Internalising")
+ineq.int.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$scl10c)), aes(x=scl10c, y=INTdsc, colour=cohort)) + ggtitle("Females Internalising")
 ineqlist <- list(ineq.ext.m, ineq.ext.f, ineq.int.m, ineq.int.f)
 ineqlist <- lapply(ineqlist, function(x) addopts_main(x)) # apply options to all graphs
 legend_b <- cowplot::get_legend(ineqlist[[1]] + theme(legend.position="bottom")) # get legend
 ineqlist <- lapply(ineqlist, function(x) ggplot_gtable(ggplot_build((x)))) # make into gtable object
 
+
 # HISTOGRAM OF X
 # get histogram data
 tabb <- scores2plot %>%
-  filter(!is.na(scl10b)) %>%
-  count(cohort, sex, scl10b) %>%
+  filter(!is.na(scl10c)) %>%
+  count(cohort, sex, scl10c) %>%
   group_by(cohort,sex) %>% 
   mutate(prop = n / sum(n))
 tabb <- as.data.frame(tabb)
@@ -253,8 +257,8 @@ addopts_hist <- function(x) {
                  legend.position = "none") +
     geom_bar(stat = "identity", position = "dodge", width = 0.5, alpha = .75) # histogram
 }
-hist.m <- ggplot(data = tabb[tabb$sex=="M",], aes(scl10b, prop, fill = cohort)) + ggtitle("Distribution of categories") 
-hist.f <- ggplot(data = tabb[tabb$sex=="F",], aes(scl10b, prop, fill = cohort)) + ggtitle("Distribution of categories")
+hist.m <- ggplot(data = tabb[tabb$sex=="M",], aes(scl10c, prop, fill = cohort)) + ggtitle("Distribution of categories") 
+hist.f <- ggplot(data = tabb[tabb$sex=="F",], aes(scl10c, prop, fill = cohort)) + ggtitle("Distribution of categories")
 histlist <- list(hist.m, hist.f, hist.m, hist.f)
 histlist <- lapply(histlist, function(x) ggplot_gtable(ggplot_build(addopts_hist(x)))) # apply options to all graphs
 

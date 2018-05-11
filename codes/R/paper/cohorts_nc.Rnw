@@ -586,16 +586,6 @@ tb.int
 @
 
 
-\clearpage
-\begin{figure}
-\begin{center}
-<<INCINEQ, dependson="FA_SCORES_MAIN", dev='tikz', fig.height=4, fig.width=4, out.width='.5\\linewidth'>>=
-@
-\end{center}
-\caption{Evolution of income inequality }
-{\scriptsize \emph{Notes}:  \par}
-\end{figure}
-
 <<FACINEQ_DEMEAN>>=
 # function for demeaning
 @

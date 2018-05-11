@@ -17,7 +17,7 @@ recode amlfte00 aplfte00 (-9 -8 -1 =.)
 recode amcipr00 (-8/-1=.) (1/max=1), gen(smkprepreg)
 replace smkprepreg = 0 if amsmev00==2 | amsmty00==2
 gen smkpr = smkprepreg
-replace smkpr = 0 if inlist(amcich00,0,96) & inlist(amwhch00,1,2)  
+replace smkpr = 0 if amcich00==0 & inlist(amwhch00,1,2)
 // gave up, less than 1/day, changed in 1st/2nd month
 
 recode amwkpr00 (-9/-1=.) (2=0), gen(mempl) // paid job when pregnant
@@ -93,7 +93,21 @@ save `mcsdem1'
 * derived (country, region, ethnicity)
 use "$mcsraw/S1/mcs1_derived_variables.dta", clear
 rename MCSID mcsid
-rename ADREGN00 region
+gen region = ADREGN00
+recode region (1 2 = 1) (3=2) (4=3) (5=4) (9=5) (6 7 8=6)
+
+lab def reglab 	1 "North" ///
+				2 "Yorksh. + Humbers." ///
+				3 "East Midlands" ///
+				4 "West Midlands" ///
+				5 "South West" ///
+				6 "East + SE" ///
+				10 "Wales" ///
+				11 "Scotland" ///
+				12 "Northern Ireland"
+lab val region reglab
+lab var region 		"Region of Birth (Harmonised)"
+
 recode ADC06EA0 (-9/-1=.) (1=0) (2/6=1), gen(ethn)
 recode ADBWGTA0 (-8 -1 = .), gen(bwt)
 replace bwt = bwt
@@ -146,12 +160,31 @@ gen mysch5 = lfte_moth	// age left FTE
 gen fysch5 = lfte_fath
 recode mysch5 fysch5 (1/15 = 15) // put to 15 everyone under 15
 
+
+// parents year of birth
+recode cmpdby00 (-2=.), gen(myob) 
+recode cppdby00 (-2=.), gen(fyob)
+
+// school leaving age
+gen msla = 14 if myob<1933
+replace msla = 15 if inrange(myob,1933,1957)
+replace msla = 16 if myob>1957 & myob!=.
+gen fsla = 14 if fyob<1933
+replace fsla = 15 if inrange(fyob,1933,1957)
+replace fsla = 16 if fyob>1957 & fyob!=.
+
+// past compuslory schooling
+gen mpsla5 = (lfte_moth>msla) if lfte_moth!=.
+gen fpsla5 = (lfte_fath>fsla) if lfte_fath!=.
+
 gen ageint5 = floor(chcagea0/30.42)
 lab var ageint5		"Age at 5y interview (months)"
 lab var fysch5		"Age Father left FTE (5y)"
 lab var mysch5		"Age Mother left FTE (5y)"
+lab var mpsla5		"Mother education past SLA (5y)"
+lab var fpsla5		"Father education past SLA (5y)"
 
-keep mcsid ageint5 ?ysch5
+keep mcsid ageint5 ?ysch5 ?psla5
 tempfile mcsdem3
 save `mcsdem3'
 
@@ -164,7 +197,14 @@ rename cmdnvq00 hnvq_main
 recode hnvq_main (-1=.) (1/3=0) (4 5 = 1) (95=.) (96 = 0), gen(mhied5)
 rename cpdnvq00 hnvq_part
 gen numch5 = cdtots00-1
-recode cmdact00 (-8/-1=.) (1 2 5 6 8 = 1) (3 4 7 9 =0), gen(mempl5)
+
+recode cmdact00 (-8/-1=.) (1 2 = 1) (3 4 5 6 7 8 9 =0), gen(mempl5)
+
+// bring in hours
+merge 1:1 mcsid using "$mcsraw/S3/mcs3_parent_interview.dta", keepusing(cmwkhr00) keep(1 3) nogen
+replace mempl5 = 2 if cmwkhr00>20 // PT is < 20h
+lab def pft 0 "Unempl./Home" 1 "Part time" 2 "Full time"
+lab val mempl5 pft
 
 recode cmwgtk00 (-8/-1 = .), gen(mweight5)
 recode cmhgtm00 (-8/-1 = .), gen(mheight5)
@@ -175,11 +215,13 @@ lab var mhied5			"Mother HE degree, NVQ4-5 (5y)"
 lab var mheight5		"Mother height (5y) (m)"
 lab var mweight5		"Mother weight (5y) (kg)"
 lab var mbmi5			"Mother BMI (5y)"
-lab var mempl5			"Mother in work/education (5y)"
+lab var mempl5			"Mother unempl/PT/FT (5y)"
+
 
 keep mcsid hnvq_main hnvq_part numch5 naturalmother5 mhied5 mweight5 mheight5 mbmi5 mempl5
 tempfile mcs5d
 save `mcs5d'
+
 
 
 *SKILLS AT 5	 ***************************************************************
@@ -483,7 +525,7 @@ forvalues i=1(1)25 {
 
 * SAMPLE SELECTION
 keep if naturalmother5 == 1	// keep only interviews with natural mother
-drop if region > 9			// drop interviews not in England
+drop if region > 6			// drop interviews not in England
 keep if country == 1
 keep if sentry == 1 // only those who entered in sweep 1
 
@@ -548,9 +590,9 @@ append using `ethn'
 /* SAVE FILES for R */
 
 local covarstokeep country region ///
-					sex smkpr singlem malaise mempl nprevst caesbirth preecl ///
+					sex smkpr singlem malaise mempl nprevst caesbirth ///
 					ethn bwt lowbwt gestaw preterm mothageb teenm parity firstb mheight mweight mbmi ///
-					mysch5 fysch5 mhied5 numch5 mweight5 mheight5 mbmi5 mempl5 ///
+					mysch5 fysch5 mhied5 numch5 mweight5 mheight5 mbmi5 mempl5 ?psla5 ///
 					scl10 incq10 faminc10_real faminc10_infl
 
 /* SAVE 5y FILE */

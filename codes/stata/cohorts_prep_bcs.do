@@ -11,29 +11,28 @@ recode a0278 (-3/-2=.), gen(bwt)
 replace bwt = bwt/1000
 gen lowbwt = bwt<2.5 if bwt!=.
 recode a0043b (-3=.) (1/3=0) (4/6=1), gen(smkpr)
-rename a0005a mothageb
+
+recode a0005a (-2=.), gen(mothageb)
 gen teenm = mothageb<20 if mothageb!=.
+gen myob = 1970 - mothageb
+
 rename a0166 parity
-rename a0163 nprevpreg
 gen firstb = parity==0 if parity!=.
 rename a0169 nprevst
-rename a0167 nprevms
 
 recode a0195b (-3 -2 = .), gen(gestaw)
 gen preterm = gestaw<37 if gestaw!=.
 recode a0012 (-2=.) (1 3 4 5 = 1) (2 = 0), gen(singlem)
 
-recode a0017 (-2=.) (1/17=1) (18 19=0), gen(mempl)
+recode a0013 (-2 -1=.) (1/17=1) (18/22=0), gen(fempl)
+replace fempl = 1 if fempl==. & a0015==1
+replace fempl = 0 if a0015==2
+
+recode a0017 (-2=.) (1/17=1) (18/22=0), gen(mempl)
 replace mempl = 1 if mempl==. & a0019==1
-replace mempl = 0 if mempl==. & a0019==2
+replace mempl = 0 if a0019==2
 
 recode a0262 (-3/-1 = .) (7=1) (1/6 8 = 0), gen(caesbirth)
-
-recode a0317 (-3/-1 = .) (1 2 = 1) (3 = 0), gen(jaundice)
-recode a0288 (-3 -2 = .) (2 = 0), gen(preecl)
-replace preecl = 1 if a0293==12
-replace preecl = 1 if a0228==1
-recode a0261a (-3 -2 = .) (2=0), gen(meconm)
 
 gen mheight = a0197/100 if a0197>0
 
@@ -41,9 +40,7 @@ lab var sex				"Sex"
 lab var bwt				"Birthweight (kg)"
 lab var lowbwt			"Low birthweight (<2500g)"
 lab var parity			"Parity"
-lab var nprevpreg		"Num previous pregnancies"
 lab var nprevst			"Num previous stillbirths"
-lab var nprevms			"Num previous miscarriages"
 lab var firstb			"First born"
 lab var mothageb		"Mother age at CM birth"
 lab var teenm			"Teen mother"
@@ -52,15 +49,30 @@ lab var gestaw			"Gestational age (weeks)"
 lab var preterm			"Preterm (<37w)"
 lab var singlem			"Single mother"
 lab var mempl			"Mother employment before pregnancy"
+lab var fempl			"Father employment"
 lab var caesbirth		"Caesarean birth"
 lab var mheight			"Mother height (m)"
+lab var myob			"Mother year of birth"
+
+
+/*
+rename a0163 nprevpreg
+rename a0167 nprevms
+recode a0317 (-3/-1 = .) (1 2 = 1) (3 = 0), gen(jaundice)
+recode a0288 (-3 -2 = .) (2 = 0), gen(preecl)
+replace preecl = 1 if a0293==12
+replace preecl = 1 if a0228==1
+recode a0261a (-3 -2 = .) (2=0), gen(meconm)
 lab var jaundice		"Jaundiced baby"
 lab var preecl			"Eclampsia during labor, signs of pre-eclampsia, eclamptic fits"
 lab var meconm			"Meconium"
+lab var nprevpreg		"Num previous pregnancies"
+lab var nprevms			"Num previous miscarriages"
 
+*/
 
-keep bcsid sex bwt lowbwt smkpr mothageb teenm parity firstb nprevpreg nprevst nprevms ///
-				gestaw preterm singlem mempl caesbirth jaundice preecl mecon mheight
+keep bcsid sex bwt lowbwt smkpr mothageb teenm parity firstb nprevst ///
+				gestaw preterm singlem mempl caesbirth mheight myob
 tempfile bcsdem1
 save `bcsdem1'
 
@@ -70,8 +82,19 @@ use "$bcsraw/1970_birth/bcs1derived.dta", clear
 rename BCSID bcsid
 rename BD1CNTRY country 
 lab var country 		"Country at Birth"
-rename BD1REGN region
-lab var region 			"Standard Region of Residence"
+gen region = BD1REGN
+recode region (1 8 =1) (2=2) (3=3) (7=4) (6=5) (4 5 =6) (9=10) (10=11) (11=12)
+lab def reglab 	1 "North" ///
+				2 "Yorksh. + Humbers." ///
+				3 "East Midlands" ///
+				4 "West Midlands" ///
+				5 "South West" ///
+				6 "East + SE" ///
+				10 "Wales" ///
+				11 "Scotland" ///
+				12 "Northern Ireland"
+lab val region reglab
+lab var region 		"Region of Birth (Harmonised)"
 
 keep bcsid country region
 tempfile bcsdem2
@@ -81,24 +104,47 @@ save `bcsdem2'
 /* 5y data (age at interview, parental education, and ethnicity) */
 use "$bcsraw/1975/f699b.dta", clear
 
+// ethnicity
 recode e245 (-3 -2 = .) (1 2 = 0) (3/7=1), gen(ethn)
+
+// parents year of birth
+merge 1:1 bcsid using `bcsdem1', nogen keepusing(myob)
+gen fyob = 1975 - e009 if e009>0
+
+// school leaving age
+gen msla = 14 if myob<1933
+replace msla = 15 if inrange(myob,1933,1957)
+replace msla = 16 if myob>1957 & myob!=.
+gen fsla = 14 if fyob<1933
+replace fsla = 15 if inrange(fyob,1933,1957)
+replace fsla = 16 if fyob>1957 & fyob!=.
 
 // parental education
 rename e195		mysch5
 rename e196		fysch5
 recode mysch5 fysch5 (-3 -2 -1 =.)
+
+// higher education
 recode e189a (-3/-1 = .) (6 7=1) (1/5 8 =0), gen(mhied5)
 replace mhied5=0 if mhied5==. & e193==0 // no additional years of FT education after school
+
+// age left FTE
 replace mysch5 = mysch5+15 // age left FTE
 replace fysch5 = fysch5+15
 
-// maternal employment/FTE
-recode e205 (-3/-1=.) (1=0) (2/8=1), gen(mempl5)
+// past compulsory school (more than 0 years past 16
+gen mpsla5 = (mysch5>msla) if mysch5!=.
+gen fpsla5 = (fysch5>fsla) if fysch5!=.
 
-// date interview
+// maternal employment/FTE
+recode e217 (-3/-1 70 80=.) (10 50 = 0) (21 22 30 41 42 = 1) (20 40 60 61 = 2), gen(mempl5)
+lab def pft 0 "Unempl./Home" 1 "Part time" 2 "Full time"
+lab val mempl5 pft
+
+
+// age child at interview
 recode e271 (-3=.)
 tostring e271, gen(datestr)
-
 gen year = 1900 + real((substr(datestr,1,2)))
 gen month = real((substr(datestr,3,2)))
 gen dateint5 = ym(year,month)
@@ -107,6 +153,7 @@ gen dateb = tm(1970-04)
 format dateb %tm
 gen ageint5 = dateint5 - dateb
 
+// number of children
 gen numch5 = e006 + e007 if e007!=-1 & e006!=-1
 
 lab var ageint5			"Age at 5y interview (months)"
@@ -115,10 +162,12 @@ lab var fysch5			"Age Father left FTE (5y)"
 lab var mysch5			"Age Mother left FTE (5y)"
 lab var mhied5			"Mother HE degree (5y)"
 lab var numch5			"Number other children in HH (5y)"
-lab var mempl5			"Mother in work/education (5y)"
+lab var mempl5			"Mother unempl/PT/FT (5y)"
+lab var mpsla5			"Mother education past SLA (5y)"
+lab var fpsla5			"Father education past SLA (5y)"
 
 
-keep bcsid ethn ageint5 ?ysch5 numch5 mhied5 mempl5
+keep bcsid ethn ageint5 ?ysch5 numch5 mhied5 mempl5 ?psla5
 tempfile bcsdem3
 save `bcsdem3'
 
@@ -190,15 +239,7 @@ tempfile bcsall10y
 save `bcsall10y'
 
 
-*QUALIFICATIONS AT 30	 *******************************************************
 
-* 10 Year Survey
-use "$bcsraw/2000/bcs6derived.dta", clear
-rename _all, lower
-keep bcsid hinvq00
-recode hinvq00 (-9=.)
-tempfile bcsnvq30y
-save `bcsnvq30y'
 
 
 *INCOME	 ******************************************************************
@@ -232,13 +273,12 @@ merge 1:1 bcsid using `bcscog5y', gen(bcs_merge_cog5y)
 merge 1:1 bcsid using `bcsinc10y', gen(bcs_merge_inc10y)
 merge 1:1 bcsid using `bcsscl10y', gen(bcs_merge_scl10y)
 merge 1:1 bcsid using `bcsall10y', gen(bcs_merge_all10y)
-merge 1:1 bcsid using `bcsnvq30y', gen(bcs_merge_nvq30y)
 
 
 // SAMPLE SELECTION
 keep if country==1			// England only
 drop if sex<1				/* missing observations */
-drop if region > 9			// drop interviews not in England
+drop if region > 6			// drop interviews not in England
 
 ********************************************************************************
 
@@ -358,9 +398,9 @@ foreach x in epvt_z copy_z hfd_z {
 
 
 local covarstokeep country region ///
-					sex smkpr singlem mempl nprevst caesbirth preecl ///
+					sex smkpr singlem mempl nprevst caesbirth ///
 					ethn bwt lowbwt gestaw preterm mothageb teenm parity firstb mheight ///
-					mysch5 fysch5 numch5 mhied5 mempl5 ///
+					?ysch5 numch5 mhied5 ?empl5 ?psla5 ///
 					scl10 incq10 faminc10_real faminc10_infl
 
 preserve
@@ -368,7 +408,7 @@ preserve
 egen ncmiss=rowmiss(bcs10_rut*)
 drop if ncmiss >22
 
-keep bcsid age*10 bcs10_rut* bcs10_ws* hinvq00 `covarstokeep'
+keep bcsid age*10 bcs10_rut* bcs10_ws* `covarstokeep'
 saveold "$rdata/bcs10yeng.dta", replace version(12)
 restore
 
@@ -381,10 +421,21 @@ preserve
 egen ncmiss=rowmiss(bcs5_rut*)
 drop if ncmiss >22
 
-keep bcsid age*5 epvt_z copy_z hfd_z bcs5_rut* hinvq00 `covarstokeep'
+keep bcsid age*5 epvt_z copy_z hfd_z bcs5_rut* `covarstokeep'
 saveold "$rdata/bcs5yeng.dta", replace version(12)
 restore
 
+
+*QUALIFICATIONS AT 30	 *******************************************************
+
+* 30 Year Survey
+use "$bcsraw/2000/bcs6derived.dta", clear
+rename _all, lower
+keep bcsid hinvq00
+rename hinvq00 nvq30
+recode nvq30 (-9=.)
+tempfile bcsoutc30y
+save `bcsoutc30y'
 
 *BEHAVIOURS AT 16	 ***********************************************************
 
@@ -429,6 +480,7 @@ drop if tokeep==0
 keep bcsid smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16
 
 merge 1:1 bcsid using `bcs16age', nogen keep(3)
+merge 1:1 bcsid using `bcsoutc30y', nogen keep(1 3)
 
 saveold "$rdata/bcs16outc.dta", replace version(12)
 

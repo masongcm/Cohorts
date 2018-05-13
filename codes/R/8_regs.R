@@ -11,13 +11,13 @@ decvars_int_reg <- c(decvars_int, c("region"))
 
 # formulas
 form_ext <- list()
-form_ext[[1]] <- as.formula("EXT ~ mysch5b")
+form_ext[[1]] <- as.formula("EXT ~ mpsla5")
 form_ext[[2]] <- as.formula(paste("EXT ~ ", pplus(decvars_reg)))
-form_ext[[3]] <- as.formula(paste("EXT ~ ", pplus(decvars_int_reg)))
+#form_ext[[3]] <- as.formula(paste("EXT ~ ", pplus(decvars_int_reg)))
 form_int <- list()
-form_int[[1]] <- as.formula("INT ~ mysch5b")
+form_int[[1]] <- as.formula("INT ~ mpsla5")
 form_int[[2]] <- as.formula(paste("INT ~ ", pplus(decvars_reg)))
-form_int[[3]] <- as.formula(paste("INT ~ ", pplus(decvars_int_reg)))
+#form_int[[3]] <- as.formula(paste("INT ~ ", pplus(decvars_int_reg)))
 
 # regressions
 r.ext <- list()
@@ -25,7 +25,7 @@ r.int <- list()
 for (cs in c("BCS.M", "MCS.M", "BCS.F", "MCS.F")) {
   r.ext[[cs]] <- list()
   r.int[[cs]] <- list()
-  for (i in 1:3) {
+  for (i in 1:2) {
     r.ext[[cs]][[i]]  <- lm(form_ext[[i]],  data=subset(scores2plot, cohortsex==cs))
     r.int[[cs]][[i]]  <- lm(form_int[[i]],  data=subset(scores2plot, cohortsex==cs))
   }
@@ -46,9 +46,17 @@ mcs14outc$id <- mcs14outc$mcsid
 mcs14outc$age14 <- factor(mcs14outc$age14)
 mcsoutc <- merge(finaldata, mcs14outc, by="id")
 
+# recode
+bcsoutc$hscl42 <- NA # high social class
+bcsoutc$hscl42[bcsoutc$scl42 %in% c(1,2)] <- 1
+bcsoutc$hscl42[bcsoutc$scl42 %in% 3:7] <- 0
+
+bcsoutc$hnvq30 <- NA # high NVQ
+bcsoutc$hnvq30[bcsoutc$nvq30 %in% c(4,5)] <- 1
+bcsoutc$hnvq30[bcsoutc$nvq30 %in% 0:3] <- 0
 
 # BCS models
-bcsoutcvars <- c("smktry16", "alctry16", "drugtry16", "hadsex16", "propdam16", "shplift16")
+bcsoutcvars <- c("smktry16", "alcoh16", "drugtry16", "hnvq30", "lhgrpay38", "hscl42")
 bcsoutcmod_m_uc <- list()
 bcsoutcmod_m_c <- list()
 bcsoutcmod_f_uc <- list()

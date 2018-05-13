@@ -252,7 +252,7 @@ replace faminc10_infl = faminc10_infl/inflBCS/1000
 tempfile bcsinc10y
 save `bcsinc10y'
 
-*SOCIAL CLASS	 ******************************************************************
+*SOCIAL CLASS (childhood)	 **********************************************
 use "$data/CohortsHarmonisedSES/raw/BCS70 Harmonised ChildhoodSES.dta", clear // income
 decode BCSID, gen(bcsid)
 rename BCS3FCL scl10
@@ -425,10 +425,26 @@ keep bcsid age*5 epvt_z copy_z hfd_z bcs5_rut* `covarstokeep'
 saveold "$rdata/bcs5yeng.dta", replace version(12)
 restore
 
+********************************************************************************
+***** ADULT OUTCOMES		                ************************************
+********************************************************************************
+
+*SOCIAL CLASS (adult, 42)	 **********************************************
+use "$data/CohortsHarmonisedSES/raw/BCS70 Harmonised AdultSES.dta", clear // income
+decode BCSID, gen(bcsid)
+rename BCS9CL scl42
+replace scl42 = scl42-3
+lab def scllab 	1 "I Professional" 2 "II Managerial" 3 "IIINM Skilled Non-Manual" ///
+				4 "IIIM Skilled Manual" 5 "IV Partly Skilled" 6 "V Unskilled" ///
+				7 "Other"
+lab val scl42 scllab
+lab var scl42	"Social Class at 42"
+keep bcsid scl42
+tempfile bcsscl42y
+save `bcsscl42y'
 
 *QUALIFICATIONS AT 30	 *******************************************************
 
-* 30 Year Survey
 use "$bcsraw/2000/bcs6derived.dta", clear
 rename _all, lower
 keep bcsid hinvq00
@@ -436,6 +452,17 @@ rename hinvq00 nvq30
 recode nvq30 (-9=.)
 tempfile bcsoutc30y
 save `bcsoutc30y'
+
+*EARNINGS AT 38	 *******************************************************
+
+use "$bcsraw/2008/bcs_2008_followup.dta", clear
+gen hgrpay38 = b8cgrowk/b8chour1 if b8chour1>0 & b8cgrowk>=0
+gen lhgrpay38 = log(hgrpay38)
+keep bcsid lhgrpay38
+lab var lhgrpay38		"Log gross hourly pay (38y)"
+tempfile bcsoutc38y
+save `bcsoutc38y'
+
 
 *BEHAVIOURS AT 16	 ***********************************************************
 
@@ -481,6 +508,8 @@ keep bcsid smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 pr
 
 merge 1:1 bcsid using `bcs16age', nogen keep(3)
 merge 1:1 bcsid using `bcsoutc30y', nogen keep(1 3)
+merge 1:1 bcsid using `bcsoutc38y', nogen keep(1 3)
+merge 1:1 bcsid using `bcsscl42y', nogen keep(1 3)
 
 saveold "$rdata/bcs16outc.dta", replace version(12)
 

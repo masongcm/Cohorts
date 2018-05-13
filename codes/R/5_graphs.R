@@ -36,10 +36,10 @@ addopts.raw <- function(x) {
   return(x)
 }
 
-rawext.m <- ggplot(subset(scores2plot, sex=="M"),aes(x=EXT.RAW, fill=cohort)) + ggtitle("EXT Scores (Males)") + coord_cartesian(ylim = c(0,.25))
-rawint.m <- ggplot(subset(scores2plot, sex=="M"),aes(x=INT.RAW, fill=cohort)) + ggtitle("INT Scores (Males)") + coord_cartesian(ylim = c(0,.4))
-rawext.f <- ggplot(subset(scores2plot, sex=="F"),aes(x=EXT.RAW, fill=cohort)) + ggtitle("EXT Scores (Females)") + coord_cartesian(ylim = c(0,.25))
-rawint.f <- ggplot(subset(scores2plot, sex=="F"),aes(x=INT.RAW, fill=cohort)) + ggtitle("INT Scores (Females)") + coord_cartesian(ylim = c(0,.4))
+rawext.m <- ggplot(subset(scores2plot, sex=="M"),aes(x=EXT_RAW, fill=cohort)) + ggtitle("EXT Scores (Males)") + coord_cartesian(ylim = c(0,.25))
+rawint.m <- ggplot(subset(scores2plot, sex=="M"),aes(x=INT_RAW, fill=cohort)) + ggtitle("INT Scores (Males)") + coord_cartesian(ylim = c(0,.4))
+rawext.f <- ggplot(subset(scores2plot, sex=="F"),aes(x=EXT_RAW, fill=cohort)) + ggtitle("EXT Scores (Females)") + coord_cartesian(ylim = c(0,.25))
+rawint.f <- ggplot(subset(scores2plot, sex=="F"),aes(x=INT_RAW, fill=cohort)) + ggtitle("INT Scores (Females)") + coord_cartesian(ylim = c(0,.4))
 rawlist <- list(rawext.m, rawint.m, rawext.f, rawint.f) 
 rawlist <- lapply(rawlist, addopts.raw) # apply options to all graphs
 
@@ -341,8 +341,73 @@ grid.arrange(ineqlist[[1]],ineqlist[[2]],
 
 
 ############################################################################################
+## ---- FACINEQ_CS
+# MEAN/CI plot of scores by compulsory schooling
+library(dplyr)
+library(grid)
+library(gridExtra)
+library(ggpubr)
+
+scores2plot <- demean(scores2plot, "mpsla5", "Compulsory", "dcs")
+
+#common options
+addopts_main <- function(x) {
+  x <- x + xlab("Maternal schooling at 5") +
+    scale_y_continuous(name = "Factor score (Compulsory = 0)", breaks = seq(-.4,.4,.2)) +
+    coord_cartesian(ylim = c(-.4, .4)) +
+    stat_summary(geom="errorbar", fun.data=mean_cl_normal, width=.2, position=position_dodge(.5)) +
+    stat_summary(fun.y=mean, geom="point", size=4, aes(colour=cohort), position=position_dodge(.5)) +
+    labs(list(colour="")) + theme(legend.position="none")
+  return(x)
+}
+
+ineq.ext.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$mpsla5)), aes(x=mpsla5, y=EXTdcs, colour=cohort)) + ggtitle("Males Externalising")
+ineq.ext.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$mpsla5)), aes(x=mpsla5, y=EXTdcs, colour=cohort)) + ggtitle("Females Externalising")
+ineq.int.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$mpsla5)), aes(x=mpsla5, y=INTdcs, colour=cohort)) + ggtitle("Males Internalising")
+ineq.int.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$mpsla5)), aes(x=mpsla5, y=INTdcs, colour=cohort)) + ggtitle("Females Internalising")
+ineqlist <- list(ineq.ext.m, ineq.ext.f, ineq.int.m, ineq.int.f)
+ineqlist <- lapply(ineqlist, function(x) addopts_main(x)) # apply options to all graphs
+legend_b <- cowplot::get_legend(ineqlist[[1]] + theme(legend.position="bottom")) # get legend
+ineqlist <- lapply(ineqlist, function(x) ggplot_gtable(ggplot_build((x)))) # make into gtable object
+
+# HISTOGRAM OF X
+# get histogram data
+tabb <- scores2plot %>%
+  filter(!is.na(mpsla5)) %>%
+  count(cohort, sex, mpsla5) %>%
+  group_by(cohort,sex) %>% 
+  mutate(prop = n / sum(n))
+tabb <- as.data.frame(tabb)
+
+# common options for histogram
+addopts_hist <- function(x) {
+  x <- x + theme(axis.title.x=element_blank(),
+                 axis.text.y=element_text(colour="white"), axis.title.y=element_text(colour="white"),
+                 axis.ticks=element_blank(),
+                 legend.position = "none") +
+    geom_bar(stat = "identity", position = "dodge", width = 0.5, alpha = .75) # histogram
+}
+hist.m <- ggplot(data = tabb[tabb$sex=="M",], aes(mpsla5, prop, fill = cohort)) + ggtitle("Distribution of categories") 
+hist.f <- ggplot(data = tabb[tabb$sex=="F",], aes(mpsla5, prop, fill = cohort)) + ggtitle("Distribution of categories")
+histlist <- list(hist.m, hist.f, hist.m, hist.f)
+histlist <- lapply(histlist, function(x) ggplot_gtable(ggplot_build(addopts_hist(x)))) # apply options to all graphs
+
+# assemble and arrange
+for (i in length(ineqlist)) {
+  maxWidth = unit.pmax(ineqlist[[i]]$widths[2:3], histlist[[i]]$widths[2:3])
+  ineqlist[[i]]$widths[2:3] <- maxWidth
+  histlist[[i]]$widths[2:3] <- maxWidth
+}
+# plot
+grid.arrange(ineqlist[[1]],ineqlist[[2]], 
+             ineqlist[[3]],ineqlist[[4]],
+             histlist[[1]],histlist[[2]], legend_b,
+             ncol=2, nrow=4, heights = c(4,4,2,0.5))
+
+
+############################################################################################
 ## ---- FACINEQ_ME
-# MEAN/CI plot of scores by maternal years of schooling
+# MEAN/CI plot of scores by maternal employment
 library(dplyr)
 library(grid)
 library(gridExtra)
@@ -403,3 +468,70 @@ grid.arrange(ineqlist[[1]],ineqlist[[2]],
              ineqlist[[3]],ineqlist[[4]],
              histlist[[1]],histlist[[2]], legend_b,
              ncol=2, nrow=4, heights = c(4,4,2,0.5))
+
+
+############################################################################################
+## ---- FACINEQ_SM
+# MEAN/CI plot of scores by maternal marital status
+library(dplyr)
+library(grid)
+library(gridExtra)
+library(ggpubr)
+
+scores2plot <- demean(scores2plot, "singlem", "Married", "dsm")
+
+#common options
+addopts_main <- function(x) {
+  x <- x + xlab("Maternal marital status at birth") +
+    scale_y_continuous(name = "Factor score (Married = 0)", breaks = seq(-.4,.4,.2)) +
+    coord_cartesian(ylim = c(-.4, .4)) +
+    stat_summary(geom="errorbar", fun.data=mean_cl_normal, width=.2, position=position_dodge(.5)) +
+    stat_summary(fun.y=mean, geom="point", size=4, aes(colour=cohort), position=position_dodge(.5)) +
+    labs(list(colour="")) + theme(legend.position="none")
+  return(x)
+}
+
+ineq.ext.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$singlem)), aes(x=singlem, y=EXTdsm, colour=cohort)) + ggtitle("Males Externalising")
+ineq.ext.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$singlem)), aes(x=singlem, y=EXTdsm, colour=cohort)) + ggtitle("Females Externalising")
+ineq.int.m <- ggplot(data=subset(scores2plot, sex=="M" & !is.na(scores2plot$singlem)), aes(x=singlem, y=INTdsm, colour=cohort)) + ggtitle("Males Internalising")
+ineq.int.f <- ggplot(data=subset(scores2plot, sex=="F" & !is.na(scores2plot$singlem)), aes(x=singlem, y=INTdsm, colour=cohort)) + ggtitle("Females Internalising")
+ineqlist <- list(ineq.ext.m, ineq.ext.f, ineq.int.m, ineq.int.f)
+ineqlist <- lapply(ineqlist, function(x) addopts_main(x)) # apply options to all graphs
+legend_b <- cowplot::get_legend(ineqlist[[1]] + theme(legend.position="bottom")) # get legend
+ineqlist <- lapply(ineqlist, function(x) ggplot_gtable(ggplot_build((x)))) # make into gtable object
+
+# HISTOGRAM OF X
+# get histogram data
+tabb <- scores2plot %>%
+  filter(!is.na(singlem)) %>%
+  count(cohort, sex, singlem) %>%
+  group_by(cohort,sex) %>% 
+  mutate(prop = n / sum(n))
+tabb <- as.data.frame(tabb)
+
+# common options for histogram
+addopts_hist <- function(x) {
+  x <- x + theme(axis.title.x=element_blank(),
+                 axis.text.y=element_text(colour="white"), axis.title.y=element_text(colour="white"),
+                 axis.ticks=element_blank(),
+                 legend.position = "none") +
+    geom_bar(stat = "identity", position = "dodge", width = 0.5, alpha = .75) # histogram
+}
+hist.m <- ggplot(data = tabb[tabb$sex=="M",], aes(singlem, prop, fill = cohort)) + ggtitle("Distribution of categories") 
+hist.f <- ggplot(data = tabb[tabb$sex=="F",], aes(singlem, prop, fill = cohort)) + ggtitle("Distribution of categories")
+histlist <- list(hist.m, hist.f, hist.m, hist.f)
+histlist <- lapply(histlist, function(x) ggplot_gtable(ggplot_build(addopts_hist(x)))) # apply options to all graphs
+
+# assemble and arrange
+for (i in length(ineqlist)) {
+  maxWidth = unit.pmax(ineqlist[[i]]$widths[2:3], histlist[[i]]$widths[2:3])
+  ineqlist[[i]]$widths[2:3] <- maxWidth
+  histlist[[i]]$widths[2:3] <- maxWidth
+}
+# plot
+grid.arrange(ineqlist[[1]],ineqlist[[2]], 
+             ineqlist[[3]],ineqlist[[4]],
+             histlist[[1]],histlist[[2]], legend_b,
+             ncol=2, nrow=4, heights = c(4,4,2,0.5))
+
+

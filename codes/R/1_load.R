@@ -39,7 +39,7 @@ printfit <- function(m) {
 auxvars <- c("sex", "region", "ethn",
              "bwt", "lowbwt", "parity", "firstb", "nprevst", "caesbirth", "smkpr", "gestaw", "preterm", 
              "mothageb", "teenm", "singlem", "mheight", "mempl",
-             "mysch5", "fysch5", "numch5", "ageint5", "mhied5", "mempl5",
+             "mysch5", "fysch5", "numch5", "ageint5", "mhied5", "mempl5", "mpsla5", "fpsla5",
              "faminc10_real", "faminc10_infl", "incq10", "scl10"
              )
 
@@ -85,7 +85,7 @@ for (i in 1:ncol(bcs5rutc)) bcs5rutcf[,i] <- as.ordered(bcs5rutc[,i])
 
 
 # auxiliary variables
-bcs5aux <- cbind(bcs5data[,c("bcsid", auxvars, "hinvq00")],
+bcs5aux <- cbind(bcs5data[,c("bcsid", auxvars)],
                  cog1 = bcs5data$epvt_z,
                  cog2 = bcs5data$hfd_z,
                  cog3 = bcs5data$copy_z
@@ -137,8 +137,6 @@ mcs5aux <- cbind(mcs5data[,c("mcsid", auxvars, "rwtd")],
                  cog3 = mcs5data$patc_bastz
 )
 names(mcs5aux)[names(mcs5aux)=="mcsid"] <- "id"
-# add empty column with hinvq00 to match BCS
-mcs5aux$hinvq00 <- NA
 
 # MERGE -------------------------------------------
 
@@ -161,7 +159,7 @@ X.all <- data.frame(rbind(Xtemp.bcs, Xtemp.mcs))
 
 # assemble final data
 items.c <- X.all[,c(grep("X", names(X.all), value=T), 
-                    "id", "cohort", auxvars, "hinvq00", "rwtd",
+                    "id", "cohort", auxvars, "rwtd",
                     "cog1", "cog2", "cog3")]
 colnames(items.c)[colnames(items.c) == "ageint5"] <- "age"
 items.c$sex <- factor(items.c$sex)
@@ -175,10 +173,10 @@ items.c <- items.c[!is.na(items.c$cohortsex),] # drop missings
 items.c <- items.c[complete.cases(items.c[,c(grep("X[0-9]", names(X.all), value=T),"age","sex")]),]
 
 # add raw scores
-items.c$EXT.RAW <- rowSums(apply(items.c[,paste("X", seq(1,6), sep="")], 2, function(x) as.numeric(x)), na.rm = T)
-items.c$INT.RAW <- rowSums(apply(items.c[,paste("X", seq(7,11), sep="")], 2, function(x) as.numeric(x)), na.rm = T)
-items.c$EXT.RAWr <- residuals(lm(EXT.RAW ~ age, data=items.c, na.action = na.exclude))
-items.c$INT.RAWr <- residuals(lm(INT.RAW ~ age, data=items.c, na.action = na.exclude))
+items.c$EXT_RAW <- rowSums(apply(items.c[,paste("X", seq(1,6), sep="")], 2, function(x) as.numeric(x)), na.rm = T)
+items.c$INT_RAW <- rowSums(apply(items.c[,paste("X", seq(7,11), sep="")], 2, function(x) as.numeric(x)), na.rm = T)
+items.c$EXT_RAWr <- residuals(lm(EXT_RAW ~ age, data=items.c, na.action = na.exclude))
+items.c$INT_RAWr <- residuals(lm(INT_RAW ~ age, data=items.c, na.action = na.exclude))
 
 
 # FINAL CLEANING/RECODING
@@ -196,13 +194,15 @@ items.c$mysch5b <- cut(items.c$mysch5, c(-1,15,16,18,21,31))
 levels(items.c$mysch5b) <- c("15", "16", "17-18", "19-21", ">21")
 
 # convert to factor
-facnms <- c("smkpr", "region", "lowbwt", "caesbirth", "preterm", "firstb", "teenm", "singlem", "mempl", "mempl5", "mhied5")
+facnms <- c("smkpr", "region", "lowbwt", "caesbirth", "preterm", "firstb", "teenm", "singlem", "mempl", "mempl5", "mhied5", "mpsla5", "fpsla5")
 items.c[,facnms] <- lapply(items.c[,facnms] , factor)
 items.c$incq10 <- ordered(items.c$incq10)
-levels(items.c$mempl5) <- c("Unempl./At home", "Empl./Education")
+levels(items.c$mempl5) <- c("Unempl./At home", "Part time", "Full time")
+levels(items.c$mpsla5) <- c("Compulsory", "Post-Compulsory")
+levels(items.c$singlem) <- c("Married", "Not married")
 
 # save dataset
-export(items.c[,!names(items.c) %in% c("INT.RAW", "EXT.RAW", "INT.RAWr", "EXT.RAWr")], paste0(dir_data,"cohorts_all.dta"))
+export(items.c[,!names(items.c) %in% c("INT_RAW", "EXT_RAW", "INT_RAWr", "EXT_RAWr")], paste0(dir_data,"cohorts_all.dta"))
 
 # KEEP ONLY REWEIGHTED SAMPLE
 items.c2 <- items.c

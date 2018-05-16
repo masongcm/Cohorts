@@ -23,6 +23,10 @@ library(here)
 library(rio)
 library(Counterfactual)
 library(dummies)
+library(dplyr)
+library(grid)
+library(gridExtra)
+library(ggpubr)
 
 
 dir_data  <- here("rdata/")

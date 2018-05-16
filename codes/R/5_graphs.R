@@ -87,7 +87,8 @@ addopts.dens <- function(x) {
     coord_cartesian(xlim = c(minx, maxx), ylim = c(0,.62)) +
     scale_fill_discrete("") + # remove fill guide title
     scale_colour_discrete(guide=FALSE) +  # remove colour legend
-    geom_density(alpha = 0.1) # PLOTS
+    geom_density(alpha = 0.1, bw = "nrd", adjust=1.5, kernel = "epanechnikov")
+    #stat_density(bw = "nrd", adjust=2, kernel = "gaussian", alpha = 0.1) # PLOTS 
   return(x)
 }
 

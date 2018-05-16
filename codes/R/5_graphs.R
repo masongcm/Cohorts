@@ -196,6 +196,7 @@ plotineq <- function(data, categ, suffix,
                    axis.text.y=element_text(colour="white"), axis.title.y=element_text(colour="white"),
                    axis.ticks=element_blank(),
                    legend.position = "none") +
+      scale_y_continuous(breaks = round(seq(.0,.2,.2),1)) +
       geom_bar(stat = "identity", position = "dodge", width = 0.5, alpha = .75) # histogram
     return(x)
   }

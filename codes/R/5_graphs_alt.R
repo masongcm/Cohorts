@@ -1,3 +1,33 @@
+############################################################################################
+## ---- INCINEQ
+# MEAN/CI plot of income by income quintile
+
+# aggregate mean income
+semean <- function(x) sqrt(var(x,na.rm=TRUE)/length(na.omit(x)))
+meaninc <- data.frame(
+  aggregate(scores2plot$faminc10_real, 
+            by = list(scores2plot$cohort, scores2plot$incq), 
+            FUN=function(x) c(m = mean(x, na.rm=T), se = semean(x) )))
+meaninc <- cbind(meaninc[1:2], as.matrix(meaninc$x))
+colnames(meaninc) <- c("cohort", "quant", "mean", "semean")
+
+# restandardise
+q1.bcs <- meaninc[meaninc$cohort=="BCS" & meaninc$quant=="1", "mean"]
+q1.mcs <- meaninc[meaninc$cohort=="MCS" & meaninc$quant=="1", "mean"]
+meaninc[meaninc$cohort=="BCS", "mean"] <- (meaninc[meaninc$cohort=="BCS", "mean"] - q1.bcs)/q1.bcs
+meaninc[meaninc$cohort=="MCS", "mean"] <- (meaninc[meaninc$cohort=="MCS", "mean"] - q1.mcs)/q1.mcs
+meaninc$ciu <- meaninc$mean + 1.96*meaninc$semean
+meaninc$cil <- meaninc$mean - 1.96*meaninc$semean
+
+ineq.inc <- ggplot(data=meaninc, aes(x=as.factor(quant), y=mean, colour=cohort)) +
+  geom_point(size=3) + 
+  scale_y_continuous(name = "Mean Family Income", breaks = seq(0,11,2)) +
+  xlab("Family Income Quintile at 10") +
+  theme(legend.justification=c(0,0), legend.position=c(0,.8), legend.title = element_blank())
+
+ineq.inc
+
+
 ## ---- FACINEQ2
 ineq.ext.bcs <- ggplot(data=subset(facandraw, cohort=="BCS" & !is.na(facandraw$incq)), aes(x=as.factor(incq), y=EXT)) + ggtitle("BCS EXT") +
   geom_boxplot() + scale_x_discrete("Family Income Quintile at 10") + scale_y_continuous(limits = c(-3, 2))

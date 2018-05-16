@@ -1,4 +1,111 @@
+% DECOMPOSITION GRAPHS AND TEXT
 
+\clearpage
+\subsection{Decomposition of inequality}
+
+We have populations $k \in \mathcal{K}$. For each population, we observe covariates $X_k$. For some $j \subseteq \mathcal{K}$, we observe outcome $Y_j$. We can identify the covariate distributions $F_{X_k}$ and the conditional distributions $F_{Y_j \mid X_j}$ and quantile functions $Q_{Y_j \mid X_j}$. Define the support of $X_k$ as $\mathcal{X}_k$ and the region of interest for the outcome as $\mathcal{Y}_j$.
+
+The interest is in the counterfactual distribution of the outcome:
+$$ F_{Y(j \mid k)}(y) = \int_{\mathcal{X}_k} F_{Y_j \mid X_j}(y \mid x) d F_{X_k}(x), \qquad y \in \mathcal{Y}_j $$
+and the corresponding quantiles:
+$$ Q_{Y(j \mid k)}(\tau) = F^\leftarrow_{Y(j \mid k)}(\tau) $$
+
+Given this, we can define counterfactual effects (CE):
+\bi
+\item Type 1 (Structure effect): CE of changing the conditional distribution: $Q_{Y(j \mid k)}(\tau) - Q_{Y(l \mid k)}(\tau)$
+\item Type 2 (Composition effect): CE of changing the covariate distribution: $Q_{Y(j \mid k)}(\tau) - Q_{Y(j \mid m)}(\tau)$
+\item Type 3: CE of changing both conditional and covariate distribution: $Q_{Y(j \mid k)}(\tau) - Q_{Y(l \mid m)}(\tau)$
+\ei
+
+In our application, we have $k=BCS,MCS$. We can thus decompose the observed differences in the distribution of non-cognitive skills into structure and composition effects. For example, the difference in the distribution of externalising skills can be written as:
+$$F_{(\theta^{EXT}_{MCS} \mid X_{MCS})} - F_{(\theta^{EXT}_{BCS} \mid X_{BCS})} =
+  \left[ F_{(\theta^{EXT}_{MCS} \mid X_{MCS})} - F_{(\theta^{EXT}_{BCS} \mid X_{MCS})} \right] +
+  \left[ F_{(\theta^{EXT}_{BCS} \mid X_{MCS})} - F_{(\theta^{EXT}_{BCS} \mid X_{BCS})} \right]$$
+
+
+
+<<COUNTERF, dependson="FA_SCORES_MAIN">>=
+# perform counterfactuals
+@
+
+<<COUNTERF_PREP_PLOTS, dependson='COUNTERF'>>=
+# prepare counterfactual plots
+@
+
+\begin{landscape}
+\begin{figure}
+<<COUNTERF_EXT, dependson='COUNTERF_PREP_PLOTS', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
+cfp.ext
+@
+\caption{Counterfactual decomposition -- externalising skills}\label{fig:counterf_ext}
+{\scriptsize \emph{Notes}: \par}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}
+<<COUNTERF_INT, dependson='COUNTERF_PREP_PLOTS', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
+cfp.int
+@
+\caption{Counterfactual decomposition -- internalising skills}\label{fig:counterf_int}
+{\scriptsize \emph{Notes}: \par}
+\end{figure}
+\end{landscape}
+
+<<COUNTERF_PREP_TAB, dependson='COUNTERF'>>=
+# prepare counterfactual tables
+@
+
+<<COUNTERF_INEQ, dependson='COUNTERF_PREP_TABS', results='markup'>>=
+cat("Males EXT")
+print(iqdecomp(logitcf.ext.m))
+
+cat("Males INT")
+print(iqdecomp(logitcf.int.m))
+
+cat("Females EXT")
+print(iqdecomp(logitcf.ext.f))
+
+cat("Females INT")
+print(iqdecomp(logitcf.int.f))
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% COUNTERFACTUAL DECOMPOSITIONS
+
+<<COUNTERF_SEQDEC_ESTIM, dependson="SELECTVARS">>=
+# estimate sequential decompositions
+@
+
+<<COUNTERF_SEQDEC_PREP>>=
+# extract data
+@
+
+<<COUNTERF_SEQDEC_PLOT>>=
+# decomposition plots
+@
+
+\begin{landscape}
+\begin{figure}
+<<COUNTERF_SEQDEC_EXT, dependson='COUNTERF_SEQDEC_PLOT', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
+cfp.seqdec.ext
+@
+\caption{Counterfactual sequential decomposition -- externalising skills}\label{fig:counterf_seq_ext}
+{\scriptsize \emph{Notes}: \par}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}
+<<COUNTERF_SEQDEC_INT, dependson='COUNTERF_SEQDEC_PLOT', dev='tikz', fig.height=10, fig.width=16, out.width='1\\linewidth'>>=
+cfp.seqdec.int
+@
+\caption{Counterfactual sequential decomposition -- internalising skills}\label{fig:counterf_seq_int}
+{\scriptsize \emph{Notes}: \par}
+\end{figure}
+\end{landscape}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % <<FA_INV_AUX, dependson='LOAD_DATA'>>=
 % # robustness models

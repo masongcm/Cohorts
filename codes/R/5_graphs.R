@@ -83,7 +83,7 @@ addopts.dens <- function(x) {
       axis.title.y=element_blank(),
       legend.position="none"
     ) +
-    scale_x_continuous(name = "Quantile", breaks = seq(-3.5,1.5,.5)) +
+    scale_x_continuous(name = "Score", breaks = seq(-3.5,1.5,.5)) +
     coord_cartesian(xlim = c(minx, maxx), ylim = c(0,.62)) +
     scale_fill_discrete("") + # remove fill guide title
     scale_colour_discrete(guide=FALSE) +  # remove colour legend

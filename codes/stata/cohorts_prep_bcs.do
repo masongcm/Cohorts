@@ -429,6 +429,17 @@ restore
 ***** ADULT OUTCOMES		                ************************************
 ********************************************************************************
 
+*BMI (harmonised)	 **********************************************
+use "$data/CohortsHarmonisedBMI/raw/bcs70_closer_wp1.dta", clear // income
+keep if inlist(visitage, 10, 16, 42)
+keep bcsid bmi visitage
+decode bcsid, gen(bcsid2)
+drop bcsid
+rename bcsid2 bcsid
+reshape wide bmi, i(bcsid) j(visitage)
+tempfile bcsbmi
+save `bcsbmi'
+
 *SOCIAL CLASS (adult, 42)	 **********************************************
 use "$data/CohortsHarmonisedSES/raw/BCS70 Harmonised AdultSES.dta", clear // income
 decode BCSID, gen(bcsid)
@@ -510,6 +521,7 @@ merge 1:1 bcsid using `bcs16age', nogen keep(3)
 merge 1:1 bcsid using `bcsoutc30y', nogen keep(1 3)
 merge 1:1 bcsid using `bcsoutc38y', nogen keep(1 3)
 merge 1:1 bcsid using `bcsscl42y', nogen keep(1 3)
+merge 1:1 bcsid using `bcsbmi', nogen keep(1 3)
 
 saveold "$rdata/bcs16outc.dta", replace version(12)
 

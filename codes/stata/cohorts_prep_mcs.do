@@ -620,9 +620,33 @@ restore
 
 
 ***************************************************************
+
+
+*BMI (harmonised)	 **********************************************
+use "$data/CohortsHarmonisedBMI/raw/mcs_closer_wp1.dta", clear // income
+keep if visitage==11
+rename bmi bmi11
+keep mcsid bmi11
+decode mcsid, gen(mcsid2)
+drop mcsid
+rename mcsid2 mcsid
+tempfile mcsbmi11
+save `mcsbmi11'
+
+// BMI at 14
+use "$mcsraw/S6/mcs6_cm_measurement.dta", clear
+rename _all, lower
+keep if fcnum00==1 // CM number 1
+gen bmi14 = fcwtcm00/((fchtcm00/100)^2) if fcwtcm00>0 & fchtcm00>0
+keep mcsid bmi14
+tempfile mcsbmi14
+save `mcsbmi14'
+
+
 // behaviours at 14-15
 use "$mcsraw/S6/mcs6_cm_interview.dta", clear
 rename _all, lower
+keep if fcnum00==1 // CM number 1
 
 rename fccage00 age14
 recode fcalcd00 (-9/-1=.) (2=0), gen(alctry14)
@@ -642,5 +666,10 @@ lab var stole14			"Ever stole anything (14)"
 lab var selfharm14		"Self harmed in past year (14)"
 
 keep mcsid age14 smktry14 alctry14 hadsex14 drugtry14 stole14 selfharm14 
+
+
+merge 1:1 mcsid using `mcsbmi11', nogen keep(1 3)
+merge 1:1 mcsid using `mcsbmi14', nogen keep(1 3)
+
 
 saveold "$rdata/mcs14outc.dta", replace version(12)

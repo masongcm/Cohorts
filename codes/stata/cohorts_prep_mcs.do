@@ -301,10 +301,10 @@ tempfile mcsinc11y
 save `mcsinc11y'	
 
 *SOCIAL CLASS	 ******************************************************************
-use "$data/CohortsHarmonisedSES/raw/MCS Harmonised ChildhoodSES.dta", clear // income
-decode MCSID, gen(mcsid)
+use "$data/CohortsHarmonised/raw/mcs_harmonised_childhoodses.dta", clear // income
+rename MCSID mcsid
 rename MCS5PCL scl10
-replace scl10 = scl10-1
+recode scl10 (3.1 = 3) (3.2=4) (4=5) (5=6) (6=7) (11=.)
 lab def scllab 	1 "I Professional" ///
 				2 "II Managerial-technical" ///
 				3 "IIINM Skilled non-manual" ///
@@ -623,13 +623,10 @@ restore
 
 
 *BMI (harmonised)	 **********************************************
-use "$data/CohortsHarmonisedBMI/raw/mcs_closer_wp1.dta", clear // income
+use "$data/CohortsHarmonised/raw/mcs_closer_wp1.dta", clear // income
 keep if visitage==11
 rename bmi bmi11
 keep mcsid bmi11
-decode mcsid, gen(mcsid2)
-drop mcsid
-rename mcsid2 mcsid
 tempfile mcsbmi11
 save `mcsbmi11'
 
@@ -651,6 +648,7 @@ keep if fcnum00==1 // CM number 1
 rename fccage00 age14
 recode fcalcd00 (-9/-1=.) (2=0), gen(alctry14)
 recode fcsmok00 (-9/-1=.) (1=0) (2/6=1), gen(smktry14)
+recode fccanb00 (-9/-1=.) (2=0), gen(canntry14)
 gen hadsex14 = 0 if inlist(fchhnd00,1,2)
 replace hadsex14 =1 if fcsexx00==1
 gen drugtry14 = 0 if fccanb00>0
@@ -660,6 +658,7 @@ recode fcharm00 (-9/-1=.) (2=0), gen(selfharm14)
 
 lab var smktry14		"Tried smoking (14)"
 lab var alctry14		"Tried alcohol (14)"
+lab var canntry14		"Tried cannabis (14)"
 lab var hadsex14		"Had sex (14)"
 lab var drugtry14		"Tried drugs (14)"
 lab var stole14			"Ever stole anything (14)"

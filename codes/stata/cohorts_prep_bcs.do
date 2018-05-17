@@ -253,10 +253,18 @@ tempfile bcsinc10y
 save `bcsinc10y'
 
 *SOCIAL CLASS (childhood)	 **********************************************
-use "$data/CohortsHarmonisedSES/raw/BCS70 Harmonised ChildhoodSES.dta", clear // income
-decode BCSID, gen(bcsid)
+use "$data/CohortsHarmonised/raw/bcs70_harmonised_childhoodses.dta", clear // income
+rename BCSID bcsid
 rename BCS3FCL scl10
-recode scl10 (13=.) // no questionnaire
+recode scl10 (3.1 = 3) (3.2=4) (4=5) (5=6) (6=7) (11=.)
+lab def scllab 	1 "I Professional" ///
+				2 "II Managerial-technical" ///
+				3 "IIINM Skilled non-manual" ///
+				4 "IIIM Skilled manual" ///
+				5 "IV Partly skilled" ///
+				6 "V Unskilled" ///
+				7 "Unclassifiable/other"
+lab val scl10 scllab
 keep bcsid scl10
 tempfile bcsscl10y
 save `bcsscl10y'
@@ -430,24 +438,25 @@ restore
 ********************************************************************************
 
 *BMI (harmonised)	 **********************************************
-use "$data/CohortsHarmonisedBMI/raw/bcs70_closer_wp1.dta", clear // income
+use "$data/CohortsHarmonised/raw/bcs70_closer_wp1.dta", clear // income
 keep if inlist(visitage, 10, 16, 42)
 keep bcsid bmi visitage
-decode bcsid, gen(bcsid2)
-drop bcsid
-rename bcsid2 bcsid
 reshape wide bmi, i(bcsid) j(visitage)
 tempfile bcsbmi
 save `bcsbmi'
 
 *SOCIAL CLASS (adult, 42)	 **********************************************
-use "$data/CohortsHarmonisedSES/raw/BCS70 Harmonised AdultSES.dta", clear // income
-decode BCSID, gen(bcsid)
+use "$data/CohortsHarmonised/raw/bcs70_harmonised_adultses.dta", clear // income
+rename BCSID bcsid
 rename BCS9CL scl42
-replace scl42 = scl42-3
-lab def scllab 	1 "I Professional" 2 "II Managerial" 3 "IIINM Skilled Non-Manual" ///
-				4 "IIIM Skilled Manual" 5 "IV Partly Skilled" 6 "V Unskilled" ///
-				7 "Other"
+recode scl42 (3.1 = 3) (3.2=4) (4=5) (5=6) (6=7) (11=.)
+lab def scllab 	1 "I Professional" ///
+				2 "II Managerial-technical" ///
+				3 "IIINM Skilled non-manual" ///
+				4 "IIIM Skilled manual" ///
+				5 "IV Partly skilled" ///
+				6 "V Unskilled" ///
+				7 "Unclassifiable/other"
 lab val scl42 scllab
 lab var scl42	"Social Class at 42"
 keep bcsid scl42
@@ -497,6 +506,7 @@ egen hadsex16 = anymatch(hb9_2 hb9_3 hb9_4 hb9_5 hb9_6 hb9_8 hb9_9), values(1)
 replace hadsex16 = . if hb9_2==-1
 egen drugtry16 = anymatch(q31_3 q31_5 q31_7 q31_9 q31_11 q31_13 q31_15), values(2 3 4 5) 
 replace drugtry16 = . if q31_3==-1
+recode q31_7 (-2 -1 =.) (1=0) (2/5=1), gen(canntry16)
 recode hd14 (-2 -1=.) (1 6=0) (2/5=1), gen(drunk16)
 recode jc13 (-2 -1=.) (2=0), gen(read16)
 recode q22_1 (-2 -1=.) (6=0) (1/5=1), gen(propdam16)
@@ -509,6 +519,7 @@ lab var drunk16			"Ever been drunk (16)"
 lab var porn16			"Porn in past month (16)"
 lab var hadsex16		"Had sex (16)"
 lab var drugtry16		"Tried drugs (16)"
+lab var canntry16		"Tried cannabis (16)"
 lab var read16			"Read book for pleasure in past week (16)"
 lab var propdam16		"Damaged other's property in past year (16)"
 lab var shplift16		"Shoplifted >5£ in past year (16)"

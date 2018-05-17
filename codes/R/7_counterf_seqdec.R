@@ -139,8 +139,8 @@ plist.int.f <- cfres.int.f$plots
 
 # EXT PLOTS
 # arrange the plots in a single column
-cfp.seqdec.ext <- plot_grid( plist.ext.m[[1]],plist.ext.m[[2]],plist.ext.m[[3]],plist.ext.m[[4]],plist.ext.m[[5]],plist.ext.m[[6]],plist.ext.m[[7]],plist.ext.m[[8]],
-                             plist.ext.f[[1]],plist.ext.f[[2]],plist.ext.f[[3]],plist.ext.f[[4]],plist.ext.f[[5]],plist.ext.f[[6]],plist.ext.f[[7]],plist.ext.f[[8]],
+cfp.seqdec.ext <- plot_grid( plist.ext.m[[1]],plist.ext.m[[2]],plist.ext.m[[3]],plist.ext.m[[4]],plist.ext.m[[5]],plist.ext.m[[6]],plist.ext.m[[7]],
+                             plist.ext.f[[1]],plist.ext.f[[2]],plist.ext.f[[3]],plist.ext.f[[4]],plist.ext.f[[5]],plist.ext.f[[6]],plist.ext.f[[7]],
                              align = 'vh',
                              hjust = -1,
                              nrow = 2,
@@ -148,8 +148,8 @@ cfp.seqdec.ext <- plot_grid( plist.ext.m[[1]],plist.ext.m[[2]],plist.ext.m[[3]],
 )
 # INT PLOTS
 # arrange the plots in a single column
-cfp.seqdec.int <- plot_grid( plist.int.m[[1]],plist.int.m[[2]],plist.int.m[[3]],plist.int.m[[4]],plist.int.m[[5]],plist.int.m[[6]],plist.int.m[[7]],plist.int.m[[8]],
-                             plist.int.f[[1]],plist.int.f[[2]],plist.int.f[[3]],plist.int.f[[4]],plist.int.f[[5]],plist.int.f[[6]],plist.int.f[[7]],plist.int.f[[8]],
+cfp.seqdec.int <- plot_grid( plist.int.m[[1]],plist.int.m[[2]],plist.int.m[[3]],plist.int.m[[4]],plist.int.m[[5]],plist.int.m[[6]],plist.int.m[[7]],
+                             plist.int.f[[1]],plist.int.f[[2]],plist.int.f[[3]],plist.int.f[[4]],plist.int.f[[5]],plist.int.f[[6]],plist.int.f[[7]],
                              align = 'vh',
                              hjust = -1,
                              nrow = 2,

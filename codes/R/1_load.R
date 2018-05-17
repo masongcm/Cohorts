@@ -89,10 +89,8 @@ for (i in 1:ncol(bcs5rutc)) bcs5rutcf[,i] <- as.ordered(bcs5rutc[,i])
 
 
 # auxiliary variables
-bcs5aux <- cbind(bcs5data[,c("bcsid", auxvars)],
-                 cog1 = bcs5data$epvt_z,
-                 cog2 = bcs5data$hfd_z,
-                 cog3 = bcs5data$copy_z
+bcs5aux <- cbind(bcs5data[,c("bcsid", 
+                             auxvars)]
 )
 names(bcs5aux)[names(bcs5aux)=="bcsid"] <- "id"
 bcs5aux$rwtd <- 1
@@ -135,10 +133,9 @@ mcs5sdqcf <- mcs5sdqc
 for (i in 1:ncol(mcs5sdqc)) mcs5sdqcf[,i] <- as.ordered(mcs5sdqc[,i])                    
 
 # add SES and cognitive data
-mcs5aux <- cbind(mcs5data[,c("mcsid", auxvars, "rwtd")],
-                 cog1 = mcs5data$nvoc_bastz,
-                 cog2 = mcs5data$psim_bastz,
-                 cog3 = mcs5data$patc_bastz
+mcs5aux <- cbind(mcs5data[,c("mcsid", 
+                             auxvars, 
+                             "rwtd")]
 )
 names(mcs5aux)[names(mcs5aux)=="mcsid"] <- "id"
 
@@ -163,8 +160,7 @@ X.all <- data.frame(rbind(Xtemp.bcs, Xtemp.mcs))
 
 # assemble final data
 items.c <- X.all[,c(grep("X", names(X.all), value=T), 
-                    "id", "cohort", auxvars, "rwtd",
-                    "cog1", "cog2", "cog3")]
+                    "id", "cohort", auxvars, "rwtd")]
 colnames(items.c)[colnames(items.c) == "ageint5"] <- "age"
 items.c$sex <- factor(items.c$sex)
 levels(items.c$sex) = c("M", "F")
@@ -204,6 +200,9 @@ items.c$incq10 <- ordered(items.c$incq10)
 levels(items.c$mempl5) <- c("Unempl./At home", "Part time", "Full time")
 levels(items.c$mpsla5) <- c("Compulsory", "Post-Compulsory")
 levels(items.c$singlem) <- c("Married", "Not married")
+
+# log birthweight
+items.c$lbwt <- log(items.c$bwt)
 
 # save dataset
 export(items.c[,!names(items.c) %in% c("INT_RAW", "EXT_RAW", "INT_RAWr", "EXT_RAWr")], paste0(dir_data,"cohorts_all.dta"))

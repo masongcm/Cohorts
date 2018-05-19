@@ -664,11 +664,11 @@ lab var drugtry14		"Tried drugs (14)"
 lab var stole14			"Ever stole anything (14)"
 lab var selfharm14		"Self harmed in past year (14)"
 
-keep mcsid age14 smktry14 alctry14 hadsex14 drugtry14 stole14 selfharm14 
+keep mcsid age14 smktry14 alctry14 hadsex14 drugtry14 stole14 selfharm14 canntry14
 
 
 merge 1:1 mcsid using `mcsbmi11', nogen keep(1 3)
 merge 1:1 mcsid using `mcsbmi14', nogen keep(1 3)
 
 
-saveold "$rdata/mcs14outc.dta", replace version(12)
+saveold "$rdata/mcsoutc.dta", replace version(12)

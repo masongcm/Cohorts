@@ -526,7 +526,7 @@ lab var shplift16		"Shoplifted >5£ in past year (16)"
 
 egen tokeep = rownonmiss(smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16)
 drop if tokeep==0
-keep bcsid smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16
+keep bcsid smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16 canntry16
 
 merge 1:1 bcsid using `bcs16age', nogen keep(3)
 merge 1:1 bcsid using `bcsoutc30y', nogen keep(1 3)
@@ -534,7 +534,7 @@ merge 1:1 bcsid using `bcsoutc38y', nogen keep(1 3)
 merge 1:1 bcsid using `bcsscl42y', nogen keep(1 3)
 merge 1:1 bcsid using `bcsbmi', nogen keep(1 3)
 
-saveold "$rdata/bcs16outc.dta", replace version(12)
+saveold "$rdata/bcsoutc.dta", replace version(12)
 
 
 

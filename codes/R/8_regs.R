@@ -9,26 +9,41 @@ pplus <- function(x) paste0(x, collapse="+")
 decvars_reg <- c(decvars, c("region"))
 decvars_int_reg <- c(decvars_int, c("region"))
 
+# labels for groups (texreg)
+grouplabs <- list("Social class (10)" = 1:4, 
+                  "Maternal education (5)" = 5, 
+                  "Maternal employment (5)" = 6:7,
+                  "Maternal background (birth)" = 8:12,
+                  "Pregnancy" = 13:18)
+# labels for variables (texreg)
+varlabs <- c("IIIM", "IIINM", "I/II", "Other",
+             "Post-compulsory",
+             "Part time", "Full time",
+             "Age", "Teen", "Height", "Unmarried", "Nonwhite",
+             "Parity", "Firstborn", "Num prev. stillbirths",
+             "Mother smoked in pregnancy","Caesarean birth","Preterm birth",
+             "(log) Birthweight (0)"
+)
+
 # formulas
-form_ext <- list()
-form_ext[[1]] <- as.formula("EXT ~ mpsla5")
-form_ext[[2]] <- as.formula(paste("EXT ~ ", pplus(decvars_reg)))
-#form_ext[[3]] <- as.formula(paste("EXT ~ ", pplus(decvars_int_reg)))
-form_int <- list()
-form_int[[1]] <- as.formula("INT ~ mpsla5")
-form_int[[2]] <- as.formula(paste("INT ~ ", pplus(decvars_reg)))
-#form_int[[3]] <- as.formula(paste("INT ~ ", pplus(decvars_int_reg)))
+form_ext <- as.formula(paste("EXT ~ ", pplus(decvars_reg)))
+form_int <- as.formula(paste("INT ~ ", pplus(decvars_reg)))
 
 # regressions
-r.ext <- list()
-r.int <- list()
+r_ext <- list()
+r_int <- list()
 for (cs in c("BCS.M", "MCS.M", "BCS.F", "MCS.F")) {
-  r.ext[[cs]] <- list()
-  r.int[[cs]] <- list()
-  for (i in 1:2) {
-    r.ext[[cs]][[i]]  <- lm(form_ext[[i]],  data=subset(scores2plot, cohortsex==cs))
-    r.int[[cs]][[i]]  <- lm(form_int[[i]],  data=subset(scores2plot, cohortsex==cs))
-  }
+  r_ext[[cs]] <- list()
+  r_int[[cs]] <- list()
+  
+  # OLS
+  r_ext[[cs]][["OLS"]]  <- lm(form_ext,  data=subset(finaldata, cohortsex==cs))
+  r_int[[cs]][["OLS"]]  <- lm(form_int,  data=subset(finaldata, cohortsex==cs))
+  
+  # Tobit
+  r_ext[[cs]][["Tobit"]]  <- VGAM::vglm(form_ext, VGAM::tobit(Upper = max(finaldata$EXT)), data=subset(finaldata, cohortsex==cs))
+  r_int[[cs]][["Tobit"]]  <- VGAM::vglm(form_int, VGAM::tobit(Upper = max(finaldata$INT)), data=subset(finaldata, cohortsex==cs))
+  
 }
 
 ###################################################################
@@ -82,9 +97,9 @@ bcsoutcvars <- names(bcsoutclabs)
 # select variables
 mcsoutclabs <- c(smktry14 = "Tried smoking (14)",
                  alctry14 = "Tried alcohol (14)",
-                 canntry14 = "Tried cannabis (14)",
+                 #canntry14 = "Tried cannabis (14)",
                  selfharm14 = "Self-harmed in past year (14)",
-                 bmi11 = "BMI (11)",
+                 #bmi11 = "BMI (11)",
                  bmi14 = "BMI (14)"
 )
 mcsoutcvars <- names(mcsoutclabs)
@@ -142,6 +157,12 @@ for (o in 1:length(mcsoutcvars)) {
 ## ---- REGS_OUTC_TAB
 # TABLES from outcome regressions
 
+# function to print coefficients in correct format
+prcoef <- function(x) {
+  if (abs(x)<10) out <- sub("^(-?)0.", ".", sprintf("%.3f", x))
+  else out <- sprintf("%.1f", x)
+  return(out)
+}
 # function to put stars
 stars <- function(t) {
   if (abs(t) > 2.58) return("^{***}")
@@ -156,21 +177,21 @@ cellpr <- function(mod, vr) {
   coefs <- lmtest::coeftest(mod, vcov = sandwich::vcovHC(mod, type = "HC1"))
   coefs2 <- coefs[vr,]
   return(
-    paste0("$", sprintf("%.3f", round(coefs2[1],3)), # estimate
-           stars(coefs2[3]), "$", # stars
-           " \\newline ($", sprintf("%.3f", round(coefs2[2],3)), "$)")
+    paste0("$", prcoef(round(coefs2[1],3)), # estimate
+                    stars(coefs2[3]), "$", # stars
+           " \\newline ($", prcoef(round(coefs2[2],3)), "$)")
   ) # SE (on new line)
 }
 
 # BCS
 # mean outcomes
-dvmeans_bcs_m <- sprintf("%.3f", round(colMeans(bcsoutc[bcsoutc$sex=="M",bcsoutcvars], na.rm = T),3))
-dvmeans_bcs_f <- sprintf("%.3f", round(colMeans(bcsoutc[bcsoutc$sex=="F",bcsoutcvars], na.rm = T),3))
+dvmeans_bcs_m <- sapply(colMeans(bcsoutc[bcsoutc$sex=="M",bcsoutcvars], na.rm = T), prcoef)
+dvmeans_bcs_f <- sapply(colMeans(bcsoutc[bcsoutc$sex=="F",bcsoutcvars], na.rm = T), prcoef)
 
 bcs_outctab <- list()
 for (i in 1:length(bcsoutcvars)) {
   lab <- paste0("\\textit{\\textbf{", bcsoutclabs[i], "}}")
-  bcs_outctab[[i]] <- matrix(c(lab, dvmeans_bcs_m[i], "", "", "", "", dvmeans_bcs_f[i], "", "", "", "",   # outcome and means
+  bcs_outctab[[bcsoutcvars[i]]] <- matrix(c(lab, dvmeans_bcs_m[i], "", "", "", "", dvmeans_bcs_f[i], "", "", "", "",   # outcome and means
                               "EXT", # row label
                               "", cellpr(bcsoutcmod_m_ext[[i]], "EXT"), "", cellpr(bcsoutcmod_m_b[[i]], "EXT"), cellpr(bcsoutcmod_m_bc[[i]], "EXT"), # males EXT
                               "", cellpr(bcsoutcmod_f_ext[[i]], "EXT"), "", cellpr(bcsoutcmod_f_b[[i]], "EXT"), cellpr(bcsoutcmod_f_bc[[i]], "EXT"),# females EXT
@@ -183,18 +204,16 @@ for (i in 1:length(bcsoutcvars)) {
   ), nrow=4, byrow=TRUE
   )
 }
-# collapse to matrix
-bcs_outctab <- do.call(rbind,lapply(bcs_outctab,matrix,ncol=11,byrow=FALSE))
 
 # MCS
 # mean outcomes
-dvmeans_mcs_m <- sprintf("%.3f", round(colMeans(mcsoutc[mcsoutc$sex=="M",mcsoutcvars], na.rm = T),3))
-dvmeans_mcs_f <- sprintf("%.3f", round(colMeans(mcsoutc[mcsoutc$sex=="F",mcsoutcvars], na.rm = T),3))
+dvmeans_mcs_m <- sapply(colMeans(mcsoutc[mcsoutc$sex=="M",mcsoutcvars], na.rm = T), prcoef)
+dvmeans_mcs_f <- sapply(colMeans(mcsoutc[mcsoutc$sex=="F",mcsoutcvars], na.rm = T), prcoef)
 
 mcs_outctab <- list()
 for (i in 1:length(mcsoutcvars)) {
   lab <- paste0("\\textit{\\textbf{", mcsoutclabs[i], "}}")
-  mcs_outctab[[i]] <- matrix(c(lab, dvmeans_mcs_m[i], "", "", "", "", dvmeans_mcs_f[i], "", "", "", "",   # outcome and means
+  mcs_outctab[[mcsoutcvars[i]]] <- matrix(c(lab, dvmeans_mcs_m[i], "", "", "", "", dvmeans_mcs_f[i], "", "", "", "",   # outcome and means
                                "EXT", # row label
                                "", cellpr(mcsoutcmod_m_ext[[i]], "EXT"), "", cellpr(mcsoutcmod_m_b[[i]], "EXT"), cellpr(mcsoutcmod_m_bc[[i]], "EXT"), # males EXT
                                "", cellpr(mcsoutcmod_f_ext[[i]], "EXT"), "", cellpr(mcsoutcmod_f_b[[i]], "EXT"), cellpr(mcsoutcmod_f_bc[[i]], "EXT"),# females EXT
@@ -207,6 +226,5 @@ for (i in 1:length(mcsoutcvars)) {
   ), nrow=4, byrow=TRUE
   )
 }
-# collapse to matrix
-mcs_outctab <- do.call(rbind,lapply(mcs_outctab,matrix,ncol=11,byrow=FALSE))
+
 

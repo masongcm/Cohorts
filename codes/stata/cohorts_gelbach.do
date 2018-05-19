@@ -18,10 +18,10 @@ di "`med_all'";
 
 local outcomes "EXT INT";
 local dvar mpsla5;
-local glab1 "Social class at 10";
-local glab2 "Mother employed at 5";
-local glab3 "Maternal background";
-local glab4 "Pregnancy/birth";
+local glab1 "Social class (10)";
+local glab2 "Maternal employment (5)";
+local glab3 "Maternal background (birth)";
+local glab4 "Pregnancy";
 
 	 b1x2 EXT if cohort == 1 & sex==1, 	
 						x1all(`dvar' regiond2 regiond3 regiond4 regiond5 regiond6)
@@ -204,5 +204,37 @@ listtab * using "$tables/med_gelb.tex",
     "\midrule") 
     foot("\bottomrule" "\end{tabular}")
 	end("\\ \\[-1.6em]")
+;
+
+/* make latex table (EXT only) */
+use `EXTtab', clear;
+drop varname outcome;
+listtab * using "$tables/med_gelb_ext.tex",
+    rstyle(tabular) replace
+    head("\begin{tabular}{L{.4\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}}" 
+    "\toprule" 
+	"& \multicolumn{4}{c}{\textbf{Males}} & \multicolumn{4}{c}{\textbf{Females}} \\ \cmidrule(lr){2-5} \cmidrule(lr){6-9}"
+	"& \multicolumn{2}{c}{\textbf{BCS}} & \multicolumn{2}{c}{\textbf{MCS}} & \multicolumn{2}{c}{\textbf{BCS}} & \multicolumn{2}{c}{\textbf{MCS}} \\ \cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}"
+	"& Coef. & \% explained & Coef. & \% explained & Coef. & \% explained & Coef. & \% explained \\"
+	"& (1) & (2) & (3) & (4) & (6) & (7) & (8) & (9)  \\"
+    "\midrule") 
+    foot("\bottomrule" "\end{tabular}")
+	end("\\ \\[-1em]")
+;
+
+/* make latex table (INT only) */
+use `INTtab', clear;
+drop varname outcome;
+listtab * using "$tables/med_gelb_int.tex",
+    rstyle(tabular) replace
+    head("\begin{tabular}{L{.4\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}}" 
+    "\toprule" 
+	"& \multicolumn{4}{c}{\textbf{Males}} & \multicolumn{4}{c}{\textbf{Females}} \\ \cmidrule(lr){2-5} \cmidrule(lr){6-9}"
+	"& \multicolumn{2}{c}{\textbf{BCS}} & \multicolumn{2}{c}{\textbf{MCS}} & \multicolumn{2}{c}{\textbf{BCS}} & \multicolumn{2}{c}{\textbf{MCS}} \\ \cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}"
+	"& Coef. & \% explained & Coef. & \% explained & Coef. & \% explained & Coef. & \% explained \\"
+	"& (1) & (2) & (3) & (4) & (6) & (7) & (8) & (9)  \\"
+    "\midrule") 
+    foot("\bottomrule" "\end{tabular}")
+	end("\\ \\[-1em]")
 ;
 

@@ -7,7 +7,7 @@ decvarslist$ses <- c("scl10b")
 decvarslist$med <- c("mpsla5")
 decvarslist$mem <- c("mempl5")
 decvarslist$mch <- c("mothageb", "teenm", "mheight", "singlem", "ethn")
-decvarslist$prg <- c("parity", "firstb", "nprevst", "smkpr", "caesbirth", "gestaw", "preterm", "bwt", "lowbwt")
+decvarslist$prg <- c("parity", "firstb", "nprevst", "smkpr", "caesbirth", "preterm", "lbwt")
 
 # interaction between mother characteristics and initial conditions
 mchxbth <-  list(apply(
@@ -30,3 +30,22 @@ finaldata <- scores2plot[complete.cases(scores2plot[,decvars]),]
 
 # export to stata for Gelbach
 export(finaldata, paste0(dir_data, "finaldata.dta"))
+
+# labels
+declabs <- c(scl10b = "Parental social class (10)",
+             mpsla5 = "Mother post-compuls. education (5)",
+             mempl5 = "Mother employment status (5)",
+             mothageb = "Mother age (0)",
+             teenm = "Teen mother (0)",
+             mheight = "Mother height (0)",
+             singlem = "Unmarried mother (0)",
+             ethn = "Nonwhite ethnicity (0)",
+             parity = "Parity (0)",
+             firstb = "Firstborn child (0)",
+             nprevst = "Num previous stillbirths (0)",
+             smkpr = "Mother smoked in pregnancy (0)",
+             caesbirth = "Caesarean birth (0)",
+             preterm = "Preterm birth (0)",
+             lbwt = "(log) Birthweight (0)"
+)
+

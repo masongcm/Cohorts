@@ -24,22 +24,26 @@ rm(list=ls())         # Clear all objects from memory
 
 
 <<READ, cache=FALSE >>=
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/1_load.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/2_efa.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/3_mifa_invariance.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/3_mifa_final.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/4_scores.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/4_scores_compare.R")
-read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/5_graphs.R")
+library(here)
+read_chunk(here("codes/R/1_load.R"))
+read_chunk(here("codes/R/2_efa.R"))
+read_chunk(here("codes/R/3_inv_main.R"))
+read_chunk(here("codes/R/3_inv_aux.R"))
+read_chunk(here("codes/R/3_inv_fit.R"))
+read_chunk(here("codes/R/4_scores.R"))
+read_chunk(here("codes/R/4_scores_aux.R"))
+read_chunk(here("codes/R/5_graphs.R"))
+read_chunk(here("codes/R/6_selectvars.R"))
+read_chunk(here("codes/R/8_regs.R"))
+read_chunk(here("codes/R/getpars.R"))
 
 @
 
-<<PREAMBLE>>=
+<<PREAMBLE >>=
 @
 
 <<LOAD_DATA>>=
 @
-
 
 \documentclass[10pt,dvipsnames]{beamer}
 \usepackage{mathpazo}  % serif math
@@ -130,7 +134,7 @@ read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/5_graph
 \author[Mason]{Orazio Attanasio \and Richard Blundell \\ Gabriella Conti \and Giacomo Mason  }
 \institute[UCL Economics]{UCL Department of Economics}
 
-\date[NCDS]{NCDS 60 Years of Our Lives \\ \today}
+\date[TAPES]{Trans-Atlantic Public Economics Seminar \\ \today}
 
 \begin{document}
 
@@ -277,15 +281,15 @@ read_chunk("/Users/giacomomason/Documents/Projects/CohortStudies/codes/R/5_graph
 @
 
 \begin{frame}
-\frametitle{Harmonisation}
-\framesubtitle{Choice of common items}
+\frametitle{Harmonisation}\label{meantab_f}
+\framesubtitle{Choice of common items (females) \hyperlink{meantab_m}{\beamerbutton{Males}}}
 \centering
 \resizebox{!}{4cm}{
-<<ITEM_TEXT, dependson="MEANTABLE", results='asis'>>=
+<<MEANTAB_F, dependson="MEANTABLE", results='asis'>>=
 require(xtable)
 
-table <- meantab
-table <- table[,!names(meantab) %in% c("cats", "fac", "bcs.num", "mcs.num")] # drop if unneeded
+table <- meantab[[2]] # females (but just need item names)
+table <- table[,!names(table) %in% c("cats", "fac", "bcs.num", "mcs.num")] # drop if unneeded
 
 print(xtable(table,
                     align="L{0cm}C{.04\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
@@ -322,19 +326,6 @@ print(xtable(table,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%% EXPLORATORY FACTOR ANALYSIS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-<<BCSEFA>>=
-@
-
-<<BCSEFARES, dependson='BCSEFA'>>=
-@
-
-<<MCSEFA>>=
-@
-
-<<MCSEFARES, dependson='MCSEFA'>>=
-@
-
 
 \subsection{Exploratory Analysis}
 
@@ -396,39 +387,20 @@ print(xtable(table,
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-<<FA_INVARIANCE>>=
-# estimate models of different levels of invariance
+<<FA_INV_MAIN>>=
+# main models only
 @
 
-<<FA_FIT, dependson='FA_INVARIANCE'>>=
+<<FA_FIT>>=
 # assemble fit indices into matrices
 @
 
-<<FA_FINAL, dependson='FA_INVARIANCE'>>=
-# select final model set
+<<FA_SCORES_MAIN>>=
+# produce scores for main models
 @
 
-<<FA_FINAL_PARS, dependson='FA_FINAL'>>=
-# get parameters of final model
-@
-
-<<CLEANUP, dependson='FA_FINAL'>>=
-@
-
-<<FA_SCORES, dependson='FA_FINAL'>>=
-# produce scores for different models
-@
-
-<<FA_SCORES_MERGE, dependson='LOAD_DATA'>>=
-# merge scores with other data
-@
-
-<<FA_SCORES_COMPARE, dependson='FA_SCORES'>>=
-# assemble and compare scores across different models
-@
-
-<<FA_SCORES_SELECT, dependson='FA_SCORES_COMPARE'>>=
-# select model to use for inequality analysis
+<<FA_SCORES_BIND>>=
+# bind scores with data
 @
 
 
@@ -441,10 +413,10 @@ print(xtable(table,
 
 \begin{frame}
 \frametitle{Measurement Invariance}\label{mires}
-\framesubtitle{Results}
+\framesubtitle{Results \hyperlink{measpars}{\beamerbutton{Measurement}}\hyperlink{lvpars}{\beamerbutton{Latent variable}}}
 
 \bi
-\item Restricting thresholds and loadings provides a good fit
+\item Restricting thresholds and loadings provides a good fit \hyperlink{fit}{\beamerbutton{Fit}}
   \bi \item We can compare the scale (variance) of the latent factors \ei
 \item Models with restricted intercepts do \emph{not} pass MI test
   \bi
@@ -464,6 +436,18 @@ print(xtable(table,
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% SCORES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Factor scores}\label{density}
+\framesubtitle{Densities \hyperlink{rawhist}{\beamerbutton{Raw scores}}}
+\begin{figure}
+<<FACDENS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=10, out.width='.9\\linewidth'>>=
+@
+\end{figure}
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%% INEQUALITY
@@ -486,191 +470,365 @@ print(xtable(table,
 
 \end{frame}
 
+
 \begin{frame}
-\frametitle{Inequality}\label{meanci}
-\framesubtitle{Visualising the gradient \hyperlink{loessext}{\beamerbutton{EXT}}\hyperlink{loessint}{\beamerbutton{INT}}}
+\frametitle{Inequality}\label{ineq_uc}
+\framesubtitle{Unconditional inequality}
+\centering
+<<INEQ_STATS, dependson="FA_SCORES_BIND", results='asis'>>=
+
+# income 
+tb <- data.frame(
+  aggregate(scores2plot$faminc10_infl, by=list(scores2plot$cohort), FUN = function(x) quantile(x, c(.1, .25, .75, .9), na.rm=T))
+)
+tb$d9010 <- tb$x[,4]/tb$x[,1]
+tb$d7525 <- tb$x[,3]/tb$x[,2]
+
+
+tb.ext <- data.frame(
+  aggregate(scores2plot$EXT, by=list(scores2plot$cohortsex), FUN = function(x) quantile(x, c(.1, .25, .5, .75, .9), na.rm=T))
+)
+tb.ext$d9010 <- abs(tb.ext$x[,"90%"]-tb.ext$x[,"10%"])
+tb.ext$d7525 <- abs(tb.ext$x[,"75%"]-tb.ext$x[,"25%"])
+tb.ext$d9050 <- abs(tb.ext$x[,"90%"]-tb.ext$x[,"50%"])
+tb.ext$d5010 <- abs(tb.ext$x[,"50%"]-tb.ext$x[,"10%"])
+rownames(tb.ext) <- tb.ext$Group.1
+tb.ext <- t(tb.ext[,-c(1,2)]) # remove aggregated quantiles and transpose
+tb.ext <- tb.ext[,c("BCS.M","MCS.M","BCS.F","MCS.F")]
+
+tb.int <- data.frame(
+  aggregate(scores2plot$INT, by=list(scores2plot$cohortsex), FUN = function(x) quantile(x, c(.1, .25, .5, .75, .9), na.rm=T))
+)
+tb.int$d9010 <- abs(tb.int$x[,"90%"]-tb.int$x[,"10%"])
+tb.int$d7525 <- abs(tb.int$x[,"75%"]-tb.int$x[,"25%"])
+tb.int$d9050 <- abs(tb.int$x[,"90%"]-tb.int$x[,"50%"])
+tb.int$d5010 <- abs(tb.int$x[,"50%"]-tb.int$x[,"10%"])
+rownames(tb.int) <- tb.int$Group.1
+tb.int <- t(tb.int[,-c(1,2)]) # remove aggregated quantiles and transpose
+tb.int <- tb.int[,c("BCS.M","MCS.M","BCS.F","MCS.F")]
+
+
+# assemble and print
+table <- rbind(tb.ext,tb.int)
+table <- cbind(data.frame(as.matrix(rep(c("90-10", "75-25", "90-50", "50-10"),2))),
+               table)
+
+print(xtable(table,
+                    align="L{0cm}L{.15\\textwidth}C{.1\\textwidth}C{.1\\textwidth}C{.1\\textwidth}C{.1\\textwidth}",
+                    digits = 4
+                    ),
+             size="\\scriptsize",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0,4)),
+                              command = c(
+                              # header
+            "Measure & \\multicolumn{2}{c}{\\textbf{Males}} & \\multicolumn{2}{c}{\\textbf{Females}} \\\\ \\cmidrule(lr){2-3}  \\cmidrule(lr){4-5} 
+                       & BCS & MCS & BCS & MCS  \\\\
+                      \\textbf{Externalising} \\\\ ",
+                      "\\textbf{Internalising} \\\\ \\midrule "
+                                    )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = "\\textwidth",
+             floating = FALSE
+)
+
+@
+\end{frame}
+
+
+<<FACINEQ_MAKE>>=
+# make factor inequality graphs
+@
+
+\begin{frame}
+\frametitle{Inequality}\label{ineq_sc}
+\framesubtitle{Social class}
+\vspace{-.2cm}
 \begin{figure}
-<<FACINEQ, dev='tikz', fig.height=6.7, fig.width=10, out.width='\\linewidth'>>=
+<<FACINEQ_SC, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=10, out.width='.9\\linewidth'>>=
+# plot
+fi <- fi_sc # select result
+gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]], 
+                        fi$ineqlist[[3]],fi$ineqlist[[4]],
+                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
+                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
+@
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Inequality}\label{ineq_sc}
+\framesubtitle{Age mother left education}
+\vspace{-.2cm}
+\begin{figure}
+<<FACINEQ_YS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=10, out.width='.9\\linewidth'>>=
+# plot
+fi <- fi_ys # select result
+gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]], 
+                        fi$ineqlist[[3]],fi$ineqlist[[4]],
+                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
+                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
+@
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Inequality}\label{ineq_sc}
+\framesubtitle{Maternal education and employment}
+\vspace{-.2cm}
+\begin{figure}
+<<FACINEQ_MECS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=8.5, fig.width=13.5, out.width='\\linewidth'>>=
+# plot
+fi <- fi_mecs # select result
+gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]], 
+                        fi$ineqlist[[3]],fi$ineqlist[[4]],
+                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
+                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
 @
 \end{figure}
 \end{frame}
 
 
-% \begin{frame}
-% \frametitle{Inequality}
-% \framesubtitle{Quantifying the gradient -- inflation- and growth-adjusted income}
-% \centering
-% \resizebox{!}{4cm}{%
-% <<FA_REGS_REAL, dependson='FA_SCORES_SELECT', results='asis'>>=
-% # regress scores on income
-% library(dplyr)
-% library(stargazer)
-% 
-% scores2plot$incq_real <- factor(ntile(scores2plot$faminc_real, 5))
-% 
-% # get min, max
-% minmax.real <-aggregate(scores2plot[,c("faminc_real")],list(scores2plot$incq_real), 
-%             FUN = function(x) c(min = min(x, na.rm=T), max = max(x, na.rm=T)))
-% minmax.real <- round(minmax.real[,-1],2)*1000
-% 
-% r.ext.f.q <- lm(EXT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="F"))
-% r.int.f.q <- lm(INT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="F"))
-% 
-% r.ext.m.q <- lm(EXT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="M"))
-% r.int.m.q <- lm(INT ~ as.factor(incq_real)*cohort, data=subset(scores2plot, sex=="M"))
-% 
-% stargazer(r.ext.m.q, r.int.m.q, r.ext.f.q, r.int.f.q,
-%           column.labels=c("Males","Females"), column.separate=c(2,2),
-%           dep.var.caption = "", multicolumn = FALSE,
-%           omit=c("Constant"),
-%           covariate.labels=c(
-%                 paste0("Income Q2 [",toString(minmax.real[2,1]),"-",toString(minmax.real[2,2])," £/w]"),
-%                 paste0("Income Q3 [",toString(minmax.real[3,1]),"-",toString(minmax.real[3,2])," £/w]"),
-%                 paste0("Income Q4 [",toString(minmax.real[4,1]),"-",toString(minmax.real[4,2])," £/w]"),
-%                 paste0("Income Q5 [",toString(minmax.real[5,1]),"+ £/w]"),
-%                              "MCS dummy",
-%                              "Income Q2 x MCS",
-%                              "Income Q3 x MCS",
-%                              "Income Q4 x MCS",
-%                              "Income Q5 x MCS"
-%                              ),
-%           no.space=TRUE, 
-%           omit.stat= c("rsq", "f", "ser", "aic", "ll"),
-%           float=FALSE    # needs begin table outside it
-% )
-% @
-% }
-% \end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% EXPLAINING EXT and INT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<SELECTVARS>>=
+# define variables and formulas for regression and decomposition
+@
+
+<<REGS_DEP, dependson="SELECTVARS">>=
+# run regressions explaining EXT INT
+@
+
 
 \begin{frame}
-\frametitle{Inequality}
-\framesubtitle{Quantifying the gradient}
+\frametitle{What explains behavioural skills?}
+
+write about variables used and groups
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{What explains behavioural skills?}
+\framesubtitle{Males}
+\begin{table}
 \centering
-\resizebox{12cm}{!}{%
-<<FA_REGS_REAL_MF, dependson='FA_SCORES', results='asis'>>=
-# regress scores on income
-library(dplyr)
-library(stargazer)
+\resizebox{!}{4cm}{
+<<REGS_M, results='asis', dependson="REGRESSIONS">>=
+
+# select models
+regs <- list(r_ext$BCS.M[["OLS"]],r_ext$MCS.M[["OLS"]],r_int$BCS.M[["OLS"]],r_int$MCS.M[["OLS"]])
+
+# robust SEs
+robust_se <- list()
+robust_p  <- list()
+for (i in 1:length(regs)) {
+  cov1              <- sandwich::vcovHC(regs[[i]], type = "HC1")
+  ct                <- lmtest::coeftest(regs[[i]], vcov = cov1)
+  robust_se[[i]] <- ct[, 2]
+  robust_p[[i]] <- ct[, 4]
+}
+
+texreg::texreg(regs,
+               stars = c(0.1, 0.05, 0.01), digits = 3,
+               override.se = robust_se, override.pvalues = robust_p,
+               single.row = TRUE, scriptsize = TRUE,
+               caption = "", label = "",
+               omit.coef = "region|Inter",
+               groups = grouplabs,
+               custom.coef.names = varlabs,
+               custom.model.names = c("EXT BCS", "EXT MCS", "INT BCS", "INT MCS"),
+               table = FALSE
+               )
+
+@
+}
+\end{table}
+\end{frame}
+
+\begin{frame}
+\frametitle{What explains behavioural skills?}
+\framesubtitle{Females}
+\begin{table}
+\centering
+\resizebox{!}{4cm}{
+<<REGS_F, results='asis', dependson="REGRESSIONS">>=
+
+# select models
+regs <- list(r_ext$BCS.F[["OLS"]],r_ext$MCS.F[["OLS"]],r_int$BCS.F[["OLS"]],r_int$MCS.F[["OLS"]])
+
+# robust SEs
+robust_se <- list()
+robust_p  <- list()
+for (i in 1:length(regs)) {
+  cov1              <- sandwich::vcovHC(regs[[i]], type = "HC1")
+  ct                <- lmtest::coeftest(regs[[i]], vcov = cov1)
+  robust_se[[i]] <- ct[, 2]
+  robust_p[[i]] <- ct[, 4]
+}
+
+texreg::texreg(regs,
+               stars = c(0.1, 0.05, 0.01), digits = 3,
+               override.se = robust_se, override.pvalues = robust_p,
+               single.row = TRUE, scriptsize = TRUE,
+               caption = "", label = "",
+               omit.coef = "region|Inter",
+               groups = grouplabs,
+               custom.coef.names = varlabs,
+               custom.model.names = c("EXT BCS", "EXT MCS", "INT BCS", "INT MCS"),
+               table = FALSE
+               )
+
+@
+}
+\end{table}
+\end{frame}
 
 
-r.ext.m.bcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="BCS"))
-r.ext.m.mcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="MCS"))
-r.int.m.bcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="BCS"))
-r.int.m.mcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="MCS"))
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% GELBACH DECOMPOSITION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-r.ext.f.bcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="BCS"))
-r.ext.f.mcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="MCS"))
-r.int.f.bcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="BCS"))
-r.int.f.mcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="MCS"))
+\begin{frame}
+\frametitle{Decomposition (EXT)}
+\framesubtitle{Explaining the education gradient}
+\centering
+\scriptsize
+\resizebox{\textwidth}{!}{
+\input{../../../tables/med_gelb_ext}
+}
+\end{frame}
 
-stargazer(r.ext.m.bcs, r.ext.m.mcs , r.int.m.bcs, r.int.m.mcs, r.ext.f.bcs, r.ext.f.mcs , r.int.f.bcs, r.int.f.mcs,
-          column.labels=c("BCS M","MCS M","BCS M","MCS M","BCS F","MCS F","BCS F","MCS F"),
-          dep.var.caption = "", multicolumn = FALSE,
-          omit=c("Constant"),
-          covariate.labels=c(
-                             "Income Q2",
-                             "Income Q3",
-                             "Income Q4",
-                             "Income Q5"
-                             ),
-          no.space=TRUE,
-          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
-          float=FALSE    # needs begin table outside it
+\begin{frame}
+\frametitle{Decomposition (INT)}
+\framesubtitle{Explaining the education gradient}
+\centering
+\scriptsize
+\resizebox{\textwidth}{!}{
+\input{../../../tables/med_gelb_int}
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% EFFECTS ON LATER OUTCOMES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+<<REGS_OUTC, dependson="SELECTVARS">>=
+# run regressions explaining adult outcomes
+@
+
+<<REGS_OUTC_TAB, dependson="REGS_OUTC">>=
+# make tables
+@
+
+
+\begin{frame}
+\frametitle{Outcomes}
+\framesubtitle{Adolescence (BCS)}
+\centering
+\resizebox{\textwidth}{!}{
+<<REGS_OUTC_BCS1, results='asis', dependson="REGRESSIONS">>=
+
+# collapse to matrix (first 4 elements of bcs_outctab are adolescence)
+bcs_outctab_mat <- do.call(rbind,lapply(bcs_outctab[c(1:4)],matrix,ncol=11,byrow=FALSE))
+table <- bcs_outctab_mat
+
+print(xtable(table,
+                    align="R{0cm}L{.22\\textwidth}C{.05\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.05\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}",
+                    digits = 3
+                    ),
+             size="\\scriptsize",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0)),
+                              command = c(
+                              # header
+            " & \\multicolumn{5}{c}{\\textbf{Males}} & \\multicolumn{5}{c}{\\textbf{Females}} \\\\ \\cmidrule(lr){2-6}  \\cmidrule(lr){7-11}
+& Mean & \\multicolumn{4}{c}{Coefficients} & Mean & \\multicolumn{4}{c}{Coefficients} \\\\ \\cmidrule(lr){3-6}  \\cmidrule(lr){8-11}"
+            )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = "\\textwidth",
+             floating = FALSE
 )
 @
 }
 \end{frame}
 
+\begin{frame}
+\frametitle{Outcomes}
+\framesubtitle{Adulthood (BCS)}
+\centering
+\resizebox{\textwidth}{!}{
+<<REGS_OUTC_BCS2, results='asis', dependson="REGRESSIONS">>=
 
+# collapse to matrix (last 4 elements of bcs_outctab are adulthood)
+bcs_outctab_mat <- do.call(rbind,lapply(bcs_outctab[c(5:8)],matrix,ncol=11,byrow=FALSE))
+table <- bcs_outctab_mat
 
-% 
-% \begin{frame}
-% \frametitle{Inequality}
-% \framesubtitle{Quantifying the gradient -- males}
-% \centering
-% \resizebox{12cm}{4cm}{%
-% <<FA_REGS_REAL_M, dependson='FA_SCORES', results='asis'>>=
-% # regress scores on income
-% library(dplyr)
-% library(stargazer)
-% 
-% 
-% r.ext.m.bcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="BCS"))
-% r.ext2.m.bcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="BCS"))
-% r.ext.m.mcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="MCS"))
-% r.ext2.m.mcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="MCS"))
-% r.int.m.bcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="BCS"))
-% r.int2.m.bcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="BCS"))
-% r.int.m.mcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="M" & cohort=="MCS"))
-% r.int2.m.mcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="M" & cohort=="MCS"))
-% 
-% stargazer(r.ext.m.bcs, r.ext2.m.bcs, r.int.m.bcs, r.int2.m.bcs, r.ext.m.mcs, r.ext2.m.mcs, r.int.m.mcs, r.int2.m.mcs,
-%           column.labels=c("BCS","MCS"), column.separate=c(4,4),
-%           dep.var.caption = "", multicolumn = FALSE,
-%           omit=c("Constant"),
-%           covariate.labels=c(
-%                              "Income Q2",
-%                              "Income Q3",
-%                              "Income Q4",
-%                              "Income Q5",
-%                              "Birthweight",
-%                              "Mat. Smoking in preg.",
-%                              "Father years of schooling",
-%                              "Mother years of schooling"
-%                              ),
-%           no.space=TRUE, 
-%           omit.stat= c("rsq", "f", "ser", "aic", "ll"),
-%           float=FALSE    # needs begin table outside it
-% )
-% @
-% }
-% \end{frame}
-% 
-% 
-% 
-% \begin{frame}
-% \frametitle{Inequality}
-% \framesubtitle{Quantifying the gradient -- females}
-% \centering
-% \resizebox{12cm}{4cm}{%
-% <<FA_REGS_REAL_F, dependson='FA_SCORES', results='asis'>>=
-% # regress scores on income
-% library(dplyr)
-% library(stargazer)
-% 
-% 
-% r.ext.f.bcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="BCS"))
-% r.ext2.f.bcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="BCS"))
-% r.ext.f.mcs <- lm(EXT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="MCS"))
-% r.ext2.f.mcs <- lm(EXT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="MCS"))
-% r.int.f.bcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="BCS"))
-% r.int2.f.bcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="BCS"))
-% r.int.f.mcs <- lm(INT ~ as.factor(incq), data=subset(scores2plot, sex=="F" & cohort=="MCS"))
-% r.int2.f.mcs <- lm(INT ~ as.factor(incq) + bwt + as.factor(smkpr) + ysch_fath + ysch_moth, data=subset(scores2plot, sex=="F" & cohort=="MCS"))
-% 
-% 
-% 
-% stargazer(r.ext.f.bcs, r.ext2.f.bcs, r.int.f.bcs, r.int2.f.bcs, r.ext.f.mcs, r.ext2.f.mcs, r.int.f.mcs, r.int2.f.mcs,
-%           column.labels=c("BCS","MCS"), column.separate=c(4,4),
-%           dep.var.caption = "", multicolumn = FALSE,
-%           omit=c("Constant"),
-%           covariate.labels=c(
-%                              "Income Q2",
-%                              "Income Q3",
-%                              "Income Q4",
-%                              "Income Q5",
-%                              "Birthweight",
-%                              "Mat. Smoking in preg.",
-%                              "Father years of schooling",
-%                              "Mother years of schooling"
-%                              ),
-%           no.space=TRUE, 
-%           omit.stat= c("rsq", "f", "ser", "aic", "ll"),
-%           float=FALSE    # needs begin table outside it
-% )
-% @
-% }
-% \end{frame}
+print(xtable(table,
+                    align="R{0cm}L{.22\\textwidth}C{.05\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.05\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}",
+                    digits = 3
+                    ),
+             size="\\scriptsize",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0)),
+                              command = c(
+                              # header
+            " & \\multicolumn{5}{c}{\\textbf{Males}} & \\multicolumn{5}{c}{\\textbf{Females}} \\\\ \\cmidrule(lr){2-6}  \\cmidrule(lr){7-11}
+& Mean & \\multicolumn{4}{c}{Coefficients} & Mean & \\multicolumn{4}{c}{Coefficients} \\\\ \\cmidrule(lr){3-6}  \\cmidrule(lr){8-11}"
+            )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = "\\textwidth",
+             floating = FALSE
+)
+@
+}
+\end{frame}
+
+\begin{frame}
+\frametitle{Outcomes}
+\framesubtitle{Adolescence (MCS)}
+\centering
+\resizebox{\textwidth}{!}{
+<<REGS_OUTC_MCS, results='asis', dependson="REGRESSIONS">>=
+
+# collapse to matrix
+mcs_outctab_mat <- do.call(rbind,lapply(mcs_outctab,matrix,ncol=11,byrow=FALSE))
+table <- mcs_outctab_mat
+
+print(xtable(table,
+                    align="R{0cm}L{.22\\textwidth}C{.05\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.05\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}",
+                    digits = 3
+                    ),
+             size="\\scriptsize",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0)),
+                              command = c(
+                              # header
+            " & \\multicolumn{5}{c}{\\textbf{Males}} & \\multicolumn{5}{c}{\\textbf{Females}} \\\\ \\cmidrule(lr){2-6}  \\cmidrule(lr){7-11}
+& Mean & \\multicolumn{4}{c}{Coefficients} & Mean & \\multicolumn{4}{c}{Coefficients} \\\\ \\cmidrule(lr){3-6}  \\cmidrule(lr){8-11}"
+            )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = "\\textwidth",
+             floating = FALSE
+)
+@
+}
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%% CONCLUSION
@@ -704,62 +862,6 @@ stargazer(r.ext.m.bcs, r.ext.m.mcs , r.int.m.bcs, r.int.m.mcs, r.ext.f.bcs, r.ex
 {\Large Thank you!}
 \end{frame}
 
-% \begin{frame}
-% \frametitle{Returns}
-% \framesubtitle{Education returns to behaviour skills in BCS}
-% \centering
-% \resizebox{!}{4cm}{%
-% <<FA_RETURNS, dependson='FA_SCORES_SELECT', results='asis'>>=
-% # regress scores on income
-% library(dplyr)
-% library(stargazer)
-% 
-% # get BCS data and make dummy for higher education
-% scoresBCS <- scores2plot[scores2plot$cohort=="BCS",]
-% scoresBCS$highered <- as.numeric(scoresBCS$hinvq00>3)
-% scoresBCS[is.na(scoresBCS$hinvq00), "highered"] <- NA
-% 
-% # females
-% r.nvq.f <- list()
-% r.nvq.f[[1]] <- lm(highered ~ EXT + INT, data=subset(scoresBCS, sex=="F"))
-% r.nvq.f[[2]] <- lm(highered ~ EXT + INT + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="F"))
-% r.nvq.f[[3]] <- lm(highered ~ EXT + INT + factor(incq), data=subset(scoresBCS, sex=="F"))
-% r.nvq.f[[4]] <- lm(highered ~ EXT + INT + ysch_moth + ysch_fath, data=subset(scoresBCS, sex=="F"))
-% r.nvq.f[[5]] <- lm(highered ~ EXT + INT + factor(incq) + ysch_moth + ysch_fath + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="F"))
-% 
-% # females
-% r.nvq.m <- list()
-% r.nvq.m[[1]] <- lm(highered ~ EXT + INT, data=subset(scoresBCS, sex=="M"))
-% r.nvq.m[[2]] <- lm(highered ~ EXT + INT + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="M"))
-% r.nvq.m[[3]] <- lm(highered ~ EXT + INT + factor(incq), data=subset(scoresBCS, sex=="M"))
-% r.nvq.m[[4]] <- lm(highered ~ EXT + INT + ysch_moth + ysch_fath, data=subset(scoresBCS, sex=="M"))
-% r.nvq.m[[5]] <- lm(highered ~ EXT + INT + factor(incq) + ysch_moth + ysch_fath + cog1 + cog2 + cog3, data=subset(scoresBCS, sex=="M"))
-% 
-% stargazer(r.nvq.m[[1]], r.nvq.m[[2]], r.nvq.m[[3]], r.nvq.m[[4]], r.nvq.m[[5]],
-%           r.nvq.f[[1]], r.nvq.f[[2]], r.nvq.f[[3]], r.nvq.f[[4]], r.nvq.f[[5]],
-%           dep.var.caption = "Completed Higher Ed. at 30",
-%           column.labels=c("Males","Females"), column.separate=c(5,5),
-%           omit=c("Constant"),
-%           covariate.labels=c("Externalising skill at 5",
-%                              "Internalising skill at 5",
-%                              "EPVT Z at 5",
-%                              "Human figure drawing Z at 5",
-%                              "Copy design Z at 5",
-%                              "Family inc. at 10 Q2",
-%                              "Family inc. at 10 Q3",
-%                              "Family inc. at 10 Q4",
-%                              "Family inc. at 10 Q5",
-%                              "Mother's years of schooling",
-%                              "Father's years of schooling"
-%                              ),
-%           no.space=TRUE, 
-%           omit.stat= c("rsq", "f", "ser", "aic", "ll"),
-%           float=FALSE    # needs begin table outside it
-% )
-% @
-% }
-% \end{frame}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%% MEASUREMENT INVARIANCE APPENDIX
@@ -769,6 +871,60 @@ stargazer(r.ext.m.bcs, r.ext.m.mcs , r.int.m.bcs, r.int.m.mcs, r.ext.f.bcs, r.ex
 \centering
 {\Large Appendix}
 \end{frame}
+
+\begin{frame}
+\frametitle{Harmonisation}\label{meantab_m}
+\framesubtitle{Choice of common items (males) \hyperlink{meantab_f}{\beamerreturnbutton{Females}}}
+\centering
+\resizebox{!}{4cm}{
+<<MEANTAB_M, dependson="MEANTABLE", results='asis'>>=
+require(xtable)
+
+table <- meantab[[1]] # males
+table <- table[,!names(table) %in% c("cats", "fac", "bcs.num", "mcs.num")] # drop if unneeded
+
+print(xtable(table,
+                    align="L{0cm}C{.04\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
+                    digits = 1
+                    ), 
+             size="\\small",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0)),
+                              command = c(
+                              # header
+                                    paste(" & 
+                                              \\multicolumn{4}{c}{\\textbf{BCS}} &
+                                              \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){2-5} \\cmidrule(lr){6-9} 
+                                            Item &
+                                              Text & Cert. Appl. & Smt. Appl. & Appl. &
+                                              Text & Cert. True & Smt. True & True \\\\ \\midrule
+                                          "
+                                            , sep="")
+                                    )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = ".8\\textwidth",
+             floating = FALSE
+)
+
+@
+} %scalebox
+\end{frame}
+
+<<BCSEFA>>=
+@
+
+<<BCSEFARES, dependson='BCSEFA'>>=
+@
+
+<<MCSEFA>>=
+@
+
+<<MCSEFARES, dependson='MCSEFA'>>=
+@
+
 
 \begin{frame}[noframenumbering]
 \frametitle{EFA}\label{numfac}
@@ -783,7 +939,7 @@ colnames(efatab) <- c("BCS All", "BCS M", "BCS F", "MCS All", "MCS M", "MCS F")
 print(xtable(efatab,
                     align="L{.25\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}",
                     digits = 0
-                    ), 
+                    ),
              size="\\small",
              include.rownames=T,
              include.colnames=T,
@@ -875,35 +1031,33 @@ with $\tau_{0,ic}=-\infty$ and $\tau_{3,ic}=+\infty$.
   \item Allows comparison of latent factor means and variances
   \ei
 \ei
-
 \end{frame}
 
+
 \begin{frame}[noframenumbering]
-\frametitle{MI}
-\framesubtitle{Fit comparison}
-\begin{table}[ht]
+\frametitle{MI}\label{fit}
+\framesubtitle{Fit comparison \hyperlink{mires}{\beamerreturnbutton{Back}}}
 \centering
-\small
+\resizebox{\textwidth}{!}{
 <<FA_FIT_RES, dependson="FA_FIT", results='asis'>>=
 require(xtable)
 
-table <- rbind(afitab[[3]],afitab[[4]],afitab[[7]])
+table <- rbind(afitab[[1]],afitab[[2]])
 
 print(xtable(table,
-                    align="L{0cm}L{.20\\textwidth}C{.03\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}",
+                    align="L{0cm}L{.20\\textwidth}C{.03\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}",
                     digits = 4
                     ),
              size="\\tiny",
              include.rownames=F,
              include.colnames=F,
              booktabs = T,
-             add.to.row = list(pos = c(list(0,3,6)),
+             add.to.row = list(pos = c(list(0,3)),
                               command = c(
                               # header
             "Model & Num. params & $\\chi^2$ & RMSEA & MFI & CFI & G-hat & \\textDelta MFI & \\textDelta CFI & \\textDelta G-hat \\\\ \\midrule
-                       \\textbf{Males only} \\\\ ",
-                      "\\newline \\textbf{Females only} \\\\ \\midrule ",
-                      "\\newline \\textbf{Males and females} \\\\ \\midrule "
+                       \\textbf{All ages} \\\\",
+                      "\\newline \\textbf{59-61 months sample} \\\\ \\midrule "
                                     )),
              sanitize.text.function = function(x){x},
              sanitize.rownames.function = function(x){""}, # to not print row numbers
@@ -912,168 +1066,138 @@ print(xtable(table,
 )
 
 @
+}
+\end{frame}
+
+
+<<FUN_GETPARS>>=
+# load function that gets parameters
+@
+
+\begin{frame}[noframenumbering]
+\frametitle{MI}\label{measpars}
+\framesubtitle{Estimated measurement parameters \hyperlink{mires}{\beamerreturnbutton{Back}}}
+<<RES_FA_PAR, dependson="FA_FIT", results='asis'>>=
+
+table <- getmeaspars(finalmod, groups = 4, mode = "tl")
+
+# sequences to add rows
+rws <- seq(2, (nrow(table)-1), by = 1) # start from row 2 (exclude model titles)
+rwsl <- as.list(rws)
+
+print.xtable(xtable(table,
+              align="C{0cm}C{.04\\textwidth}C{.04\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}",
+              digits = 3
+                    ),
+             size="\\scriptsize",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0)),
+                              command = c(
+                              # header
+                                          " &
+                                            & \\textbf{Loadings}
+                                            & \\multicolumn{2}{c}{\\textbf{Thresholds}}
+                                            & \\multicolumn{3}{c}{\\textbf{Intercepts}}
+                                            & \\multicolumn{3}{c}{\\textbf{Variances}}
+                                            \\\\ \\cmidrule(lr){3-3} \\cmidrule(lr){4-5} \\cmidrule(lr){6-8} \\cmidrule(lr){9-11}
+
+                                            &
+                                            & $\\lambda$
+                                            & $\\tau_1$
+                                            & $\\tau_2$
+                                            & \\multicolumn{3}{c}{$\\nu$}
+                                            & \\multicolumn{3}{c}{$\\text{diag}(\\Psi)$} \\\\
+
+                                            Measure
+                                            & Factor
+                                            & All
+                                            & All
+                                            & All
+                                            & BCS F
+                                            & MCS M
+                                            & MCS F
+                                            & BCS F
+                                            & MCS M
+                                            & MCS F
+                                            \\\\ "
+                      )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabularx", width = "\\textwidth",
+             floating = FALSE
+)
+@
+\end{frame}
+
+\begin{frame}[noframenumbering]
+\frametitle{MI}\label{lvpars}
+\framesubtitle{Estimated latent means and variances \hyperlink{mires}{\beamerreturnbutton{Back}}}
+\begin{table}[ht]
+\small
+\centering
+<<RES_FA_LV, dependson="FA_FIT", results='asis'>>=
+require(xtable)
+
+lvtab <- getlvpars(finalmod, groups = 4)
+table <- rbind(lvtab$Males,lvtab$Females)
+
+
+print.xtable(xtable(table,
+                     align="C{0cm}L{.13\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.07\\textwidth}",
+                    digits = 3
+                    ),
+             size="\\small",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0,2,4)),
+                              command = c(
+                              # header
+                                   "\\toprule
+                                    & \\multicolumn{4}{c}{\\textbf{BCS}}
+                                    & \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){2-5} \\cmidrule(lr){6-9}
+                                    & Mean & \\multicolumn{2}{c}{Covariance} & Corr. & Mean & \\multicolumn{2}{c}{Covariance} & Corr. \\\\ \\midrule
+                      \\textbf{Males} \\\\",
+                      "\\textbf{Females} \\\\",
+                      "\\bottomrule"
+                                    )),
+             hline.after = NULL,  # remove default booktabs lines
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabularx", width = "\\textwidth",
+             floating = FALSE
+)
+
+@
 \end{table}
 \end{frame}
 
+\begin{frame}
+\frametitle{Factor scores}\label{rawhist}
+\framesubtitle{Raw scores \hyperlink{density}{\beamerreturnbutton{Back}}}
+\begin{figure}
+<<RAWHIST, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=10, out.width='.9\\linewidth'>>=
+@
+\end{figure}
+\end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%% ROBUSTNESS APPENDIX
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[noframenumbering]
-\frametitle{Age distribution \hyperlink{mires}{\beamerreturnbutton{Back}}}\label{agehist}
-\begin{figure}
-\begin{center}
-<<AGEHIST, dev='tikz', fig.height=6, fig.width=6, out.width='.6\\linewidth', cache=TRUE>>=
-@
-\end{center}
-\caption{Distribution of age in the BCS and MCS sample}
-\end{figure}
-\end{frame}
-
-
-
-\begin{frame}[noframenumbering]
-\frametitle{MI}\label{fit4}
-\framesubtitle{Fit comparison -- 4 group models \hyperlink{mires}{\beamerreturnbutton{Back}}}
-
-\begin{table}[ht]
-\centering
-\small
-<<FA_FIT_RES4, dependson="FA_FIT", results='asis'>>=
-require(xtable)
-
-table <- rbind(afitab[[7]],afitab[[8]],afitab[[9]])
-
-print(xtable(table,
-                    align="L{0cm}L{.20\\textwidth}C{.03\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}C{.05\\textwidth}",
-                    digits = 4
-                    ),
-             size="\\tiny",
-             include.rownames=F,
-             include.colnames=F,
-             booktabs = T,
-             add.to.row = list(pos = c(list(0,3,6)),
-                              command = c(
-                              # header
-            "Model & Num. params & $\\chi^2$ & RMSEA & MFI & CFI & G-hat & \\textDelta MFI & \\textDelta CFI & \\textDelta G-hat \\\\ \\midrule
-                      \\newline \\textbf{(7) not age adjusted} \\\\",
-                      "\\newline \\textbf{(8) age adjusted} \\\\\\midrule ",
-                      "\\newline \\textbf{(9) 59-62m range} \\\\ \\midrule "
-                                    )),
-             sanitize.text.function = function(x){x},
-             sanitize.rownames.function = function(x){""}, # to not print row numbers
-             tabular.environment = "tabular", width = "\\textwidth",
-             floating = FALSE
-)
-
-@
-\end{table}
-
-\end{frame}
-
-\begin{frame}[noframenumbering]
-\frametitle{Factor scores vs. Sum scores}
-\begin{figure}
-<<FACRAW, dev='tikz', fig.height=7, fig.width=7, out.width='.65\\linewidth'>>=
-@
-\end{figure}
-\end{frame}
-
-<<LOESS_REAL, dependson='FA_SCORES_SELECT'>>=
-@
-
-\begin{frame}[noframenumbering]
-\frametitle{Inequality \hyperlink{meanci}{\beamerreturnbutton{Back}}}\label{loessext}
-\framesubtitle{Visualising the gradient -- inflation- and growth-adjusted income}
-\begin{figure}
-<<LOESS_REAL_EXT, dependson='LOESS_REAL', dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
-ploess.real.ext
-@
-\end{figure}
-\end{frame}
-
-\begin{frame}[noframenumbering]
-\frametitle{Inequality \hyperlink{meanci}{\beamerreturnbutton{Back}}}\label{loessint}
-\framesubtitle{Visualising the gradient -- inflation- and growth-adjusted income}
-\begin{figure}
-<<LOESS_REAL_INT, dependson='LOESS_REAL', dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
-ploess.real.int
-@
-\end{figure}
-\end{frame}
-
-
-<<LOESS_INFL, dependson="FA_SCORES_SELECT">>=
-@
-
-\begin{frame}[noframenumbering]
-\frametitle{Inequality}
-\framesubtitle{Visualising the gradient -- inflation-adjusted income}
-\begin{figure}
-<<LOESS_INFL_EXT, dependson='LOESS_INFL', dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
-ploess.infl.ext
-@
-\end{figure}
-\end{frame}
-
-\begin{frame}[noframenumbering]
-\frametitle{Inequality}
-\framesubtitle{Visualising the gradient -- inflation-adjusted income}
-\begin{figure}
-<<LOESS_INFL_INT, dependson='LOESS_INFL', dev='tikz', fig.height=8, fig.width=12, out.width='.95\\linewidth'>>=
-ploess.infl.int
-@
-\end{figure}
-\end{frame}
-
-
-\begin{frame}[noframenumbering]
-\frametitle{Inequality}
-\framesubtitle{Quantifying the gradient -- inflation-adjusted income}
-\centering
-\resizebox{!}{4cm}{%
-<<FA_REGS_INFL, dependson='FA_SCORES_SELECT', results='asis'>>=
-# regress scores on income
-library(dplyr)
-library(stargazer)
-
-scores2plot$incq_infl <- factor(ntile(scores2plot$faminc_infl, 5))
-
-r.ext.f.c <- lm(EXT ~ faminc_infl*cohort, data=subset(scores2plot, sex=="F"))
-r.ext.f.q <- lm(EXT ~ incq_infl*cohort, data=subset(scores2plot, sex=="F"))
-r.int.f.c <- lm(INT ~ faminc_infl*cohort, data=subset(scores2plot, sex=="F"))
-r.int.f.q <- lm(INT ~ incq_infl*cohort, data=subset(scores2plot, sex=="F"))
-
-r.ext.m.c <- lm(EXT ~ faminc_infl*cohort, data=subset(scores2plot, sex=="M"))
-r.ext.m.q <- lm(EXT ~ incq_infl*cohort, data=subset(scores2plot, sex=="M"))
-r.int.m.c <- lm(INT ~ faminc_infl*cohort, data=subset(scores2plot, sex=="M"))
-r.int.m.q <- lm(INT ~ incq_infl*cohort, data=subset(scores2plot, sex=="M"))
-
-stargazer(r.ext.m.q, r.int.m.q, r.ext.f.q, r.int.f.q,
-          column.labels=c("Males","Females"), column.separate=c(2,2),
-          dep.var.caption = "", multicolumn = FALSE,
-          omit=c("Constant"),
-          covariate.labels=c(
-                             "Income Q2",
-                             "Income Q3",
-                             "Income Q4",
-                             "Income Q5",
-                             "MCS dummy",
-                             "Income Q2 x MCS",
-                             "Income Q3 x MCS",
-                             "Income Q4 x MCS",
-                             "Income Q5 x MCS"
-                             ),
-          no.space=TRUE, 
-          omit.stat= c("rsq", "f", "ser", "aic", "ll"),
-          float=FALSE    # needs begin table outside it
-)
-@
-}
-\end{frame}
-
+% \begin{frame}[noframenumbering]
+% \frametitle{Age distribution \hyperlink{mires}{\beamerreturnbutton{Back}}}\label{agehist}
+% \begin{figure}
+% \begin{center}
+% <<AGEHIST, dev='tikz', fig.height=6, fig.width=6, out.width='.6\\linewidth', cache=TRUE>>=
+% @
+% \end{center}
+% \caption{Distribution of age in the BCS and MCS sample}
+% \end{figure}
+% \end{frame}
 
 
 

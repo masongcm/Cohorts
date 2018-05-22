@@ -8,19 +8,28 @@ tab scl10b, gen(scl10bd);
 tab region, gen(regiond);
 tab mempl5, gen(mempl5d);
 
+local med_scl "scl10bd2 scl10bd3 scl10bd4 scl10bd5";
 local med_mem "mempl5d2 mempl5d3";
 local med_mch "mothageb mheight singlem ethn";
 local med_prg "parity firstb nprevst smkpr preterm lbwt";
 
-local med_all = "`med_mem' `med_mch' `med_prg'";
+local med_all = "`med_scl' `med_mem' `med_mch' `med_prg'";
 di "`med_all'";
 
 local outcomes "EXT INT";
 local dvar mpsla5;
-local glab1 "Maternal employment (5)";
-local glab2 "Maternal background (birth)";
-local glab3 "Pregnancy";
+local glab1 "Social class (10)";
+local glab2 "Maternal employment (5)";
+local glab3 "Maternal background (birth)";
+local glab4 "Pregnancy";
 
+	 b1x2 EXT if cohort == 1 & sex==1, 	
+						x1all(`dvar' regiond2 regiond3 regiond4 regiond5 regiond6)
+						x2all(`med_all')
+						robust
+						x1only(`dvar')
+						x2delta(scl = `med_scl' : mem = `med_mem' : mch = `med_mch' : prg = `med_prg')
+						;
 
 /**************************************************************************/
 /* GELBACH MEDIATION */
@@ -35,7 +44,7 @@ forvalues g = 1(1)2 {; 				/* gender */
 						x2all(`med_all')
 						robust
 						x1only(`dvar')
-						x2delta(mem = `med_mem' : mch = `med_mch' : prg = `med_prg')
+						x2delta(scl = `med_scl' : mem = `med_mem' : mch = `med_mch' : prg = `med_prg')
 						;	
 	mat b1base		= e(b1base);
 	mat V1base		= e(V1base);
@@ -184,7 +193,7 @@ drop varname group* gind ord outcome;
 
 #delimit ;
 /* make latex table */
-listtab * using "$tables/med_gelb.tex",
+listtab * using "$tables/med_gelb_sc.tex",
     rstyle(tabular) replace
     head("\begin{tabular}{L{.4\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep}  C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep}}" 
     "\toprule" 
@@ -200,7 +209,7 @@ listtab * using "$tables/med_gelb.tex",
 /* make latex table (EXT only) */
 use `EXTtab', clear;
 drop varname outcome;
-listtab * using "$tables/med_gelb_ext.tex",
+listtab * using "$tables/med_gelb_sc_ext.tex",
     rstyle(tabular) replace
     head("\begin{tabular}{L{.4\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}}" 
     "\toprule" 
@@ -216,7 +225,7 @@ listtab * using "$tables/med_gelb_ext.tex",
 /* make latex table (INT only) */
 use `INTtab', clear;
 drop varname outcome;
-listtab * using "$tables/med_gelb_int.tex",
+listtab * using "$tables/med_gelb_sc_int.tex",
     rstyle(tabular) replace
     head("\begin{tabular}{L{.4\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}}" 
     "\toprule" 

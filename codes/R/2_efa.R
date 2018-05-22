@@ -10,6 +10,7 @@ items.bcs <- items.c[items.c$cohort=="BCS",c(grep("X[0-9]", names(items.c), valu
 nbcs <- dim(items.bcs)[1]
 bcscor <- hetcor(items.bcs, ML=TRUE, std.err = F)$correlations
 bcsfa <- fa(r=bcscor, nfactors=2, rotate = rotation, fm="wls")
+#bcsfa3 <- fa(r=bcscor, nfactors=3, rotate = rotation, fm="wls")
 
 items.bcs.m <- items.c[items.c$cohort=="BCS" & items.c$sex=="M",c(grep("X[0-9]", names(items.c), value=T))]
 nbcs.m <- dim(items.bcs.m)[1]
@@ -66,6 +67,7 @@ items.mcs <- items.c[items.c$cohort=="MCS",c(grep("X[0-9]", names(items.c), valu
 nmcs <- dim(items.mcs)[1]
 mcscor <- hetcor(items.mcs, ML=TRUE, std.err = F)$correlations
 mcsfa <- fa(r=mcscor, nfactors=2, rotate = rotation, fm="wls")
+#mcsfa3 <- fa(r=mcscor, nfactors=3, rotate = rotation, fm="wls")
 
 items.mcs.m <- items.c[items.c$cohort=="MCS" & items.c$sex=="M",c(grep("X[0-9]", names(items.c), value=T))]
 nmcs.m <- dim(items.mcs.m)[1]

@@ -3,11 +3,10 @@
 
 # select variables for decomposition, in groups
 decvarslist <- list()
-decvarslist$ses <- c("scl10b")
 decvarslist$med <- c("mpsla5")
 decvarslist$mem <- c("mempl5")
-decvarslist$mch <- c("mothageb", "teenm", "mheight", "singlem", "ethn")
-decvarslist$prg <- c("parity", "firstb", "nprevst", "smkpr", "caesbirth", "preterm", "lbwt")
+decvarslist$mch <- c("mothageb", "mheight", "singlem", "ethn")
+decvarslist$prg <- c("parity", "firstb", "nprevst", "smkpr", "preterm", "lbwt")
 
 # interaction between mother characteristics and initial conditions
 mchxbth <-  list(apply(
@@ -16,7 +15,7 @@ mchxbth <-  list(apply(
 decvarslist_int <- c(decvarslist, mchxbth)
 
 # names of the groups
-decvarsgroups <- c("Social Class", "Mat. Education", "Mat. Employment", "Mat. Charact.", "Pregnancy/Birth")
+decvarsgroups <- c("Mat. Education", "Mat. Employment", "Mat. Charact.", "Pregnancy/Birth")
 
 # make into vector
 decvars <- unname(unlist(decvarslist))

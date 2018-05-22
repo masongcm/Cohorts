@@ -317,6 +317,26 @@ for (g in c(1,2)) {                   # males/females
   
 }
 
+# colour coding
+
+meantab_cc2 <- meantab
+meantab_cc3 <- meantab
+for (g in c(1,2)) {
+  # 2 factors
+  meantab_cc2[[g]][meantab_cc2[[g]]$fac=="EXT","bcs.text"] <- paste0("{\\color{OliveGreen}", meantab_cc2[[g]][meantab_cc2[[g]]$fac=="EXT","bcs.text"], "}")
+  meantab_cc2[[g]][meantab_cc2[[g]]$fac=="EXT","mcs.text"] <- paste0("{\\color{OliveGreen}", meantab_cc2[[g]][meantab_cc2[[g]]$fac=="EXT","mcs.text"], "}")  
+  meantab_cc2[[g]][meantab_cc2[[g]]$fac=="INT","bcs.text"] <- paste0("{\\color{Orange}", meantab_cc2[[g]][meantab_cc2[[g]]$fac=="INT","bcs.text"], "}")
+  meantab_cc2[[g]][meantab_cc2[[g]]$fac=="INT","mcs.text"] <- paste0("{\\color{Orange}", meantab_cc2[[g]][meantab_cc2[[g]]$fac=="INT","mcs.text"], "}")
+  
+  # 3 factors
+  meantab_cc3[[g]][meantab_cc3[[g]]$num %in% c(1,2,4),"bcs.text"] <- paste0("{\\color{Fuchsia}", meantab_cc3[[g]][meantab_cc3[[g]]$num %in% c(1,2,4),"bcs.text"], "}")
+  meantab_cc3[[g]][meantab_cc3[[g]]$num %in% c(3,5,6),"bcs.text"] <- paste0("{\\color{OliveGreen}", meantab_cc3[[g]][meantab_cc3[[g]]$num %in% c(3,5,6),"bcs.text"], "}")
+  meantab_cc3[[g]][meantab_cc3[[g]]$num %in% c(1,2,4),"mcs.text"] <- paste0("{\\color{Fuchsia}", meantab_cc3[[g]][meantab_cc3[[g]]$num %in% c(1,2,4),"mcs.text"], "}")
+  meantab_cc3[[g]][meantab_cc3[[g]]$num %in% c(3,5,6),"mcs.text"] <- paste0("{\\color{OliveGreen}", meantab_cc3[[g]][meantab_cc3[[g]]$num %in% c(3,5,6),"mcs.text"], "}")
+  
+  meantab_cc3[[g]][meantab_cc3[[g]]$num %in% c(7,8,10),"bcs.text"] <- paste0("{\\color{Orange}", meantab_cc3[[g]][meantab_cc3[[g]]$num %in% c(7,8,10),"bcs.text"], "}")
+  meantab_cc3[[g]][meantab_cc3[[g]]$fac=="INT","mcs.text"] <- paste0("{\\color{Orange}", meantab_cc3[[g]][meantab_cc3[[g]]$fac=="INT","mcs.text"], "}")
+}
 
 rm(mcskeepb, ncats, ncomm, t, t2, X.all, X.allg, means, facnms)
 

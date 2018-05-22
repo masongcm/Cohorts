@@ -1,50 +1,3 @@
-## ---- REGS_DEP
-
-###################################################################
-# function to collapse regressors in formula
-pplus <- function(x) paste0(x, collapse="+")
-
-# REGRESSIONS OF EXT/INT ON CHILDHOOD VARIABLES
-# add region to vector of regressors
-decvars_reg <- c(decvars, c("region"))
-decvars_int_reg <- c(decvars_int, c("region"))
-
-# labels for groups (texreg)
-grouplabs <- list("Social class (10)" = 1:4, 
-                  "Maternal education (5)" = 5, 
-                  "Maternal employment (5)" = 6:7,
-                  "Maternal background (birth)" = 8:12,
-                  "Pregnancy" = 13:18)
-# labels for variables (texreg)
-varlabs <- c("IIIM", "IIINM", "I/II", "Other",
-             "Post-compulsory",
-             "Part time", "Full time",
-             "Age", "Teen", "Height", "Unmarried", "Nonwhite",
-             "Parity", "Firstborn", "Num prev. stillbirths",
-             "Mother smoked in pregnancy","Caesarean birth","Preterm birth",
-             "(log) Birthweight (0)"
-)
-
-# formulas
-form_ext <- as.formula(paste("EXT ~ ", pplus(decvars_reg)))
-form_int <- as.formula(paste("INT ~ ", pplus(decvars_reg)))
-
-# regressions
-r_ext <- list()
-r_int <- list()
-for (cs in c("BCS.M", "MCS.M", "BCS.F", "MCS.F")) {
-  r_ext[[cs]] <- list()
-  r_int[[cs]] <- list()
-  
-  # OLS
-  r_ext[[cs]][["OLS"]]  <- lm(form_ext,  data=subset(finaldata, cohortsex==cs))
-  r_int[[cs]][["OLS"]]  <- lm(form_int,  data=subset(finaldata, cohortsex==cs))
-  
-  # Tobit
-  r_ext[[cs]][["Tobit"]]  <- VGAM::vglm(form_ext, VGAM::tobit(Upper = max(finaldata$EXT)), data=subset(finaldata, cohortsex==cs))
-  r_int[[cs]][["Tobit"]]  <- VGAM::vglm(form_int, VGAM::tobit(Upper = max(finaldata$INT)), data=subset(finaldata, cohortsex==cs))
-  
-}
 
 ###################################################################
 ## ---- REGS_OUTC
@@ -159,7 +112,7 @@ for (o in 1:length(mcsoutcvars)) {
 
 # function to print coefficients in correct format
 prcoef <- function(x) {
-  if (abs(x)<10) out <- sub("^(-?)0.", ".", sprintf("%.3f", x))
+  if (abs(x)<10) out <- sub("^(-?)0.", "\\1.", sprintf("%.3f", x))
   else out <- sprintf("%.1f", x)
   return(out)
 }
@@ -178,7 +131,7 @@ cellpr <- function(mod, vr) {
   coefs2 <- coefs[vr,]
   return(
     paste0("$", prcoef(round(coefs2[1],3)), # estimate
-                    stars(coefs2[3]), "$", # stars
+           stars(coefs2[3]), "$", # stars
            " \\newline ($", prcoef(round(coefs2[2],3)), "$)")
   ) # SE (on new line)
 }
@@ -192,15 +145,15 @@ bcs_outctab <- list()
 for (i in 1:length(bcsoutcvars)) {
   lab <- paste0("\\textit{\\textbf{", bcsoutclabs[i], "}}")
   bcs_outctab[[bcsoutcvars[i]]] <- matrix(c(lab, dvmeans_bcs_m[i], "", "", "", "", dvmeans_bcs_f[i], "", "", "", "",   # outcome and means
-                              "EXT", # row label
-                              "", cellpr(bcsoutcmod_m_ext[[i]], "EXT"), "", cellpr(bcsoutcmod_m_b[[i]], "EXT"), cellpr(bcsoutcmod_m_bc[[i]], "EXT"), # males EXT
-                              "", cellpr(bcsoutcmod_f_ext[[i]], "EXT"), "", cellpr(bcsoutcmod_f_b[[i]], "EXT"), cellpr(bcsoutcmod_f_bc[[i]], "EXT"),# females EXT
-                              "INT", # row label
-                              "", "", cellpr(bcsoutcmod_m_int[[i]], "INT"), cellpr(bcsoutcmod_m_b[[i]], "INT"), cellpr(bcsoutcmod_m_bc[[i]], "INT"),# males INT
-                              "", "", cellpr(bcsoutcmod_f_int[[i]], "INT"), cellpr(bcsoutcmod_f_b[[i]], "INT"), cellpr(bcsoutcmod_f_bc[[i]], "INT"),# females INT
-                              "COG", # row label
-                              "", "", "", "", cellpr(bcsoutcmod_m_bc[[i]], "cogscore"), # males COG
-                              "", "", "", "", cellpr(bcsoutcmod_f_bc[[i]], "cogscore") # females COG
+                                            "EXT", # row label
+                                            "", cellpr(bcsoutcmod_m_ext[[i]], "EXT"), "", cellpr(bcsoutcmod_m_b[[i]], "EXT"), cellpr(bcsoutcmod_m_bc[[i]], "EXT"), # males EXT
+                                            "", cellpr(bcsoutcmod_f_ext[[i]], "EXT"), "", cellpr(bcsoutcmod_f_b[[i]], "EXT"), cellpr(bcsoutcmod_f_bc[[i]], "EXT"),# females EXT
+                                            "INT", # row label
+                                            "", "", cellpr(bcsoutcmod_m_int[[i]], "INT"), cellpr(bcsoutcmod_m_b[[i]], "INT"), cellpr(bcsoutcmod_m_bc[[i]], "INT"),# males INT
+                                            "", "", cellpr(bcsoutcmod_f_int[[i]], "INT"), cellpr(bcsoutcmod_f_b[[i]], "INT"), cellpr(bcsoutcmod_f_bc[[i]], "INT"),# females INT
+                                            "COG", # row label
+                                            "", "", "", "", cellpr(bcsoutcmod_m_bc[[i]], "cogscore"), # males COG
+                                            "", "", "", "", cellpr(bcsoutcmod_f_bc[[i]], "cogscore") # females COG
   ), nrow=4, byrow=TRUE
   )
 }
@@ -214,15 +167,15 @@ mcs_outctab <- list()
 for (i in 1:length(mcsoutcvars)) {
   lab <- paste0("\\textit{\\textbf{", mcsoutclabs[i], "}}")
   mcs_outctab[[mcsoutcvars[i]]] <- matrix(c(lab, dvmeans_mcs_m[i], "", "", "", "", dvmeans_mcs_f[i], "", "", "", "",   # outcome and means
-                               "EXT", # row label
-                               "", cellpr(mcsoutcmod_m_ext[[i]], "EXT"), "", cellpr(mcsoutcmod_m_b[[i]], "EXT"), cellpr(mcsoutcmod_m_bc[[i]], "EXT"), # males EXT
-                               "", cellpr(mcsoutcmod_f_ext[[i]], "EXT"), "", cellpr(mcsoutcmod_f_b[[i]], "EXT"), cellpr(mcsoutcmod_f_bc[[i]], "EXT"),# females EXT
-                               "INT", # row label
-                               "", "", cellpr(mcsoutcmod_m_int[[i]], "INT"), cellpr(mcsoutcmod_m_b[[i]], "INT"), cellpr(mcsoutcmod_m_bc[[i]], "INT"),# males INT
-                               "", "", cellpr(mcsoutcmod_f_int[[i]], "INT"), cellpr(mcsoutcmod_f_b[[i]], "INT"), cellpr(mcsoutcmod_f_bc[[i]], "INT"),# females INT
-                               "COG", # row label
-                               "", "", "", "", cellpr(mcsoutcmod_m_bc[[i]], "cogscore"), # males COG
-                               "", "", "", "", cellpr(mcsoutcmod_f_bc[[i]], "cogscore") # females COG
+                                            "EXT", # row label
+                                            "", cellpr(mcsoutcmod_m_ext[[i]], "EXT"), "", cellpr(mcsoutcmod_m_b[[i]], "EXT"), cellpr(mcsoutcmod_m_bc[[i]], "EXT"), # males EXT
+                                            "", cellpr(mcsoutcmod_f_ext[[i]], "EXT"), "", cellpr(mcsoutcmod_f_b[[i]], "EXT"), cellpr(mcsoutcmod_f_bc[[i]], "EXT"),# females EXT
+                                            "INT", # row label
+                                            "", "", cellpr(mcsoutcmod_m_int[[i]], "INT"), cellpr(mcsoutcmod_m_b[[i]], "INT"), cellpr(mcsoutcmod_m_bc[[i]], "INT"),# males INT
+                                            "", "", cellpr(mcsoutcmod_f_int[[i]], "INT"), cellpr(mcsoutcmod_f_b[[i]], "INT"), cellpr(mcsoutcmod_f_bc[[i]], "INT"),# females INT
+                                            "COG", # row label
+                                            "", "", "", "", cellpr(mcsoutcmod_m_bc[[i]], "cogscore"), # males COG
+                                            "", "", "", "", cellpr(mcsoutcmod_f_bc[[i]], "cogscore") # females COG
   ), nrow=4, byrow=TRUE
   )
 }

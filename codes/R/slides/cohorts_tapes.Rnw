@@ -171,7 +171,8 @@ read_chunk(here("codes/R/getpars.R"))
 ~\\    
 \item \textbf{Q1}: Can we derive \textbf{comparable measures} of socioemotional skills across populations?
     \bi
-    \item Does the same instrument measure the same constructs in the same way:
+    \item Most economic literature uses simple sum scores
+    \item But does the same instrument measure the same constructs in the same way:
       \bi 
       \item across different populations?
       \item in the same population, at different points in time?
@@ -397,17 +398,36 @@ print(xtable(table,
 \frametitle{Factor structure}
 \framesubtitle{Existing evidence}
 
+How many dimensions underlie the new 11-item scale?
+\bi
+\item Rutter A scale (BCS) 
+  \bi 
+  \item Traditionally conceptualised as bidimensional \citep{Blanden2007}
+    \bi
+    \item \emph{anti-social} -- or aggressive-hyperactive
+    \item \emph{neurotic} -- or anxious-fearful
+    \ei
+  \item Sometimes the former is split into aggressive-antisocial and hyperkinetic \citep{McGee1985}
+  \ei
+\item Strengths and difficulties (MCS) 
+  \bi
+  \item Five subscales (emotional, hyperactivity, prosocial, peer, conduct) \citep{Stone2010}
+  \item Evidence that lower-dimensional structures can work \citep{Goodman2010}
+  \ei
+\ei
+
 \end{frame}
 
 \begin{frame}
 \frametitle{EFA}\label{efa}
 \framesubtitle{Dimensionality}
 
+On our data:
 \bi
 \item Different methods for assessing number of factors give varied results \hyperlink{numfac}{\beamerbutton{Det.}}
 \item We choose two factors to maximise interpretability
 \item In both cohorts, EFA delivers a clear-cut split between two factors
-\item Factors can be coherently interpreted as internalising and internalising skills
+\item Factors can be coherently interpreted as externalising ($\sim$ anti-social) and internalising ($\sim$ neurotic)
 \ei 
 \vspace{12pt}
 \centering
@@ -478,16 +498,21 @@ print(xtable(table,
 
 \bi
 \item Two constructs isolated in the new scale, separately by cohort
-\item But are externalising and internalising problems measured in a comparable way \emph{across cohorts}?
-\vspace{12pt}\pause
-\item \textbf{Measurement Invariance (MI)} analysis
-  \bi
-  \item Formal test of the invariance hypothesis
-  \item Set up categorical Item Factor Analysis (IFA) model
-  \item Pool the two cohorts together, and estimate models of different invariance level -- following \cite{Wu2016}
-  \item Test relative fit of restricted models compared to initial model
-  \ei 
+\item But are externalising and internalising measured in a comparable way \emph{across cohorts}?
 \ei
+\vspace{12pt}\pause
+\textbf{Measurement Invariance (MI)} analysis \citep{Wu2016a}
+  \bi
+  \item Formal test of the invariance hypothesis using factor analysis
+  \item Aim: assess if constructs are measured in the same way in two or more groups
+  \item Procedure:
+    \bnm
+    \item Start from the most general model -- parameters allowed differ across groups
+    \item Impose restrictions on sets of parameters to be equal across groups
+    \item Test relative fit of restricted models compared to initial model
+    \enm
+  \ei 
+
 
 \end{frame}
 
@@ -520,8 +545,15 @@ with $\tau_{0,ic}=-\infty$ and $\tau_{3,ic}=+\infty$.
 
 
 \begin{frame}
-\frametitle{MI}\label{misteps}
-\framesubtitle{Invariance steps \hyperlink{miapp1}{\beamerbutton{Details}}}
+\frametitle{Measurement Invariance}\label{misteps}
+\framesubtitle{Steps \hyperlink{miapp1}{\beamerbutton{Details}}}
+
+We follow the approach in \cite{Wu2016a}
+\bi
+\item Define group ($c$) as cohort-gender cell
+  \bi \item Invariance results do not vary if separating by gender \ei
+\ei
+~\\
 \bnm
 \item \textbf{Configural} model
   \bi
@@ -563,17 +595,14 @@ with $\tau_{0,ic}=-\infty$ and $\tau_{3,ic}=+\infty$.
 
 \begin{frame}
 \frametitle{Measurement Invariance}\label{mires}
-\framesubtitle{Results \hyperlink{measpars}{\beamerbutton{Measurement}}\hyperlink{lvpars}{\beamerbutton{Latent variable}}}
+\framesubtitle{Results}
 
 \bi
 \item We use RMSE to compare fit between models of different invariance level
 \item Restricting thresholds and loadings provides a good fit \hyperlink{fit}{\beamerbutton{Fit details}}
   \bi \item We can compare the scale (variance) of the latent factors \ei
 \item Models with restricted intercepts do \emph{not} pass MI test
-  \bi
-  \item Unclear whether mean comparisons can be done
-  \item \cite{Wu2016} vs \cite{Millsap2004}
-  \ei
+  \bi \item We cannot compare the location of latent factors in different groups \ei
 \ei
 \begin{center}
 <<FA_FIT_RES, dependson="FA_FIT", results='asis'>>=
@@ -588,7 +617,7 @@ for (c in 1:ncol(table)) {
 }
 
 print(xtable(table,
-                    align="L{0cm}L{.3\\textwidth}C{.1\\textwidth}C{.15\\textwidth}",
+                    align="L{0cm}L{.5\\textwidth}C{.1\\textwidth}C{.15\\textwidth}",
                     digits = 4
                     ),
              size="\\footnotesize",
@@ -602,7 +631,7 @@ print(xtable(table,
                                     )),
              sanitize.text.function = function(x){x},
              sanitize.rownames.function = function(x){""}, # to not print row numbers
-             tabular.environment = "tabular", width = "5\\textwidth",
+             tabular.environment = "tabular", width = "\\textwidth",
              floating = FALSE
 )
 
@@ -612,11 +641,21 @@ print(xtable(table,
 
 \begin{frame}
 \frametitle{Measurement Invariance}
-\framesubtitle{Results \hyperlink{measpars}{\beamerbutton{Measurement}}\hyperlink{lvpars}{\beamerbutton{Latent variable}}}
+\framesubtitle{Factor scores}
 \bi
-\item \textbf{Q1}: Can we derive comparable measures of noncognitive skills across cohorts?
-\item Yes, we can use the model with non-invariant intercepts to score the latent factors (externalising and internalising skills)
+\item Nevertheless, we can use the model with non-invariant intercepts to score the latent factors (externalising and internalising dimensions)
+\item Estimated parameters: \hyperlink{measpars}{\beamerbutton{Measurement}}\hyperlink{lvpars}{\beamerbutton{Latent variable}}
+\item Use Empirical Bayes approach to predict individual scores
 \item All scores are coded so that \emph{higher is better}
+\item \textbf{CAUTION}: location differences by cohort are not interpretable!
+~\\
+\pause
+\item Is this an improvement on using simple sum scores?
+  \bi
+  \item Scores from the model exploit the covariance structure of the whole 11-item scale
+  \item Every pattern of response is assigned a score
+  \item Substantial increase in variability ({\color{red} could add boxplot of factor scores vs sum scores})
+  \ei
 \ei
 \end{frame}
 
@@ -744,6 +783,22 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 \end{frame}
 
 \begin{frame}
+\frametitle{Inequality}\label{ineq_fsc}
+\framesubtitle{Father occupation}
+\vspace{-.2cm}
+\begin{figure}
+<<FACINEQ_FSC, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=10, out.width='.9\\linewidth'>>=
+# plot
+fi <- fi_fsc # select result
+gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]], 
+                        fi$ineqlist[[3]],fi$ineqlist[[4]],
+                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
+                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
+@
+\end{figure}
+\end{frame}
+
+\begin{frame}
 \frametitle{Inequality}\label{ineq_ys}
 \framesubtitle{Age mother left education}
 \vspace{-.2cm}
@@ -798,15 +853,15 @@ write about variables used and groups
 
 
 \begin{frame}
-\frametitle{What explains behavioural skills?}
-\framesubtitle{Males}
+\frametitle{What explains socioemotional skills?}
+\framesubtitle{Externalising}
 \begin{table}
 \centering
 \resizebox{\textwidth}{!}{
 <<REGS_M, results='asis', dependson="REGRESSIONS">>=
 
 # select models
-regs <- list(r_ext$BCS.M[["OLS"]],r_ext$MCS.M[["OLS"]],r_int$BCS.M[["OLS"]],r_int$MCS.M[["OLS"]])
+regs <- list(r_ext$BCS.M[["OLS"]],r_ext$MCS.M[["OLS"]],r_ext$BCS.F[["OLS"]],r_ext$MCS.F[["OLS"]])
 
 # robust SEs
 robust_se <- list()
@@ -826,7 +881,7 @@ texreg::texreg(regs,
                omit.coef = "region|Inter",
                groups = grouplabs,
                custom.coef.names = varlabs,
-               custom.model.names = c("EXT BCS", "EXT MCS", "INT BCS", "INT MCS"),
+               custom.model.names = c("Males BCS", "Males MCS", "Females BCS", "Females MCS"),
                include.rmse = FALSE,
                table = FALSE
                )
@@ -837,15 +892,15 @@ texreg::texreg(regs,
 \end{frame}
 
 \begin{frame}
-\frametitle{What explains behavioural skills?}
-\framesubtitle{Females}
+\frametitle{What explains socioemotional skills?}
+\framesubtitle{Internalising}
 \begin{table}
 \centering
 \resizebox{\textwidth}{!}{
 <<REGS_F, results='asis', dependson="REGRESSIONS">>=
 
 # select models
-regs <- list(r_ext$BCS.F[["OLS"]],r_ext$MCS.F[["OLS"]],r_int$BCS.F[["OLS"]],r_int$MCS.F[["OLS"]])
+regs <- list(r_int$BCS.M[["OLS"]],r_int$MCS.M[["OLS"]],r_int$BCS.F[["OLS"]],r_int$MCS.F[["OLS"]])
 
 # robust SEs
 robust_se <- list()
@@ -865,7 +920,7 @@ texreg::texreg(regs,
                omit.coef = "region|Inter",
                groups = grouplabs,
                custom.coef.names = varlabs,
-               custom.model.names = c("EXT BCS", "EXT MCS", "INT BCS", "INT MCS"),
+               custom.model.names = c("Males BCS", "Males MCS", "Females BCS", "Females MCS"),
                include.rmse = FALSE,
                table = FALSE
                )
@@ -1137,45 +1192,45 @@ print(xtable(table,
 @
 } %scalebox
 \end{frame}
-% 
-% <<BCSEFA>>=
-% @
-% 
-% <<BCSEFARES, dependson='BCSEFA'>>=
-% @
-% 
-% <<MCSEFA>>=
-% @
-% 
-% <<MCSEFARES, dependson='MCSEFA'>>=
-% @
-% 
-% 
-% \begin{frame}[noframenumbering]
-% \frametitle{EFA}\label{numfac}
-% \framesubtitle{Number of factors \hyperlink{efa}{\beamerreturnbutton{Back}}}
-% \begin{center}
-% <<EFATAB, dependson='MCSEFARES', results='asis'>>=
-% # combine results
-% efatab <- cbind(efatab.bcs,efatab.mcs)
-% colnames(efatab) <- c("BCS All", "BCS M", "BCS F", "MCS All", "MCS M", "MCS F")
-% 
-% 
-% print(xtable(efatab,
-%                     align="L{.25\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}",
-%                     digits = 0
-%                     ),
-%              size="\\small",
-%              include.rownames=T,
-%              include.colnames=T,
-%              booktabs = T,
-%              sanitize.text.function = function(x){x},
-%              tabular.environment = "tabular", width = ".8\\textwidth",
-%              floating = FALSE
-% )
-% @
-% \end{center}
-% \end{frame}
+
+<<BCSEFA>>=
+@
+
+<<BCSEFARES, dependson='BCSEFA'>>=
+@
+
+<<MCSEFA>>=
+@
+
+<<MCSEFARES, dependson='MCSEFA'>>=
+@
+
+
+\begin{frame}[noframenumbering]
+\frametitle{EFA}\label{numfac}
+\framesubtitle{Number of factors \hyperlink{efa}{\beamerreturnbutton{Back}}}
+\begin{center}
+<<EFATAB, dependson='MCSEFARES', results='asis'>>=
+# combine results
+efatab <- cbind(efatab.bcs,efatab.mcs)
+colnames(efatab) <- c("BCS All", "BCS M", "BCS F", "MCS All", "MCS M", "MCS F")
+
+
+print(xtable(efatab,
+                    align="L{.25\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}",
+                    digits = 0
+                    ),
+             size="\\small",
+             include.rownames=T,
+             include.colnames=T,
+             booktabs = T,
+             sanitize.text.function = function(x){x},
+             tabular.environment = "tabular", width = ".8\\textwidth",
+             floating = FALSE
+)
+@
+\end{center}
+\end{frame}
 
 \begin{frame}
 \frametitle{EFA}\label{meantab_fcc3}

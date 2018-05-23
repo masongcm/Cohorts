@@ -225,7 +225,7 @@ plotineq <- function(data, categ, suffix,
   return(out)
 }
 
-# SOCIAL CLASS
+# SOCIAL CLASS at 10 -------------------------
 # reorder social class to have "other" on the LHS (scl10c)
 scores2plot$scl10c <- factor(scores2plot$scl10b, levels(scores2plot$scl10b)[c(5,1:4)])
 # demean scores for lowest class
@@ -234,20 +234,26 @@ scores2plot <- demean(scores2plot, "scl10b", "IIINM", "dsc")
 fi_sc <- plotineq(scores2plot, "scl10b", "dsc", ylab = "Score (IIINM = 0)", xlab = "Family Social Class at 10",
                   ylim = c(-.6,.4), vline=4.5)
 
+# FATHER SOCIAL CLASS at 5 --------------------
+# demean scores for lowest class
+scores2plot <- demean(scores2plot, "fscl5wb", "Blue collar", "dfsc")
+# make plots
+fi_fsc <- plotineq(scores2plot, "fscl5wb", "dfsc", ylab = "Score (Blue c. = 0)", xlab = "Father Occupation at 5",
+                  ylim = c(-.6,.4), vline=4.5)
 
-# MATERNAL SCHOOLING
+
+# MATERNAL SCHOOLING -------------------------
 # demean scores for lowest level
 scores2plot <- demean(scores2plot, "mysch5b", "17-18", "dys")
 fi_ys <- plotineq(scores2plot, "mysch5b", "dys", ylab = "Score (17-18 = 0)", xlab = "Age mother left FTE",
                   ylim = c(-.6,.4))
 
-# MATERNAL EMPLOYMENT
+# MATERNAL EMPLOYMENT  -------------------------
 scores2plot <- demean(scores2plot, "mempl5", "Unempl./At home", "dme")
 fi_me <- plotineq(scores2plot, "mempl5", "dme", ylab = "Score (Unempl./At home = 0)", xlab = "Maternal employment at 5")
 
-# EMPLOYMENT*EDUCATION
+# EMPLOYMENT*EDUCATION  -------------------------
 # generate interaction
-scores2plot$mempl5b <- dplyr::recode(scores2plot$mempl5, "Full time" = "Employed", "Part time" = "Employed")
 scores2plot$mscem5 <- interaction(scores2plot[c("mempl5b","mpsla5")]) # generate interaction
 levels(scores2plot$mscem5) <- c("Compuls. \n Unempl./Home",
                                 "Compuls. \n Employed",

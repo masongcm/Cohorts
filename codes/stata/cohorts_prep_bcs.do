@@ -36,6 +36,21 @@ recode a0262 (-3/-1 = .) (7=1) (1/6 8 = 0), gen(caesbirth)
 
 gen mheight = a0197/100 if a0197>0
 
+recode a0014 (-2=.) (8=7), gen(fscl)
+replace fscl = 8 if fscl==.
+recode a0018 (-2=.) (8=7), gen(mscl)
+// label for social class
+lab def scllab 	1 "I Professional" ///
+				2 "II Managerial-technical" ///
+				3 "IIINM Skilled non-manual" ///
+				4 "IIIM Skilled manual" ///
+				5 "IV Partly skilled" ///
+				6 "V Unskilled" ///
+				7 "Unempl/uncl/army/other" ///
+				8 "No partner"
+lab val fscl scllab
+lab val mscl scllab
+
 lab var sex				"Sex"
 lab var bwt				"Birthweight (kg)"
 lab var lowbwt			"Low birthweight (<2500g)"
@@ -53,6 +68,8 @@ lab var fempl			"Father employment"
 lab var caesbirth		"Caesarean birth"
 lab var mheight			"Mother height (m)"
 lab var myob			"Mother year of birth"
+lab var fscl			"Father SC"
+lab var mscl			"Mother SC (most recent job)"
 
 
 /*
@@ -72,7 +89,7 @@ lab var nprevms			"Num previous miscarriages"
 */
 
 keep bcsid sex bwt lowbwt smkpr mothageb teenm parity firstb nprevst ///
-				gestaw preterm singlem mempl caesbirth mheight myob
+				gestaw preterm singlem mempl caesbirth mheight myob fscl mscl
 tempfile bcsdem1
 save `bcsdem1'
 
@@ -108,7 +125,7 @@ use "$bcsraw/1975/f699b.dta", clear
 recode e245 (-3 -2 = .) (1 2 = 0) (3/7=1), gen(ethn)
 
 // parents year of birth
-merge 1:1 bcsid using `bcsdem1', nogen keepusing(myob)
+merge 1:1 bcsid using `bcsdem1', nogen keepusing(myob) keep(1 3)
 gen fyob = 1975 - e009 if e009>0
 
 // school leaving age
@@ -141,6 +158,13 @@ recode e217 (-3/-1 70 80=.) (10 50 = 0) (21 22 30 41 42 = 1) (20 40 60 61 = 2), 
 lab def pft 0 "Unempl./Home" 1 "Part time" 2 "Full time"
 lab val mempl5 pft
 
+// social class
+recode e197 (-2=.) (-1=8) (-3=7), gen(fscl5)
+recode e206 (-2=.) (-1=.) (-3=7), gen(mscl5)
+replace mscl5=7 if mempl5==0
+lab val fscl5 scllab
+lab val mscl5 scllab
+
 
 // age child at interview
 recode e271 (-3=.)
@@ -165,9 +189,11 @@ lab var numch5			"Number other children in HH (5y)"
 lab var mempl5			"Mother unempl/PT/FT (5y)"
 lab var mpsla5			"Mother education past SLA (5y)"
 lab var fpsla5			"Father education past SLA (5y)"
+lab var mscl5			"Mother SC (5)"
+lab var fscl5			"Father SC (5)"
 
 
-keep bcsid ethn ageint5 ?ysch5 numch5 mhied5 mempl5 ?psla5
+keep bcsid ethn ageint5 ?ysch5 numch5 mhied5 mempl5 ?psla5 ?scl5
 tempfile bcsdem3
 save `bcsdem3'
 
@@ -237,9 +263,6 @@ keep bcsid agemint10 agetest10 ///
 
 tempfile bcsall10y
 save `bcsall10y'
-
-
-
 
 
 *INCOME	 ******************************************************************
@@ -406,9 +429,10 @@ foreach x in epvt_z copy_z hfd_z {
 
 
 local covarstokeep country region ///
+					mscl fscl ///
 					sex smkpr singlem mempl nprevst caesbirth ///
 					ethn bwt lowbwt gestaw preterm mothageb teenm parity firstb mheight ///
-					?ysch5 numch5 mhied5 ?empl5 ?psla5 ///
+					?ysch5 numch5 mhied5 ?empl5 ?psla5 ?scl5 ///
 					scl10 incq10 faminc10_real faminc10_infl
 
 preserve

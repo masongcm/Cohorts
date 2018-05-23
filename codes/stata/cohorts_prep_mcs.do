@@ -2,6 +2,12 @@
 *****                MCS                   *************************************
 ********************************************************************************
 
+* SOC2000 to Social Class mapping
+import delimited "$suppdata/soc2sc.csv", varn(1) clear
+rename ïsoc2000 soc2000
+tempfile soc2sc
+save `soc2sc'
+
 *longitudinal file (country, stratum, weights)
 use "$mcsraw/S1/mcs_longitudinal_family_file.dta", clear
 keep mcsid sentry country pttype2 weight1 weight2
@@ -14,66 +20,92 @@ use "$mcsraw/S1/mcs1_parent_interview.dta", clear
 rename ahcsexa0 sex
 recode amlfte00 aplfte00 (-9 -8 -1 =.)
 
+// smoke in pregnancy
 recode amcipr00 (-8/-1=.) (1/max=1), gen(smkprepreg)
 replace smkprepreg = 0 if amsmev00==2 | amsmty00==2
 gen smkpr = smkprepreg
 replace smkpr = 0 if amcich00==0 & inlist(amwhch00,1,2)
 // gave up, less than 1/day, changed in 1st/2nd month
 
+// employment
 recode amwkpr00 (-9/-1=.) (2=0), gen(mempl) // paid job when pregnant
 gen ymendlastjob = ym(amjeyr00, amjemt00) if inrange(amjeyr00,0,2002) & inrange(amjemt00,1,12)
 gen ymconc = ym(ahcdbya0,ahcdbma0)-9 
 replace mempl = 1 if (ymconc - ymendlastjob)<12 // employed in year before pregnancy
 
-// still births
+// marital status
+recode amfcin00 (-9/-1=.) (2 3 = 0) (1 4 5 6 = 1), gen(singlem)
+
+// previous still births
 local lets "a b c d e f g h i"
 gen nprevst = 0
 foreach l of local lets {
 	replace nprevst = nprevst+1 if amlive`l'0 == 2
 }
 
+// birth outcomes
 recode amdewm0a (-9/-1=.) (5 6 = 1) (1/4 51/95 = 0), gen(caesbirth)
-
 egen jaundice = anymatch(amwrbmaa amwrbmab amwrbmac amwrbmad amwrbmae amwrbmaf amwrbmag), values(4)
 replace jaundice=. if amwrbmaa <0
-
 egen preecl = anymatch(amilwm0a amilwm0b amilwm0c amilwm0d amilwm0e amilwm0f amilwm0g), values(5)
 replace preecl=. if amilpr00 <0
 
-/*
-// relationship of main respondent
-rename ahprelaa ahprela1
-rename ahprelab ahprela2
-rename ahprelac ahprela3
-rename ahprelad ahprela4
-rename ahprelae ahprela5
-rename ahprelaf ahprela6
-gen relmain = .
-levelsof ampnum00, local(mainrcodes)
-di "`mainrcodes'"
-foreach x of local mainrcodes {
-	di `x'
-	replace relmain = ahprela`x' if ampnum00==`x'
-}
-lab val relmain LABF
-lab var relmain		"CM relationship to main respondent"
-
-*/
-
-// marital status
-recode amfcin00 (-9/-1=.) (2 3 = 0) (1 4 5 6 = 1), gen(singlem)
-
 // maternal malaise
-
 recode 	amtire00 amdepr00 amworr00 amrage00 ///
 		amscar00 amupse00 amkeyd00 amnerv00 amhera00 ///
 		(-9/-1=.) (2=0)
-
 local mlq "amtire00 amdepr00 amworr00 amrage00 amscar00 amupse00 amkeyd00 amnerv00 amhera00"
 gen malaise=0
 foreach v of local mlq {
 	replace malaise = malaise + `v'
 }
+
+// label for social class
+lab def scllab 	1 "I Professional" ///
+				2 "II Managerial-technical" ///
+				3 "IIINM Skilled non-manual" ///
+				4 "IIIM Skilled manual" ///
+				5 "IV Partly skilled" ///
+				6 "V Unskilled" ///
+				7 "Unempl/uncl/army/other" ///
+				8 "No partner"
+
+		
+local pers = "m p" // main/partner
+foreach p of local pers {
+
+	// employment status (for SC)
+	gen empstat_`p'=.
+	replace empstat_`p' = 1 if a`p'emse00==2 & a`p'seem00==3 // self-employed, >25
+	replace empstat_`p' = 2 if a`p'emse00==2 & a`p'seem00==2 // self-employed, <25
+	replace empstat_`p' = 3 if a`p'emse00==2 & a`p'seem00==1 // self-employed, alone
+	replace empstat_`p' = 4 if a`p'supv00==1 & inlist(a`p'empn00, 4,5,6) // manager, >25
+	replace empstat_`p' = 5 if a`p'supv00==1 & inlist(a`p'empn00, 1,2,3) // manager, <25
+	replace empstat_`p' = 6 if a`p'supv00==2 // supervisor/foreman
+	replace empstat_`p' = 7 if a`p'supv00==3 // not manager or supervisor
+	
+	gen soc2000=a`p'socc00
+	merge m:1 soc2000 using `soc2sc', nogen keep (1 3)
+	gen `p'scl = .
+	replace `p'scl = se25p 	if empstat_m==1
+	replace `p'scl = sel25 	if empstat_m==2
+	replace `p'scl = seno 	if empstat_m==3
+	replace `p'scl = man25p if empstat_m==4
+	replace `p'scl = manl25 if empstat_m==5
+	replace `p'scl = sup 	if empstat_m==6
+	replace `p'scl = emp 	if empstat_m==7
+	replace `p'scl = emp	if soc2000!=. & empstat_m==.
+	recode `p'scl (10=1) (20=2) (31=3) (32=4) (40=5) (50=6) (60=7)
+	replace `p'scl=7 if a`p'emse00==3 // never had paid job
+	lab val `p'scl scllab
+	drop soc2000 se25p sel25 seno man25p manl25 sup emp
+	
+}
+rename pscl fscl
+replace fscl = 7 if apwkst00==3  // no current paid job
+replace fscl = 8 if appnum00==-1 // no partner
+
+
 
 lab var sex			"CM sex"
 lab var smkpr		"Smoked during pregnancy (main resp)"
@@ -84,8 +116,8 @@ lab var nprevst		"Num previous stillbirths"
 lab var caesbirth	"Caesarean birth"
 lab var jaundice	"Jaundiced baby"
 lab var preecl		"Raised blood pressure, eclampsia /preeclampsia, or toxaemia"
-
-keep mcsid amlfte00 aplfte00 amotcn00 sex smkpr singlem malaise mempl nprevst caesbirth preecl
+lab var mscl		"Mother SC (last job)"
+keep mcsid amlfte00 aplfte00 amotcn00 sex smkpr singlem malaise mempl nprevst caesbirth preecl mscl
 tempfile mcsdem1
 save `mcsdem1'
 
@@ -118,7 +150,8 @@ gen gestaw = floor(ADGESTA0/7) if ADGESTA0>0
 gen preterm = gestaw<37 if gestaw!=.
 
 // total num of biological siblings (in HH, not in HH)
-merge 1:1 mcsid using `mcsdem1', keepusing(amotcn00)
+// plus mother and partner employment
+merge 1:1 mcsid using "$mcsraw/S1/mcs1_parent_interview.dta", keepusing(amotcn00 ampjob00 appjob00 amwkst00 apwkst00)
 gen parity = ADOTHS00 
 replace parity= parity + amotcn00 if amotcn00 >0 
 gen firstb = parity==0 // no natural siblings
@@ -126,6 +159,30 @@ gen firstb = parity==0 // no natural siblings
 recode AMHGTM00 (-1=.), gen(mheight)
 recode AMWGBK00 (-8/-1=.), gen(mweight) // before CM born
 recode AMDBMIB0 (-8/-1=.), gen(mbmi) // before CM born
+
+rename _all, lower
+
+// social class
+local pers = "m p" // main/partner
+foreach p of local pers {
+	gen `p'scl = .
+	replace `p'scl = 1 if inlist(a`p'd17s00, 3.1, 3.3)
+	replace `p'scl = 2 if inlist(a`p'd17s00, 1, 2, 3.2, 3.4, 4.1, 4.3, 5, 7.3, 8.1, 8.2, 9.2)
+	replace `p'scl = 3 if inlist(a`p'd17s00, 4.2, 4.4, 6, 7.1, 7.2, 12.1, 12.6)
+	replace `p'scl = 4 if inlist(a`p'd17s00, 7.4, 9.1, 10, 11.1, 12.3, 13.3)
+	replace `p'scl = 5 if inlist(a`p'd17s00, 11.2, 12.2, 12.4, 12.5, 12.7, 13.1, 13.2, 13.5)
+	replace `p'scl = 6 if inlist(a`p'd17s00, 13.4)
+}
+
+rename pscl fscl
+
+replace mscl = 7 if ampjob00==2 	// main not in work
+replace fscl = 7 if appjob00==2 	// partner not in work
+replace fscl = 8 if appjob00==. 	// partner not present
+replace fscl = 7 if fscl==. 		// remaining are other category
+
+lab val mscl scllab
+lab val fscl scllab
 
 lab var ethn 			"Nonwhite ethnicity"
 lab var bwt				"Birthweight (kg)"
@@ -139,8 +196,9 @@ lab var firstb			"First born"
 lab var mheight			"Mother height (m)"
 lab var mweight			"Mother weight (kg)"
 lab var mbmi			"Mother BMI"
+lab var fscl			"Father SC"
 
-keep mcsid region ethn bwt lowbwt gestaw preterm mothageb teenm parity firstb mheight mweight mbmi
+keep mcsid region ethn bwt lowbwt gestaw preterm mothageb teenm parity firstb mheight mweight mbmi fscl
 tempfile mcsdem2
 save `mcsdem2'
 
@@ -200,8 +258,8 @@ gen numch5 = cdtots00-1
 
 recode cmdact00 (-8/-1=.) (1 2 = 1) (3 4 5 6 7 8 9 =0), gen(mempl5)
 
-// bring in hours
-merge 1:1 mcsid using "$mcsraw/S3/mcs3_parent_interview.dta", keepusing(cmwkhr00) keep(1 3) nogen
+// bring in hours and partner work
+merge 1:1 mcsid using "$mcsraw/S3/mcs3_parent_interview.dta", keepusing(cmwkhr00 cpwkhr00 cmpjob00 cppjob00 cmwkwk00 cpwkwk00) keep(1 3) nogen
 replace mempl5 = 2 if cmwkhr00>20 // PT is < 20h
 lab def pft 0 "Unempl./Home" 1 "Part time" 2 "Full time"
 lab val mempl5 pft
@@ -210,15 +268,37 @@ recode cmwgtk00 (-8/-1 = .), gen(mweight5)
 recode cmhgtm00 (-8/-1 = .), gen(mheight5)
 recode cmdbmi00 (-8/-1 = .), gen(mbmi5)
 
+
+local pers = "m p" // main/partner
+foreach p of local pers {
+	gen `p'scl5 = .
+	replace `p'scl5 = 1 if inlist(c`p'd17s00, 3.1, 3.3)
+	replace `p'scl5 = 2 if inlist(c`p'd17s00, 1, 2, 3.2, 3.4, 4.1, 4.3, 5, 7.3, 8.1, 8.2, 9.2)
+	replace `p'scl5 = 3 if inlist(c`p'd17s00, 4.2, 4.4, 6, 7.1, 7.2, 12.1, 12.6)
+	replace `p'scl5 = 4 if inlist(c`p'd17s00, 7.4, 9.1, 10, 11.1, 12.3, 13.3)
+	replace `p'scl5 = 5 if inlist(c`p'd17s00, 11.2, 12.2, 12.4, 12.5, 12.7, 13.1, 13.2, 13.5)
+	replace `p'scl5 = 6 if inlist(c`p'd17s00, 13.4)
+}
+rename pscl5 fscl5
+
+replace mscl5 = 7 if cmpjob00==2 	// main not in work
+replace fscl5 = 7 if cppjob00==2 	// partner not in work
+replace fscl5 = 8 if cppjob00==. 	// partner not present
+replace fscl5 = 7 if fscl5==. 		// remaining are other category
+
+lab val mscl5 scllab
+lab val fscl5 scllab
+
 lab var numch5			"Number other children in HH (5y)"
 lab var mhied5			"Mother HE degree, NVQ4-5 (5y)"
 lab var mheight5		"Mother height (5y) (m)"
 lab var mweight5		"Mother weight (5y) (kg)"
 lab var mbmi5			"Mother BMI (5y)"
 lab var mempl5			"Mother unempl/PT/FT (5y)"
+lab var mscl5			"Mother SC (5)"
+lab var fscl5			"Father SC (5)"
 
-
-keep mcsid hnvq_main hnvq_part numch5 naturalmother5 mhied5 mweight5 mheight5 mbmi5 mempl5
+keep mcsid hnvq_main hnvq_part numch5 naturalmother5 mhied5 mweight5 mheight5 mbmi5 mempl5 mscl5 fscl5
 tempfile mcs5d
 save `mcs5d'
 
@@ -305,6 +385,7 @@ use "$data/CohortsHarmonised/raw/mcs_harmonised_childhoodses.dta", clear // inco
 rename MCSID mcsid
 rename MCS5PCL scl10
 recode scl10 (3.1 = 3) (3.2=4) (4=5) (5=6) (6=7) (11=.)
+// label for social class
 lab def scllab 	1 "I Professional" ///
 				2 "II Managerial-technical" ///
 				3 "IIINM Skilled non-manual" ///
@@ -590,9 +671,10 @@ append using `ethn'
 /* SAVE FILES for R */
 
 local covarstokeep country region ///
+					?scl ///
 					sex smkpr singlem malaise mempl nprevst caesbirth ///
 					ethn bwt lowbwt gestaw preterm mothageb teenm parity firstb mheight mweight mbmi ///
-					mysch5 fysch5 mhied5 numch5 mweight5 mheight5 mbmi5 mempl5 ?psla5 ///
+					mysch5 fysch5 mhied5 numch5 mweight5 mheight5 mbmi5 mempl5 ?psla5 ?scl5 ///
 					scl10 incq10 faminc10_real faminc10_infl
 
 /* SAVE 5y FILE */

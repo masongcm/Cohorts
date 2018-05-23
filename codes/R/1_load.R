@@ -40,10 +40,10 @@ printfit <- function(m) {
 ## ---- LOAD_DATA
 
 # auxiliary variables to retain
-auxvars <- c("sex", "region", "ethn",
+auxvars <- c("sex", "region", "ethn", "fscl", "mscl",
              "bwt", "lowbwt", "parity", "firstb", "nprevst", "caesbirth", "smkpr", "gestaw", "preterm", 
              "mothageb", "teenm", "singlem", "mheight", "mempl",
-             "mysch5", "fysch5", "numch5", "ageint5", "mhied5", "mempl5", "mpsla5", "fpsla5",
+             "mysch5", "fysch5", "numch5", "ageint5", "mhied5", "mempl5", "mpsla5", "fpsla5", "fscl5", "mscl5",
              "faminc10_real", "faminc10_infl", "incq10", "scl10"
              )
 
@@ -51,9 +51,6 @@ auxvars <- c("sex", "region", "ethn",
 bcs5data <- read.dta(paste0(dir_data, "bcs5yeng.dta"), convert.factors = F) # all BCS data
 bcs5rutb <- bcs5data[,grep("bcs5_rutb", names(bcs5data), value=TRUE)]                 # BINARY Rutter items only
 bcs5rutc <- bcs5data[,grep("bcs5_rutc", names(bcs5data), value=TRUE)]                 # 3CAT Rutter items only
-
-# social class 
-bcs5data$scl10 <- factor(bcs5data$scl10, labels = c("I", "II", "IIINM", "IIIM", "IV", "V", "other"))
 
 # BINARY VERSION
 # merge Rutter items 4 and 19
@@ -97,8 +94,6 @@ bcs5aux$rwtd <- 1
 
 # MCS -------------------------------------------
 mcs5data <- read.dta(paste(dir_data, "mcs5yeng.dta", sep=""), convert.factors = F) # all MCS data
-# social class 
-mcs5data$scl10 <- factor(mcs5data$scl10, labels = c("I", "II", "IIINM", "IIIM", "IV", "V", "other"))
 
 # items to keep (binary version)
 mcskeepb <- c(2,3,5,6,7,8,10,12,13,14,15,16,18,19,22,23,24)  # excluding prosocial scale (itm 1 4 9 17 20)
@@ -180,7 +175,26 @@ items.c$INT_RAWr <- residuals(lm(INT_RAW ~ age, data=items.c, na.action = na.exc
 
 
 # FINAL CLEANING/RECODING
-# recode social class for plots
+
+# social class
+for (s in c("scl10", "mscl", "mscl5")) items.c[,s] <- factor(items.c[,s], labels = c("I", "II", "IIINM", "IIIM", "IV", "V", "other"))
+for (s in c("fscl", "fscl5")) items.c[,s] <- factor(items.c[,s], labels = c("I", "II", "IIINM", "IIIM", "IV", "V", "other", "no fath."))
+
+# collapsed social class (blue vs white collar)
+for (s in c("scl10","mscl","mscl5","fscl", "fscl5")) {
+  items.c[,paste0(s,"wb")] <- dplyr::recode(items.c[,s], 
+                               "I" = "White collar",
+                               "II" = "White collar",
+                               "IIINM" = "White collar",
+                               "IIIM" = "Blue collar",
+                               "IV" = "Blue collar",
+                               "V" = "Blue collar",
+                               "other" = "Blue collar",
+                               "no fath." = "No father fig."
+  )
+}
+
+# recode social class at 10
 items.c$scl10b <- NA
 items.c$scl10b[items.c$scl10 %in% c("I", "II")] <- 4
 items.c$scl10b[items.c$scl10 %in% c("IIINM")] <- 3
@@ -198,6 +212,7 @@ facnms <- c("smkpr", "region", "lowbwt", "caesbirth", "preterm", "firstb", "teen
 items.c[,facnms] <- lapply(items.c[,facnms] , factor)
 items.c$incq10 <- ordered(items.c$incq10)
 levels(items.c$mempl5) <- c("Unempl./At home", "Part time", "Full time")
+items.c$mempl5b <- dplyr::recode(items.c$mempl5, "Full time" = "Employed", "Part time" = "Employed")
 levels(items.c$mpsla5) <- c("Compulsory", "Post-Compulsory")
 levels(items.c$singlem) <- c("Married", "Not married")
 

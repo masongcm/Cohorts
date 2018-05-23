@@ -7,7 +7,9 @@ use "$rdata/finaldata.dta", clear;
 tab scl10b, gen(scl10bd);
 tab region, gen(regiond);
 tab mempl5, gen(mempl5d);
+tab fscl5wb, gen(fscl5wbd);
 
+local med_fsc "fscl5wbd2 fscl5wbd3";
 local med_mem "mempl5d2 mempl5d3";
 local med_mch "mothageb mheight singlem ethn";
 local med_prg "parity firstb nprevst smkpr preterm lbwt";
@@ -17,9 +19,11 @@ di "`med_all'";
 
 local outcomes "EXT INT";
 local dvar mpsla5;
-local glab1 "Maternal employment (5)";
-local glab2 "Maternal background (birth)";
-local glab3 "Pregnancy";
+
+local glab1 "Father occupation (5)";
+local glab2 "Maternal employment (5)";
+local glab3 "Maternal background (birth)";
+local glab4 "Pregnancy";
 
 
 /**************************************************************************/
@@ -35,7 +39,7 @@ forvalues g = 1(1)2 {; 				/* gender */
 						x2all(`med_all')
 						robust
 						x1only(`dvar')
-						x2delta(mem = `med_mem' : mch = `med_mch' : prg = `med_prg')
+						x2delta(fsc = `med_fsc' : mem = `med_mem' : mch = `med_mch' : prg = `med_prg')
 						;	
 	mat b1base		= e(b1base);
 	mat V1base		= e(V1base);
@@ -111,7 +115,7 @@ forvalues g = 1(1)2 {; 				/* gender */
 		local decompf		= ("$" + strtrim("`: di %10.1f `decompf''") + "$");
 		
 		/* mediated effect */
-		post `medtab' 	("`o'") ("med`i'") ("Explained by: `glab`i''") ("`decomp'") ("`decompf'");
+		post `medtab' 	("`o'") ("med`i'") ("Explained by: \newline `glab`i''") ("`decomp'") ("`decompf'");
 		
 		local i=`i'+1;
 	};
@@ -186,7 +190,7 @@ drop varname group* gind ord outcome;
 /* make latex table */
 listtab * using "$tables/med_gelb.tex",
     rstyle(tabular) replace
-    head("\begin{tabular}{L{.4\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep}  C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep}}" 
+    head("\begin{tabular}{L{.3\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep}  C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep} C{0.125\textwidth-2\tabcolsep}}" 
     "\toprule" 
 	"& \multicolumn{4}{c}{\textbf{Males}} & \multicolumn{4}{c}{\textbf{Females}} \\ \cmidrule(lr){2-5} \cmidrule(lr){6-9}"
 	"& \multicolumn{2}{c}{\textbf{BCS}} & \multicolumn{2}{c}{\textbf{MCS}} & \multicolumn{2}{c}{\textbf{BCS}} & \multicolumn{2}{c}{\textbf{MCS}} \\ \cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}"
@@ -202,7 +206,7 @@ use `EXTtab', clear;
 drop varname outcome;
 listtab * using "$tables/med_gelb_ext.tex",
     rstyle(tabular) replace
-    head("\begin{tabular}{L{.4\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}}" 
+    head("\begin{tabular}{L{.3\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}}" 
     "\toprule" 
 	"& \multicolumn{4}{c}{\textbf{Males}} & \multicolumn{4}{c}{\textbf{Females}} \\ \cmidrule(lr){2-5} \cmidrule(lr){6-9}"
 	"& \multicolumn{2}{c}{\textbf{BCS}} & \multicolumn{2}{c}{\textbf{MCS}} & \multicolumn{2}{c}{\textbf{BCS}} & \multicolumn{2}{c}{\textbf{MCS}} \\ \cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}"
@@ -218,7 +222,7 @@ use `INTtab', clear;
 drop varname outcome;
 listtab * using "$tables/med_gelb_int.tex",
     rstyle(tabular) replace
-    head("\begin{tabular}{L{.4\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}}" 
+    head("\begin{tabular}{L{.3\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep} C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}C{0.15\textwidth-2\tabcolsep} C{0.1\textwidth-2\tabcolsep}}" 
     "\toprule" 
 	"& \multicolumn{4}{c}{\textbf{Males}} & \multicolumn{4}{c}{\textbf{Females}} \\ \cmidrule(lr){2-5} \cmidrule(lr){6-9}"
 	"& \multicolumn{2}{c}{\textbf{BCS}} & \multicolumn{2}{c}{\textbf{MCS}} & \multicolumn{2}{c}{\textbf{BCS}} & \multicolumn{2}{c}{\textbf{MCS}} \\ \cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}"

@@ -10,18 +10,18 @@ decvars_reg <- c(decvars, c("region"))
 decvars_int_reg <- c(decvars_int, c("region"))
 
 # labels for groups (texreg)
-grouplabs <- list(#"Social class (10)" = 1:4, 
-                  "Maternal education (5)" = 1, 
-                  "Maternal employment (5)" = 2:3,
-                  "Maternal background (birth)" = 4:7,
-                  "Pregnancy" = 8:13)
+grouplabs <- list("Father occupation (5)" = 1:2, 
+                  "Maternal education (5)" = 3, 
+                  "Maternal employment (5)" = 4,
+                  "Maternal background (birth)" = 5:8,
+                  "Pregnancy" = 9:14)
 # labels for variables (texreg)
-varlabs <- c(#"IIIM", "IIINM", "I/II", "Other",
+varlabs <- c("Blue collar", "No father",
              "Post-compulsory",
-             "Part time", "Full time",
+             "Employed",
              "Age", "Height", "Unmarried", "Nonwhite child",
              "Parity", "Firstborn", "Num prev. stillbirths",
-             "Mother smoked in pregnancy","Preterm birth",
+             "Mother smoked in pregnancy", "Preterm birth",
              "(log) Birthweight"
 )
 

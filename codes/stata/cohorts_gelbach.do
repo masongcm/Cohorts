@@ -8,11 +8,12 @@ tab scl10b, gen(scl10bd);
 tab region, gen(regiond);
 tab mempl5, gen(mempl5d);
 tab fscl5wb, gen(fscl5wbd);
+tab preterm, gen(pretermd);
 
 local med_fsc "fscl5wbd2 fscl5wbd3";
 local med_mem "mempl5d2 mempl5d3";
-local med_mch "mothageb mheight singlem ethn";
-local med_prg "parity firstb nprevst smkpr preterm lbwt";
+local med_mch "mothageb mheight singlem ethn numch5";
+local med_prg "firstb nprevst smkpr pretermd2 pretermd3 lbwt";
 
 local med_all = "`med_mem' `med_mch' `med_prg'";
 di "`med_all'";
@@ -27,7 +28,7 @@ local glab4 "Pregnancy";
 
 
 /**************************************************************************/
-/* GELBACH MEDIATION */
+/* GELBACH DECOMPOSITION */
 /**************************************************************************/
 
 forvalues c = 1(1)2 {; 				/* cohort */
@@ -165,6 +166,8 @@ save `INTtab';
 
 use `EXTtab', clear;
 append using `INTtab';
+
+saveold "$rdata/gelbres.dta", replace version(12);
 
 gen group=.;
 replace group = 1 if outcome == "EXT";		lab def glab 1 "\textbf{Externalising}", modify;

@@ -6,8 +6,8 @@ decvarslist <- list()
 decvarslist$ses <- c("fscl5wb")
 decvarslist$med <- c("mpsla5")
 decvarslist$mem <- c("mempl5b")
-decvarslist$mch <- c("mothageb", "mheight", "singlem", "ethn")
-decvarslist$prg <- c("parity", "firstb", "nprevst", "smkpr", "preterm", "lbwt")
+decvarslist$mch <- c("mothageb", "mheight", "singlem", "ethn", "numch5")
+decvarslist$prg <- c("firstb", "nprevst", "smkpr", "preterm", "lbwt")
 
 # interaction between mother characteristics and initial conditions
 mchxbth <-  list(apply(

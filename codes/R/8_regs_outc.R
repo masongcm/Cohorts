@@ -1,7 +1,7 @@
 
 ###################################################################
-## ---- REGS_OUTC
-# REGRESSIONS OF ADOLESCENT OUTCOMES ON EXT/INT & CHILDHOOD VARIABLES
+## ---- LOAD_DATA_OUTC
+# LOAD OUTCOMES DATA
 
 # assemble outcomes data (BCS)
 bcs16outc <- read.dta(paste0(dir_data, "bcsoutc.dta"), convert.factors = F) # all BCS data
@@ -57,6 +57,10 @@ mcsoutclabs <- c(smktry14 = "Tried smoking (14)",
 )
 mcsoutcvars <- names(mcsoutclabs)
 
+
+###################################################################
+## ---- REGS_OUTC
+# REGRESSIONS OF ADOLESCENT OUTCOMES ON EXT/INT & CHILDHOOD VARIABLES
 
 # estimate BCS models
 bcsoutcmod_m_ext <- list()

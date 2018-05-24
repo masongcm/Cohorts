@@ -215,9 +215,17 @@ levels(items.c$mempl5) <- c("Unempl./At home", "Part time", "Full time")
 items.c$mempl5b <- dplyr::recode(items.c$mempl5, "Full time" = "Employed", "Part time" = "Employed")
 levels(items.c$mpsla5) <- c("Compulsory", "Post-Compulsory")
 levels(items.c$singlem) <- c("Married", "Not married")
+levels(items.c$smkpr) <- c("Non-smoker", "Smoker")
 
 # log birthweight
 items.c$lbwt <- log(items.c$bwt)
+
+# missing gestational age
+items.c$preterm2 <- as.character(items.c$preterm)
+items.c[is.na(items.c$preterm2),"preterm2"] <- "Missing"
+items.c$preterm <- factor(items.c$preterm2)
+levels(items.c$preterm) <- c("Term", "Preterm", "Missing")
+items.c <- items.c[ , !(names(items.c) %in% "preterm2")]
 
 # save dataset
 export(items.c[,!names(items.c) %in% c("INT_RAW", "EXT_RAW", "INT_RAWr", "EXT_RAWr")], paste0(dir_data,"cohorts_all.dta"))

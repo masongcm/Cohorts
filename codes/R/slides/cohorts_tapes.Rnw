@@ -111,6 +111,12 @@ read_chunk(here("codes/R/getpars.R"))
 \setbeamertemplate{itemize subitem}[mysquare]
 \setbeamertemplate{itemize subsubitem}[mysquare]
 
+% spacing
+\usepackage{setspace}
+\setstretch{1.3}
+\setbeamerfont{frametitle}{size=\linespread{1.0}\Large}
+
+
 % define new columns
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
@@ -133,7 +139,7 @@ read_chunk(here("codes/R/getpars.R"))
 \title[Noncognitive skills in cohorts]{\bf{Inequality in non-cognitive skills: \\ a cross-cohort comparison}}
 
 \author[Mason]{Orazio Attanasio \and Richard Blundell \\ Gabriella Conti \and Giacomo Mason  }
-\institute[UCL Economics]{UCL Department of Economics}
+\institute[UCL \& IFS]{UCL and IFS}
 
 \date[TAPES]{Trans-Atlantic Public Economics Seminar \\ \today}
 
@@ -151,40 +157,53 @@ read_chunk(here("codes/R/getpars.R"))
 \begin{frame}
 \frametitle{Motivation}
 \framesubtitle{Inequality in skills}
-
 \bi
 \item Socio-emotional skills developed during childhood are important for lifetime outcomes
 \item Socioeconomic gradients in these skills are persistent 
 \item {\color{red} IMPROVE INTRO...}
 \ei
+\end{frame}
 
+
+\begin{frame}
+\frametitle{Motivation}
+\framesubtitle{Measuring socioemotional skills}
+
+\bi
+  \item Usually, socioemotional constructs are measured using validated scales
+    \bi \item e.g. Rutter, BSAG, SDQ \ei
+  \item Most economic literature uses simple sum scores of these scales
+  \item Sometimes useful to consider different populations/groups
+    \bi
+    \item Different countries
+    \item Different subgroups (gender, race, ...)
+    \item Same population, at different points in time
+    \ei
+  \item Do these scales measure the same constructs?
+  \item Are the constructs measured in the same way?
+  \item And what if only info from different scales is available?
+\ei
 \end{frame}
 
 
 \begin{frame}
 \frametitle{This study}
 \framesubtitle{Research questions}
+We compare the evolution of socioemotional skills in the UK
 \bi
-\item Usually, socioemotional constructs are measured using validated scales
-    \bi \item e.g. Rutter, BSAG, SDQ \ei
+\item \textbf{Q1}: \textbf{How many latent dimensions} do we need to capture socioemotional skills in the data?
+~\\
 \pause
-~\\    
-\item \textbf{Q1}: Can we derive \textbf{comparable measures} of socioemotional skills across populations?
-    \bi
-    \item Most economic literature uses simple sum scores
-    \item But does the same instrument measure the same constructs in the same way:
-      \bi 
-      \item across different populations?
-      \item in the same population, at different points in time?
-      \ei
-    \item And what if only different instruments are available?
-    \ei
+\item \textbf{Q2}: Can we derive \textbf{comparable measures} of socioemotional skills across cohorts of children born in different years?
+~\\
 \pause
-~\\    
-\item \textbf{Q2}: \textbf{How many latent dimensions} are underlying these instruments?
-    \bi
-    \item Can they be simply summarised into a single score?
-    \ei
+\item \textbf{Q3}: How has \textbf{inequality} in early-life socioemotional skills evolved in the UK between 1975 and 2005?
+~\\
+\pause
+\item \textbf{Q4}: Have the \textbf{determinants} of socioemotional skills evolved?
+~\\
+\pause
+\item \textbf{Q5}: How do early socioemotional skills map into \textbf{adolescent/adult outcomes}?
 \ei
 \end{frame}
 
@@ -197,25 +216,25 @@ read_chunk(here("codes/R/getpars.R"))
 \item Focus on socioemotional skills in two British cohorts
   \bi \item British Cohort Study (BCS, b. 1970)
   \item Millennium Cohort Study (MCS, b. 2000/1) \ei
-\ei
 ~\\ \pause
-\textbf{Contribution}
+\item \textbf{Contribution}
 \bi
 \item Construct a common 11-item scale, starting from different survey instruments
 \item Investigate its psychometric properties, and find
   \bnm 
-  \item \textbf{\textit{Comparability}} in terms of scale (but not location)
   \item \textbf{\textit{Bidimensionality}} -- Externalising and Internalising
+  \item \textbf{\textit{Comparability}} in terms of scale (but not location)
   \enm
 \ei
 ~\\ \pause
 
-\textbf{Key findings}
+\item \textbf{Key findings}
   \bi
   \item Inequality in non-cognitive skills has increased in 1975-2005
   \item Sharpest change for boys rather than girls
   \item {\color{red} OTHER RESULTS}
   \ei
+\ei
 
 \end{frame}
 
@@ -236,16 +255,14 @@ read_chunk(here("codes/R/getpars.R"))
 \framesubtitle{The UK birth cohort studies}
 
 \bi
-\item Four main cohorts:
+\item Four main cohort studies:
   \bi
   \item \textit{National Survey of Health and Development} (NSHD) -- b. March 1946
   \item \textit{National Child Development Study} (NCDS) -- b. March 1958
   \item \textit{British Cohort Study} (BCS) -- b. April 1970
   \item \textit{Millennium Cohort Study} (MCS) -- b. 2000-2001
   \ei
-~\\
-\item Follow 15,000+ individuals from birth onwards
-\item Include extensive data on
+\item Nationally representative samples of 10,000+ individuals from birth
   \bi
   \item Perinatal period (pregnancy, birth outcomes)
   \item Skill formation -- cognitive, socioemotional
@@ -253,12 +270,12 @@ read_chunk(here("codes/R/getpars.R"))
   \item Family background and composition
   \item Schooling and labour market outcomes
   \ei
-~\\
 \pause
-\item Not always consistent
+\vspace{0.2cm}
+\item Not always \textbf{consistent}
   \bi
   \item Different design, timing, questions, survey instruments...
-  \item Harmonisation efforts (CLOSER)
+  \item Harmonisation effort underway (CLOSER)
   \ei
 \ei
 
@@ -274,7 +291,7 @@ read_chunk(here("codes/R/getpars.R"))
 \begin{column}{0.6\textwidth}
 \bi
 \item Data from 5 year follow-up
-\item Sample restricted to England
+  \bi \item Sample restricted to England \ei
 \item Socioemotional skills: \textbf{Rutter A scale} \citep{Rutter1970}
   \bi
   \item 19 items (descriptions of behaviours) from maternal questionnaire
@@ -305,8 +322,10 @@ read_chunk(here("codes/R/getpars.R"))
 
 \bi
 \item Data from 5 year follow-up
-\item Sample restricted to England
-\item Complex survey design: rebalance sample to make representative
+  \bi
+  \item Sample restricted to England
+  \item Complex survey design: rebalance sample to make representative
+  \ei
 \item Socioemotional skills: \textbf{Strengths and Difficulties Questionnaire} (SDQ, \citealp{Goodman1994})
   \bi
   \item ``Updated" and expanded version of the Rutter scale 
@@ -329,9 +348,7 @@ read_chunk(here("codes/R/getpars.R"))
 %%%%%%%% HARMONISATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Harmonised scale}
-
-\subsection{Common items}
+\section{Deriving a harmonised scale}
 
 \begin{frame}
 \frametitle{Harmonisation}
@@ -339,8 +356,9 @@ read_chunk(here("codes/R/getpars.R"))
 
 \bi
 \item Rutter and SDQ are different instruments
+  \bi \item Not ideal to just use sum scores and assume they return comparable information... \ei
 \item Focus on subset of items that have similar wording between the two instruments
-\item New 11-item subscale
+\item $\Rightarrow$ New 11-item subscale
 \ei
 
 \end{frame}
@@ -349,9 +367,42 @@ read_chunk(here("codes/R/getpars.R"))
 # make table with means
 @
 
+<<MEANTABLE_PRINT>>=
+# function to print mean table
+printmeantab <- function(tab) {
+  print(xtable(tab,
+               align="L{0cm}C{.04\\textwidth}L{.45\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}L{.45\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
+               digits = 1
+  ), 
+  size="\\small",
+  include.rownames=F,
+  include.colnames=F,
+  booktabs = T,
+  add.to.row = list(pos = c(list(0)),
+                    command = c(
+                      # header
+                      paste(" & 
+                                              \\multicolumn{4}{c}{\\textbf{BCS}} &
+                                              \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){2-5} \\cmidrule(lr){6-9} 
+                                            Item &
+                                              Text & Cert. Appl. & Smt. Appl. & Appl. &
+                                              Text & Cert. True & Smt. True & True \\\\ \\midrule
+                                          "
+                            , sep="")
+                    )),
+  sanitize.text.function = function(x){x},
+  sanitize.rownames.function = function(x){""}, # to not print row numbers
+  tabular.environment = "tabular", width = ".8\\textwidth",
+  floating = FALSE
+  )
+}
+
+@
+
 \begin{frame}
 \frametitle{Harmonisation}\label{meantab_f}
 \framesubtitle{Choice of common items (females) \hyperlink{meantab_m}{\beamerbutton{Males}}}
+\begin{spacing}{1.1}
 \centering
 \resizebox{!}{4cm}{
 <<MEANTAB_F, dependson="MEANTABLE", results='asis'>>=
@@ -360,45 +411,19 @@ require(xtable)
 table <- meantab[[2]] # females
 table <- table[,!names(table) %in% c("cats", "fac", "bcs.num", "mcs.num")] # drop if unneeded
 
-print(xtable(table,
-                    align="L{0cm}C{.04\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
-                    digits = 1
-                    ), 
-             size="\\small",
-             include.rownames=F,
-             include.colnames=F,
-             booktabs = T,
-             add.to.row = list(pos = c(list(0)),
-                              command = c(
-                              # header
-                                    paste(" & 
-                                              \\multicolumn{4}{c}{\\textbf{BCS}} &
-                                              \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){2-5} \\cmidrule(lr){6-9} 
-                                            Item &
-                                              Text & Cert. Appl. & Smt. Appl. & Appl. &
-                                              Text & Cert. True & Smt. True & True \\\\ \\midrule
-                                          "
-                                            , sep="")
-                                    )),
-             sanitize.text.function = function(x){x},
-             sanitize.rownames.function = function(x){""}, # to not print row numbers
-             tabular.environment = "tabular", width = ".8\\textwidth",
-             floating = FALSE
-)
+printmeantab(table)
 
 @
 } %scalebox
+\end{spacing}
 \end{frame}
 
-
-
-\subsection{Exploratory Analysis}
 
 \begin{frame}
 \frametitle{Factor structure}
 \framesubtitle{Existing evidence}
 
-How many dimensions underlie the new 11-item scale?
+\textbf{Q1}: How many dimensions underlie the new 11-item scale?
 \bi
 \item Rutter A scale (BCS) 
   \bi 
@@ -407,7 +432,7 @@ How many dimensions underlie the new 11-item scale?
     \item \emph{anti-social} -- or aggressive-hyperactive
     \item \emph{neurotic} -- or anxious-fearful
     \ei
-  \item Sometimes the former is split into aggressive-antisocial and hyperkinetic \citep{McGee1985}
+  \item Sometimes the former is split into aggressive/conduct vs hyperkinetic \citep{McGee1985,Collishaw2004}
   \ei
 \item Strengths and difficulties (MCS) 
   \bi
@@ -422,7 +447,6 @@ How many dimensions underlie the new 11-item scale?
 \frametitle{EFA}\label{efa}
 \framesubtitle{Dimensionality}
 
-On our data:
 \bi
 \item Different methods for assessing number of factors give varied results \hyperlink{numfac}{\beamerbutton{Det.}}
 \item We choose two factors to maximise interpretability
@@ -431,6 +455,7 @@ On our data:
 \ei 
 \vspace{12pt}
 \centering
+\begin{spacing}{1.1}
 \begin{tabular}{C{.05\textwidth}L{.3\textwidth}|C{.05\textwidth}L{.3\textwidth}}
   & \textbf{{\color{OliveGreen}Externalising}}  &    & \textbf{{\color{Orange}Internalising}}  \\
 1 & Restless                & 7  & Worried                \\
@@ -440,12 +465,14 @@ On our data:
 5 & Temper tantrums         & 11 & Head/stomachaches \\
 6 & Disobedient             &    &                       
 \end{tabular}
+\end{spacing}
 
 \end{frame}
 
 \begin{frame}
 \frametitle{EFA}\label{meantab_fcc2}
 \framesubtitle{Choice of common items (females) \hyperlink{meantab_fcc3}{\beamerbutton{3 factors}}}
+\begin{spacing}{1.1}
 \centering
 \resizebox{!}{4cm}{
 <<MEANTAB_FCC, dependson="MEANTABLE", results='asis'>>=
@@ -454,34 +481,11 @@ require(xtable)
 table <- meantab_cc2[[2]] # females
 table <- table[,!names(table) %in% c("cats", "fac", "bcs.num", "mcs.num")] # drop if unneeded
 
-print(xtable(table,
-                    align="L{0cm}C{.04\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
-                    digits = 1
-                    ), 
-             size="\\small",
-             include.rownames=F,
-             include.colnames=F,
-             booktabs = T,
-             add.to.row = list(pos = c(list(0)),
-                              command = c(
-                              # header
-                                    paste(" & 
-                                              \\multicolumn{4}{c}{\\textbf{BCS}} &
-                                              \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){2-5} \\cmidrule(lr){6-9} 
-                                            Item &
-                                              Text & Cert. Appl. & Smt. Appl. & Appl. &
-                                              Text & Cert. True & Smt. True & True \\\\ \\midrule
-                                          "
-                                            , sep="")
-                                    )),
-             sanitize.text.function = function(x){x},
-             sanitize.rownames.function = function(x){""}, # to not print row numbers
-             tabular.environment = "tabular", width = ".8\\textwidth",
-             floating = FALSE
-)
+printmeantab(table)
 
 @
 } %scalebox
+\end{spacing}
 \end{frame}
 
 
@@ -504,7 +508,7 @@ print(xtable(table,
 \textbf{Measurement Invariance (MI)} analysis \citep{Wu2016a}
   \bi
   \item Formal test of the invariance hypothesis using factor analysis
-  \item Aim: assess if constructs are measured in the same way in two or more groups
+  \item Aim: assess if constructs are measured in the same way in 2+ groups
   \item Procedure:
     \bnm
     \item Start from the most general model -- parameters allowed differ across groups
@@ -520,11 +524,11 @@ print(xtable(table,
 \begin{frame}
 \frametitle{Measurement Invariance}\label{midet}
 \framesubtitle{IFA model}
-Categorical Item Factor Analysis (IFA) model
+\setstretch{1.1}
 
+Categorical Item Factor Analysis (IFA) model
 \bi
-\item Threshold model \citep{Muthen1984}
-\item Latent propensity to endorse each item $i$ for child $j$ in group $c$
+\item Latent propensity to endorse each item $i$ for child $j$ in group $c$ \citep{Muthen1984}
 \begin{align}\label{eq:propens}
 \begin{split}
 X^*_{ijc} &=\nu_{ci} + \lambda_{ci}\theta^{EXT}_{jc} + u_{ijc} \qquad \text{for} \; i=1,\dots, 6 \\
@@ -553,7 +557,7 @@ We follow the approach in \cite{Wu2016a}
 \item Define group ($c$) as cohort-gender cell
   \bi \item Invariance results do not vary if separating by gender \ei
 \ei
-~\\
+\vspace{.2cm}
 \bnm
 \item \textbf{Configural} model
   \bi
@@ -605,11 +609,13 @@ We follow the approach in \cite{Wu2016a}
   \bi \item We cannot compare the location of latent factors in different groups \ei
 \ei
 \begin{center}
+\resizebox{\textwidth}{!}{
 <<FA_FIT_RES, dependson="FA_FIT", results='asis'>>=
 require(xtable)
 
 table <- rbind(afitab[[1]])
-table <- as.matrix(table[,c("mnames","npar","rmsea")])
+table <- merge(table,afitab[[2]], by="mnames") # merge additional result
+table <- as.matrix(table[,c("mnames","npar.x","chisq.x","rmsea.x","chisq.y","rmsea.y")])
 
 for (c in 1:ncol(table)) {
   table[2,c] <- paste0("{\\color{green}", table[2,c], "}")
@@ -617,7 +623,7 @@ for (c in 1:ncol(table)) {
 }
 
 print(xtable(table,
-                    align="L{0cm}L{.5\\textwidth}C{.1\\textwidth}C{.15\\textwidth}",
+                    align="L{0cm}L{.35\\textwidth}C{.12\\textwidth}C{.15\\textwidth}C{.1\\textwidth}C{.15\\textwidth}C{.1\\textwidth}",
                     digits = 4
                     ),
              size="\\footnotesize",
@@ -627,7 +633,8 @@ print(xtable(table,
              add.to.row = list(pos = c(list(0)),
                               command = c(
                               # header
-            "Model & Num. params & RMSEA \\\\"
+            " & & \\multicolumn{2}{c}{\\textbf{Full sample}} & \\multicolumn{2}{c}{\\textbf{59-61 months}} \\\\ \\cmidrule(lr){3-4}  \\cmidrule(lr){5-6}
+            Model & Num. par. & $\\chi^2$ & RMSEA & $\\chi^2$ & RMSEA \\\\"
                                     )),
              sanitize.text.function = function(x){x},
              sanitize.rownames.function = function(x){""}, # to not print row numbers
@@ -636,8 +643,14 @@ print(xtable(table,
 )
 
 @
+}
 \end{center}
 \end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% SCORES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
 \frametitle{Measurement Invariance}
@@ -652,16 +665,13 @@ print(xtable(table,
 \pause
 \item Is this an improvement on using simple sum scores?
   \bi
-  \item Scores from the model exploit the covariance structure of the whole 11-item scale
-  \item Every pattern of response is assigned a score
+  \item Sum scores assume that each item conveys the same information
+  \item Scores obtained from the model exploit the covariance structure of the whole 11-item scale
+  \item Every 11-dimensional pattern of response in the data can be assigned a different score
   \item Substantial increase in variability ({\color{red} could add boxplot of factor scores vs sum scores})
   \ei
 \ei
 \end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%% SCORES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
 \frametitle{Factor scores}\label{density}
@@ -676,19 +686,14 @@ print(xtable(table,
 %%%%%%%% INEQUALITY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Inequality in behaviour problems}
+\section{Inequality in socioemotional skills}
 
 \begin{frame}
 \frametitle{Inequality}
 
 \bi
-\item \textbf{Q2}: Has socioeconomic inequality in behavioural problems increased between 1975 and 2005?
-\item Investigate income gradient in externalising and internalising scores
-  \bi
-  \item Merge harmonised income data from CLOSER Work Package 2(a)
-  \item Weekly family income when child is 10 (not contemporaneous)
-  \item Working on access to harmonised social class data
-  \ei
+\item \textbf{Q3}: How has socioeconomic inequality in socioemotional skills increased between 1975 (BCS) and 2005 (MCS)?
+\item 
 \ei
 
 \end{frame}
@@ -696,7 +701,7 @@ print(xtable(table,
 
 \begin{frame}
 \frametitle{Inequality}\label{ineq_uc}
-\framesubtitle{Unconditional inequality}
+\framesubtitle{Unconditional (quantile differences)}
 \centering
 <<INEQ_STATS, dependson="FA_SCORES_BIND", results='asis'>>=
 
@@ -738,7 +743,7 @@ table <- cbind(data.frame(as.matrix(rep(c("90-10", "75-25", "90-50", "50-10"),2)
 
 print(xtable(table,
                     align="L{0cm}L{.15\\textwidth}C{.1\\textwidth}C{.1\\textwidth}C{.1\\textwidth}C{.1\\textwidth}",
-                    digits = 4
+                    digits = 3
                     ),
              size="\\scriptsize",
              include.rownames=F,
@@ -767,24 +772,8 @@ print(xtable(table,
 @
 
 \begin{frame}
-\frametitle{Inequality}\label{ineq_sc}
-\framesubtitle{Social class}
-\vspace{-.2cm}
-\begin{figure}
-<<FACINEQ_SC, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=10, out.width='.9\\linewidth'>>=
-# plot
-fi <- fi_sc # select result
-gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]], 
-                        fi$ineqlist[[3]],fi$ineqlist[[4]],
-                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
-                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
-@
-\end{figure}
-\end{frame}
-
-\begin{frame}
 \frametitle{Inequality}\label{ineq_fsc}
-\framesubtitle{Father occupation}
+\framesubtitle{Father occupation \hyperlink{ineq_sc}{\beamerbutton{Social class (10)}}}
 \vspace{-.2cm}
 \begin{figure}
 <<FACINEQ_FSC, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=10, out.width='.9\\linewidth'>>=
@@ -798,14 +787,15 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 \end{figure}
 \end{frame}
 
+
 \begin{frame}
-\frametitle{Inequality}\label{ineq_ys}
-\framesubtitle{Age mother left education}
+\frametitle{Inequality}\label{ineq_ps}
+\framesubtitle{Mother compulsory education \hyperlink{ineq_ys}{\beamerbutton{Age left education}}}
 \vspace{-.2cm}
 \begin{figure}
-<<FACINEQ_YS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=10, out.width='.9\\linewidth'>>=
+<<FACINEQ_PS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=10, out.width='.9\\linewidth'>>=
 # plot
-fi <- fi_ys # select result
+fi <- fi_ps # select result
 gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]], 
                         fi$ineqlist[[3]],fi$ineqlist[[4]],
                         fi$histlist[[1]],fi$histlist[[2]], fi$legend,
@@ -830,10 +820,45 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 \end{figure}
 \end{frame}
 
+\begin{frame}
+\frametitle{Inequality}\label{ineq_sm}
+\framesubtitle{Smoking in pregnancy}
+\vspace{-.2cm}
+\begin{figure}
+<<FACINEQ_SM, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=11, out.width='\\linewidth'>>=
+# plot
+fi <- fi_sm # select result
+gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]], 
+                        fi$ineqlist[[3]],fi$ineqlist[[4]],
+                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
+                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
+@
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Inequality}
+
+\textbf{Q3}: How has \textbf{inequality} in early-life socioemotional skills evolved in the UK between 1975 and 2005?
+
+\bi
+\item Unconditionally, the distribution is more spread out (except for girls' internalising)
+\item Inequality across socioeconomic indicators has increased, especially
+  \bi
+  \item for boys rather than girls
+  \item considering inequality across maternal schooling and employment, rather than paternal occupation
+  \ei
+\ei
+
+\end{frame}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%% EXPLAINING EXT and INT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Determinants of socioemotional skills}
 
 <<SELECTVARS>>=
 # define variables and formulas for regression and decomposition
@@ -845,18 +870,32 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 
 
 \begin{frame}
-\frametitle{What explains behavioural skills?}
+\frametitle{Determinants of socioemotional skills}
 
-write about variables used and groups
+We explain externalising and internalising skills using information from the birth and 5 year surveys \\
+
+\begin{table}
+\footnotesize
+\begin{tabular}{L{.25\textwidth}C{.1\textwidth}L{.5\textwidth}}
+Group & Age &  \\
+\midrule
+Father occupation & 5 & White collar (SC I-IIINM) \newline Blue collar (SC IIIM-V-other) \newline No father figure \\
+Maternal education & 5 & Post-compulsory schooling \\
+Maternal employment & 5 & Employed \\
+Maternal background & 0/5 & Age, height \newline Nonwhite ethnicity (child) \newline Number of children in HH \\
+Pregnancy & 0 & Firstborn child, number of previous stillbirths \newline Mother smoked in pregnancy \newline Preterm birth, (log) birth weight \\
+\end{tabular}
+\end{table}
 
 \end{frame}
 
 
 \begin{frame}
-\frametitle{What explains socioemotional skills?}
+\frametitle{Determinants of socioemotional skills}
 \framesubtitle{Externalising}
 \begin{table}
 \centering
+\setstretch{1.0}
 \resizebox{\textwidth}{!}{
 <<REGS_M, results='asis', dependson="REGRESSIONS">>=
 
@@ -878,23 +917,28 @@ texreg::texreg(regs,
                override.se = robust_se, override.pvalues = robust_p,
                single.row = TRUE, scriptsize = TRUE,
                caption = "", label = "",
-               omit.coef = "region|Inter",
+               omit.coef = "region|Inter|numch5|mheight|nprevst|preterm",
                groups = grouplabs,
                custom.coef.names = varlabs,
                custom.model.names = c("Males BCS", "Males MCS", "Females BCS", "Females MCS"),
+               custom.note = "",
                include.rmse = FALSE,
                table = FALSE
                )
 
 @
 }
+\\[-12pt] \justify {\scriptsize \emph{Notes}: Robust standard errors in parentheses. All estimates additionally control for region of birth, mother height, number of previous stillbirths at child's birth, preterm birth, a dummy for missing gestational age, and number of other children in the household at child age 5.
+\par}
 \end{table}
 \end{frame}
 
 \begin{frame}
-\frametitle{What explains socioemotional skills?}
+\frametitle{Determinants of socioemotional skills}
 \framesubtitle{Internalising}
+\vspace{-.3cm}
 \begin{table}
+\setstretch{1.0}
 \centering
 \resizebox{\textwidth}{!}{
 <<REGS_F, results='asis', dependson="REGRESSIONS">>=
@@ -917,16 +961,19 @@ texreg::texreg(regs,
                override.se = robust_se, override.pvalues = robust_p,
                single.row = TRUE, scriptsize = TRUE,
                caption = "", label = "",
-               omit.coef = "region|Inter",
+               omit.coef = "region|Inter|numch5|mheight|nprevst|preterm",
                groups = grouplabs,
                custom.coef.names = varlabs,
                custom.model.names = c("Males BCS", "Males MCS", "Females BCS", "Females MCS"),
+               custom.note = "",
                include.rmse = FALSE,
                table = FALSE
                )
 
 @
 }
+\\[-12pt] \justify {\scriptsize \emph{Notes}: Robust standard errors in parentheses. All estimates additionally control for region of birth, mother height, number of previous stillbirths at child's birth, preterm birth, a dummy for missing gestational age, and number of other children in the household at child age 5.
+\par}
 \end{table}
 \end{frame}
 
@@ -936,31 +983,38 @@ texreg::texreg(regs,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
-\frametitle{Decomposition (EXT)}\label{gelb_ext}
-\framesubtitle{Explaining the education gradient \hyperlink{gelbsc_ext}{\beamerbutton{Social class}}}
-\centering
-\scriptsize
-\resizebox{\textwidth}{!}{
-\input{../../../tables/med_gelb_ext}
-}
+\frametitle{Decomposition}
+\framesubtitle{Gelbach (2016)}
+
+write up Gelbach approach...
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Decomposition (EXT)}\label{gelb_ext_f}
+\framesubtitle{Explaining the gradient by maternal compulsory schooling \hyperlink{gelb_ext}{\beamerbutton{Table}}}
+
 \end{frame}
 
 \begin{frame}
-\frametitle{Decomposition (INT)}\label{gelb_int}
-\framesubtitle{Explaining the education gradient \hyperlink{gelbsc_int}{\beamerbutton{Social class}}}
-\centering
-\scriptsize
-\resizebox{\textwidth}{!}{
-\input{../../../tables/med_gelb_int}
-}
+\frametitle{Decomposition (INT)}\label{gelb_int_f}
+\framesubtitle{Explaining the gradient by maternal compulsory schooling \hyperlink{gelb_int}{\beamerbutton{Table}}}
+
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%% EFFECTS ON LATER OUTCOMES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{Mapping skills to later outcomes}
 
-<<REGS_OUTC, dependson="SELECTVARS">>=
+<<LOAD_DATA_OUTC, dependson="SELECTVARS">>=
+# rload outcomes data
+@
+
+
+<<REGS_OUTC, dependson="LOAD_DATA_OUTC">>=
 # run regressions explaining adult outcomes
 @
 
@@ -994,9 +1048,10 @@ print(xtable(tab,
 @
 
 \begin{frame}
-\frametitle{Outcomes}
+\frametitle{Mapping skills into behaviours}
 \framesubtitle{Adolescence (MCS)}
 \centering
+\setstretch{1.0}
 \resizebox{\textwidth}{!}{
 <<REGS_OUTC_MCS, results='asis', dependson="REGRESSIONS">>=
 
@@ -1016,9 +1071,10 @@ printoutctab(table)
 
 
 \begin{frame}[noframenumbering]
-\frametitle{Outcomes}
+\frametitle{Mapping skills into behaviours}
 \framesubtitle{Adolescence (MCS)}
 \centering
+\setstretch{1.0}
 \resizebox{\textwidth}{!}{
 <<REGS_OUTC_MCS_COG, results='asis', dependson="REGRESSIONS">>=
 
@@ -1034,9 +1090,10 @@ printoutctab(table)
 
 
 \begin{frame}
-\frametitle{Outcomes}
+\frametitle{Mapping skills into behaviours}
 \framesubtitle{Adolescence (BCS)}
 \centering
+\setstretch{1.0}
 \resizebox{\textwidth}{!}{
 <<REGS_OUTC_BCS1, results='asis', dependson="REGRESSIONS">>=
 
@@ -1055,9 +1112,10 @@ printoutctab(table)
 \end{frame}
 
 \begin{frame}[noframenumbering]
-\frametitle{Outcomes}
+\frametitle{Mapping skills into behaviours}
 \framesubtitle{Adolescence (BCS)}
 \centering
+\setstretch{1.0}
 \resizebox{\textwidth}{!}{
 <<REGS_OUTC_BCS1_COG, results='asis', dependson="REGRESSIONS">>=
 
@@ -1072,9 +1130,10 @@ printoutctab(table)
 \end{frame}
 
 \begin{frame}
-\frametitle{Outcomes}
+\frametitle{Mapping skills into labour market}
 \framesubtitle{Adulthood (BCS)}
 \centering
+\setstretch{1.0}
 \resizebox{\textwidth}{!}{
 <<REGS_OUTC_BCS2, results='asis', dependson="REGRESSIONS">>=
 
@@ -1093,9 +1152,10 @@ printoutctab(table)
 \end{frame}
 
 \begin{frame}[noframenumbering]
-\frametitle{Outcomes}
+\frametitle{Mapping skills into labour market}
 \framesubtitle{Adulthood (BCS)}
 \centering
+\setstretch{1.0}
 \resizebox{\textwidth}{!}{
 <<REGS_OUTC_BCS2_COG, results='asis', dependson="REGRESSIONS">>=
 
@@ -1155,6 +1215,7 @@ printoutctab(table)
 \begin{frame}
 \frametitle{Harmonisation}\label{meantab_m}
 \framesubtitle{Choice of common items (males) \hyperlink{meantab_f}{\beamerreturnbutton{Females}}}
+\begin{spacing}{1.1}
 \centering
 \resizebox{!}{4cm}{
 <<MEANTAB_M, dependson="MEANTABLE", results='asis'>>=
@@ -1163,43 +1224,20 @@ require(xtable)
 table <- meantab[[1]] # males
 table <- table[,!names(table) %in% c("cats", "fac", "bcs.num", "mcs.num")] # drop if unneeded
 
-print(xtable(table,
-                    align="L{0cm}C{.04\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
-                    digits = 1
-                    ), 
-             size="\\small",
-             include.rownames=F,
-             include.colnames=F,
-             booktabs = T,
-             add.to.row = list(pos = c(list(0)),
-                              command = c(
-                              # header
-                                    paste(" & 
-                                              \\multicolumn{4}{c}{\\textbf{BCS}} &
-                                              \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){2-5} \\cmidrule(lr){6-9} 
-                                            Item &
-                                              Text & Cert. Appl. & Smt. Appl. & Appl. &
-                                              Text & Cert. True & Smt. True & True \\\\ \\midrule
-                                          "
-                                            , sep="")
-                                    )),
-             sanitize.text.function = function(x){x},
-             sanitize.rownames.function = function(x){""}, # to not print row numbers
-             tabular.environment = "tabular", width = ".8\\textwidth",
-             floating = FALSE
-)
+printmeantab(table)
 
 @
 } %scalebox
+\end{spacing}
 \end{frame}
 
-<<BCSEFA>>=
+<<BCSEFA, dependson='LOAD_DATA'>>=
 @
 
 <<BCSEFARES, dependson='BCSEFA'>>=
 @
 
-<<MCSEFA>>=
+<<MCSEFA, dependson='LOAD_DATA'>>=
 @
 
 <<MCSEFARES, dependson='MCSEFA'>>=
@@ -1209,6 +1247,7 @@ print(xtable(table,
 \begin{frame}[noframenumbering]
 \frametitle{EFA}\label{numfac}
 \framesubtitle{Number of factors \hyperlink{efa}{\beamerreturnbutton{Back}}}
+\setstretch{1.1}
 \begin{center}
 <<EFATAB, dependson='MCSEFARES', results='asis'>>=
 # combine results
@@ -1235,6 +1274,7 @@ print(xtable(efatab,
 \begin{frame}
 \frametitle{EFA}\label{meantab_fcc3}
 \framesubtitle{Choice of common items (females) \hyperlink{meantab_fcc2}{\beamerreturnbutton{2 factors}}}
+\begin{spacing}{1.1}
 \centering
 \resizebox{!}{4cm}{
 <<MEANTAB_FCC3, dependson="MEANTABLE", results='asis'>>=
@@ -1243,40 +1283,19 @@ require(xtable)
 table <- meantab_cc3[[2]] # females
 table <- table[,!names(table) %in% c("cats", "fac", "bcs.num", "mcs.num")] # drop if unneeded
 
-print(xtable(table,
-                    align="L{0cm}C{.04\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
-                    digits = 1
-                    ), 
-             size="\\small",
-             include.rownames=F,
-             include.colnames=F,
-             booktabs = T,
-             add.to.row = list(pos = c(list(0)),
-                              command = c(
-                              # header
-                                    paste(" & 
-                                              \\multicolumn{4}{c}{\\textbf{BCS}} &
-                                              \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){2-5} \\cmidrule(lr){6-9} 
-                                            Item &
-                                              Text & Cert. Appl. & Smt. Appl. & Appl. &
-                                              Text & Cert. True & Smt. True & True \\\\ \\midrule
-                                          "
-                                            , sep="")
-                                    )),
-             sanitize.text.function = function(x){x},
-             sanitize.rownames.function = function(x){""}, # to not print row numbers
-             tabular.environment = "tabular", width = ".8\\textwidth",
-             floating = FALSE
-)
+printmeantab(table)
+
 
 @
 } %scalebox
+\end{spacing}
 \end{frame}
 
 
 \begin{frame}[noframenumbering]
 \frametitle{MI}\label{miapp1}
 \framesubtitle{Invariance steps \hyperlink{misteps}{\beamerreturnbutton{Back}}}
+\setstretch{1.0}
 \Fontvi
 \bi
 \item \textbf{Configural} model
@@ -1354,6 +1373,7 @@ print(xtable(table,
 \begin{frame}[noframenumbering]
 \frametitle{MI}\label{measpars}
 \framesubtitle{Estimated measurement parameters \hyperlink{mires}{\beamerreturnbutton{Back}}}
+\setstretch{1.1}
 <<RES_FA_PAR, dependson="FA_FIT", results='asis'>>=
 
 table <- getmeaspars(finalmod, groups = 4, mode = "tl")
@@ -1460,29 +1480,73 @@ print.xtable(xtable(table,
 \end{figure}
 \end{frame}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%% GELBACH DECOMPOSITION WITH SOCIAL CLASS
+%%%%%%%% ADDITIONAL INEQ GRAPHS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[noframenumbering]
-\frametitle{Decomposition (EXT)}\label{gelbsc_ext}
-\framesubtitle{Explaining the education gradient \hyperlink{gelb_ext}{\beamerreturnbutton{Back}}}
+\frametitle{Inequality}\label{ineq_sc}
+\framesubtitle{Social class \hyperlink{ineq_fsc}{\beamerreturnbutton{Back}}}
+\vspace{-.2cm}
+\begin{figure}
+<<FACINEQ_SC, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=10, out.width='.9\\linewidth'>>=
+# plot
+fi <- fi_sc # select result
+gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]], 
+                        fi$ineqlist[[3]],fi$ineqlist[[4]],
+                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
+                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
+@
+\end{figure}
+\end{frame}
+
+\begin{frame}[noframenumbering]
+\frametitle{Inequality}\label{ineq_ys}
+\framesubtitle{Age mother left education \hyperlink{ineq_ps}{\beamerreturnbutton{Back}}}
+\vspace{-.2cm}
+\begin{figure}
+<<FACINEQ_YS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=10, out.width='.9\\linewidth'>>=
+# plot
+fi <- fi_ys # select result
+gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]], 
+                        fi$ineqlist[[3]],fi$ineqlist[[4]],
+                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
+                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
+@
+\end{figure}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% GELBACH DECOMPOSITION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[noframenumbering]
+\frametitle{Decomposition (EXT)}\label{gelb_ext}
+\framesubtitle{Explaining the education gradient \hyperlink{gelb_ext_f}{\beamerreturnbutton{Back}}}
 \centering
 \scriptsize
+\setstretch{1.1}
 \resizebox{\textwidth}{!}{
-\input{../../../tables/med_gelb_sc_ext}
+\input{../../../tables/med_gelb_ext}
 }
 \end{frame}
 
 \begin{frame}[noframenumbering]
-\frametitle{Decomposition (INT)}\label{gelbsc_int}
-\framesubtitle{Explaining the education gradient \hyperlink{gelb_int}{\beamerreturnbutton{Back}}}
+\frametitle{Decomposition (INT)}\label{gelb_int}
+\framesubtitle{Explaining the education gradient \hyperlink{gelb_int_f}{\beamerreturnbutton{Back}}}
 \centering
 \scriptsize
+\setstretch{1.1}
 \resizebox{\textwidth}{!}{
-\input{../../../tables/med_gelb_sc_int}
+\input{../../../tables/med_gelb_int}
 }
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% BIBLIOGRAPHY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[noframenumbering]
 \bibliographystyle{chicago}

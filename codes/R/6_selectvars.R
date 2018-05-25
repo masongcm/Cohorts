@@ -3,9 +3,9 @@
 
 # select variables for decomposition, in groups
 decvarslist <- list()
-decvarslist$ses <- c("fscl5wb")
 decvarslist$med <- c("mpsla5")
 decvarslist$mem <- c("mempl5b")
+decvarslist$ses <- c("fscl5wb")
 decvarslist$mch <- c("mothageb", "mheight", "singlem", "ethn", "numch5")
 decvarslist$prg <- c("firstb", "nprevst", "smkpr", "preterm", "lbwt")
 
@@ -16,7 +16,7 @@ mchxbth <-  list(apply(
 decvarslist_int <- c(decvarslist, mchxbth)
 
 # names of the groups
-decvarsgroups <- c("Father Occupation", "Mat. Education", "Mat. Employment", "Mat. Charact.", "Pregnancy/Birth")
+decvarsgroups <- c("Maternal education (5)", "Maternal employment (5)", "Father occupation (5)","Maternal background (0)", "Pregnancy")
 
 # make into vector
 decvars <- unname(unlist(decvarslist))

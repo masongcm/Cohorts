@@ -10,8 +10,8 @@ tab mempl5, gen(mempl5d);
 tab fscl5wb, gen(fscl5wbd);
 tab preterm, gen(pretermd);
 
-local med_fsc "fscl5wbd2 fscl5wbd3";
 local med_mem "mempl5d2 mempl5d3";
+local med_fsc "fscl5wbd2 fscl5wbd3";
 local med_mch "mothageb mheight singlem ethn numch5";
 local med_prg "firstb nprevst smkpr pretermd2 pretermd3 lbwt";
 
@@ -21,8 +21,8 @@ di "`med_all'";
 local outcomes "EXT INT";
 local dvar mpsla5;
 
-local glab1 "Father occupation (5)";
-local glab2 "Maternal employment (5)";
+local glab1 "Maternal employment (5)";
+local glab2 "Father occupation (5)";
 local glab3 "Maternal background (birth)";
 local glab4 "Pregnancy";
 
@@ -40,7 +40,7 @@ forvalues g = 1(1)2 {; 				/* gender */
 						x2all(`med_all')
 						robust
 						x1only(`dvar')
-						x2delta(fsc = `med_fsc' : mem = `med_mem' : mch = `med_mch' : prg = `med_prg')
+						x2delta(mem = `med_mem' : fsc = `med_fsc' : mch = `med_mch' : prg = `med_prg')
 						;	
 	mat b1base		= e(b1base);
 	mat V1base		= e(V1base);

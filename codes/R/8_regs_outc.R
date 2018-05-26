@@ -13,7 +13,8 @@ cogbcs <- bcs5data[,c("bcsid", "epvt_z", "hfd_z", "copy_z")]
 colnames(cogbcs)[1] <- "id"
 bcsoutc <- merge(bcsoutc, cogbcs, by = "id", all.x = TRUE)
 # make factor
-bcsoutc$cogscore <- fa(bcsoutc[,c("epvt_z", "hfd_z", "copy_z")], factors=1)$scores
+bcscogfa <- fa(bcsoutc[,c("epvt_z", "hfd_z", "copy_z")], factors=1)
+bcsoutc$cogscore <- factor.scores(bcsoutc[,c("epvt_z", "hfd_z", "copy_z")], bcscogfa, method = "Bartlett")$scores
 
 # assemble outcomes data (MCS)
 mcs14outc <- read.dta(paste0(dir_data, "mcsoutc.dta"), convert.factors = F) # all BCS data
@@ -25,7 +26,8 @@ cogmcs <- mcs5data[,c("mcsid", "nvoc_bastz", "psim_bastz", "patc_bastz")]
 colnames(cogmcs)[1] <- "id"
 mcsoutc <- merge(mcsoutc, cogmcs, by = "id", all.x = TRUE)
 # make factor
-mcsoutc$cogscore <- fa(mcsoutc[,c("nvoc_bastz", "psim_bastz", "patc_bastz")], factors=1)$scores
+mcscogfa <- fa(mcsoutc[,c("nvoc_bastz", "psim_bastz", "patc_bastz")], factors=1)
+mcsoutc$cogscore <- factor.scores(mcsoutc[,c("nvoc_bastz", "psim_bastz", "patc_bastz")], mcscogfa, method="Bartlett")$scores
 
 # recode
 bcsoutc$hscl42 <- NA # high social class
@@ -50,9 +52,8 @@ bcsoutcvars <- names(bcsoutclabs)
 # select variables
 mcsoutclabs <- c(smktry14 = "Tried smoking (14)",
                  alctry14 = "Tried alcohol (14)",
-                 #canntry14 = "Tried cannabis (14)",
+                 canntry14 = "Tried cannabis (14)",
                  selfharm14 = "Self-harmed in past year (14)",
-                 #bmi11 = "BMI (11)",
                  bmi14 = "BMI (14)"
 )
 mcsoutcvars <- names(mcsoutclabs)

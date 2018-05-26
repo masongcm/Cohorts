@@ -115,6 +115,15 @@ p <- plot_grid( pcol, legend_b, ncol = 1, rel_heights = c(1, .1))
 p
 
 ############################################################################################
+## ---- FACRAW
+# see how scored factors compare with raw scores
+box.ext.bcs <- ggplot(data=subset(scores2plot, cohort=="BCS"), aes(x=as.factor(EXT_RAW), y=EXT)) + geom_boxplot() + ggtitle("BCS Externalising") + xlab("Sum score") + ylab("Factor score")
+box.int.bcs <- ggplot(data=subset(scores2plot, cohort=="BCS"), aes(x=as.factor(INT_RAW), y=INT)) + geom_boxplot() + ggtitle("BCS Internalising") + xlab("Sum score") + ylab("Factor score")
+box.ext.mcs <- ggplot(data=subset(scores2plot, cohort=="MCS"), aes(x=as.factor(EXT_RAW), y=EXT)) + geom_boxplot() + ggtitle("MCS Externalising") + xlab("Sum score") + ylab("Factor score")
+box.int.mcs <- ggplot(data=subset(scores2plot, cohort=="MCS"), aes(x=as.factor(INT_RAW), y=INT)) + geom_boxplot() + ggtitle("MCS Internalising") + xlab("Sum score") + ylab("Factor score")
+plot_grid(box.ext.bcs, box.int.bcs, box.ext.mcs, box.int.mcs, ncol=2, align="h")
+
+############################################################################################
 ## ---- FACINEQ_MAKE
 
 # function to demean variables in data to have mean zero in a given level

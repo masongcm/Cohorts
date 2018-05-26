@@ -205,7 +205,7 @@ items.c$scl10b <- factor(items.c$scl10b, labels = c("IV V","IIIM","IIINM","I II"
 
 # recode years of schooling for plots
 items.c$mysch5b <- cut(items.c$mysch5, c(-1,15,16,18,21,31))
-levels(items.c$mysch5b) <- c("15", "16", "17-18", "19-21", ">21")
+levels(items.c$mysch5b) <- c("15", "16", "17-18", "19-21", "$>$21")
 
 # convert to factor
 facnms <- c("smkpr", "region", "lowbwt", "caesbirth", "preterm", "firstb", "teenm", "singlem", "mempl", "mempl5", "mhied5", "mpsla5", "fpsla5")

@@ -69,7 +69,7 @@ for (g in c("M", "F")) {
                                   scores2plot[scores2plot$cohortsex==cs2,f]
     )$p.value,3)
     if (pval>.0001) ksp[[paste0(f,".",g)]] <- toString(pval)
-    else ksp[[paste0(f,".",g)]] <- "<0.0001"
+    else ksp[[paste0(f,".",g)]] <- "$<0.0001$"
   }
 }
 # graph x axis boundaries

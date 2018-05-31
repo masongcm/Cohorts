@@ -3,7 +3,7 @@
 ############################################################################################
 ## ---- FA_SCORES_MAIN
 # score model selected as final
-scores.final <- predict(finalmod, newdata = items[[1]])
+scores.final <- lavPredict(finalmod, newdata = items[[1]])
 
 ############################################################################################
 ## ---- FA_SCORES_BIND

@@ -175,9 +175,9 @@ read_chunk(here("codes/R/getpars.R"))
   \item Usually, socioemotional constructs are measured using validated scales
     \bi 
     \item e.g. Rutter, BSAG, SDQ 
-    \item Obtained by aggregating different items
+    \item Obtained by aggregating different questions (items)
     \ei
-  \item Can we use these scales to compare different cohorts, by gender?
+  \item Can we use information from these scales to compare different populations (cohorts, gender)?
   \item And what if only info from different scales is available?
     \bi
     \item Can different scales measure the \textbf{same constructs}?
@@ -191,6 +191,7 @@ read_chunk(here("codes/R/getpars.R"))
 \frametitle{This study}
 \framesubtitle{Research questions}
 We compare the evolution of inequality in socioemotional skills at age 5 across two UK cohorts born 30 years apart
+\pause
 \bi
 \item \textbf{Q1}: \textbf{How many latent dimensions} underlie the available survey instruments?
 ~\\
@@ -229,7 +230,7 @@ We compare the evolution of inequality in socioemotional skills at age 5 across 
   \bi
   \item Inequality in non-cognitive skills has increased in 1975-2005
   \item Sharpest change for boys rather than girls
-  \item Increased importance of pregnancy factors, decreased importance of paternal education, in explaining skill inequality by maternal education
+  \item Increased importance of pregnancy factors, decreased importance of paternal occupation, in explaining skill inequality by maternal education
   \item In both cohorts, socioemotional skills (especially externalising) are significant predictors of social and health outcomes in adolescence
   \ei
 \ei
@@ -272,7 +273,6 @@ We compare the evolution of inequality in socioemotional skills at age 5 across 
 \item Not always \textbf{consistent}
   \bi
   \item Different design, timing, questions, survey instruments...
-  \item Harmonisation effort underway (CLOSER)
   \ei
 \ei
 
@@ -357,7 +357,7 @@ We compare the evolution of inequality in socioemotional skills at age 5 across 
 \item Focus on subset of items that have similar wording between the two instruments
 \item Recode items to enhance comparability when needed
   \bi \item E.g. ``Generally obedient" dichotomised to match ``Often disobedient"  \ei
-\item $\Rightarrow$ New 11-item subscale
+\item $\Rightarrow$ \textbf{Novel 11-item scale}
 \ei
 
 \end{frame}
@@ -424,13 +424,16 @@ printmeantab(table)
 \textbf{Q1}: How many dimensions underlie the new 11-item scale?
 
 \bi
-\item Factor analysis routinely used to construct measures of socioemotional skills \citep{Conti2014,Attanasio2017c}
-\item Starts with \emph{exploratory} step
-\item Decompose the covariance matrix of items to assess:
-  \bi \item the dimensionality of the underlying factor structure (how many latent factors)
-  \item which items measure which latent factor \ei
+\item Factor analysis routinely used to examine socioemotional skills \citep{Conti2014,Attanasio2017c}
+\item Starts with \emph{exploratory factor analysis} step
+\item Objective is to assess
+  \bi
+  \item the dimensionality of the underlying factor structure (\emph{how many} latent factors)
+  \item \emph{which items} measure which latent factor 
+  \ei
+\vspace{.3cm}
 \item Psychometric literature often finds \textbf{two latent factors} provide good synthesis for Rutter and SDQ \hyperlink{efalit}{\beamerbutton{Det.}}
-\item This can be tested in our data
+\item We can test this in our data
 \ei
 
 \end{frame}
@@ -442,15 +445,12 @@ printmeantab(table)
 \textbf{Q1}: How many dimensions underlie the new 11-item scale?
 
 \bi
-\item Dimensionality
+\item Exploratory FA: weighted least squares and \textit{oblimin} factor rotation
+\item Separately by cohort (BCS, MCS) and gender
+\item We find
   \bi
-  \item Methods for assessing dimensionality imply 1-3 factors \hyperlink{numfac}{\beamerbutton{Det.}}
+  \item Dimensionality methods imply 1-3 factors \hyperlink{numfac}{\beamerbutton{Det.}}
   \item We choose \textbf{two factors} to maximise interpretability
-  \ei
-\item Structure
-  \bi
-  \item Exploratory FA using weighted least squares and \textit{oblimin} rotation
-  \item Factors can be coherently interpreted as \textbf{externalising} ($\sim$ anti-social) and \textbf{internalising} ($\sim$ neurotic)
   \ei
 \ei 
 \pause
@@ -459,7 +459,7 @@ printmeantab(table)
 \small
 \begin{spacing}{1.0}
 \begin{tabular}{C{.05\textwidth}L{.3\textwidth}|C{.05\textwidth}L{.3\textwidth}}
-  & \textbf{{\color{OliveGreen}Externalising}}  &    & \textbf{{\color{Orange}Internalising}}  \\
+  & \textbf{{\color{OliveGreen}Externalising SE skills}}  &    & \textbf{{\color{Orange}Internalising SE skills}}  \\
 1 & Restless                & 7  & Worried                \\
 2 & Squirmy/fidgety         & 8  & Afraid of new things   \\
 3 & Fights/bullies children & 9  & Solitary               \\
@@ -513,7 +513,7 @@ printmeantab(table)
   \item Aim: assess if constructs are measured in the same way in 2+ groups
   \item Procedure:
     \bnm
-    \item Start from the most general model -- parameters allowed to differ across groups
+    \item Start from most general model -- parameters allowed to differ across groups
     \item Impose restrictions on sets of parameters to be equal across groups
     \item Test relative fit of restricted models compared to initial model
     \enm
@@ -530,17 +530,16 @@ printmeantab(table)
 
 Categorical Item Factor Analysis (IFA) model
 \bi
-\item Observed categorical items $X_1$-$X_{11}$ measuring latent factor $\theta$
-\item Latent propensity to endorse each item $i$ for child $j$ in group $c$ \citep{Muthen1984}
+\item We observe categorical items $X_1$-$X_{11}$ measuring latent factor $\theta$ (externalising/internalising socioemotional skills)
+\pause
+\item Different groups of individuals ($c$) -- children in cohort-gender cell
+\pause
+\item Define propensity to endorse item $i$ for child $j$ in group $c$ \citep{Muthen1984}
 $$ X^*_{ijc} =\nu_{ci} + \lambda_{ci}\theta_{jc} + u_{ijc} $$
+\pause
 \item Discreteness \citep{Piatek2016}
 $$X_{ijc} = s \qquad \text{if} \; \tau_{s,ic} \leq X^*_{ijc} < \tau_{s+1,ic} \qquad \text{for} \; s=0,1,2$$
 with $\tau_{0,ic}=-\infty$ and $\tau_{3,ic}=+\infty$.
-\vspace{.2cm}
-\item We follow the approach in \cite{Wu2016a}
-  \bi
-  \item Define group ($c$) as cohort-gender cell
-  \ei
 \ei
 \end{frame}
 
@@ -548,6 +547,8 @@ with $\tau_{0,ic}=-\infty$ and $\tau_{3,ic}=+\infty$.
 \begin{frame}[t]
 \frametitle{Measurement Invariance}\label{misteps}
 \framesubtitle{Steps \hyperlink{miapp1}{\beamerbutton{Details}}}
+\setstretch{1.1}
+\cite{Wu2016a}
 $$ X^*_{ijc} =
 \only<1>{\textcolor{red}{\nu_{ci}} + \textcolor{red}{\lambda_{ci}}\theta_{jc} + u_{ijc}} 
 \only<2>{\textcolor{red}{\nu_{ci}} + \textcolor{green}{\lambda_{i}}\theta_{jc} + u_{ijc}} 
@@ -558,7 +559,8 @@ $$X_{ijc} = s \qquad \text{if} \;
 \only<2>{\textcolor{green}{\tau_{s,i}} \leq X^*_{ijc} < \textcolor{green}{\tau_{s+1,i}}}
 \only<3>{\textcolor{green}{\tau_{s,i}} \leq X^*_{ijc} < \textcolor{green}{\tau_{s+1,i}}}
 \qquad \text{for} \; s=0,1,2$$
-\vspace{-.2cm}
+\vspace{-.4cm}
+\setstretch{1.3}
 \bnm
 \item \textbf{Configural} model
   \bi
@@ -604,10 +606,10 @@ $$X_{ijc} = s \qquad \text{if} \;
 \framesubtitle{Results}
 
 \bi
-\item We use RMSE to compare fit between models with different invariance restriction
-\item Restricting only thresholds and loadings provides a good fit \hyperlink{fit}{\beamerbutton{Fit details}}
+\item We use RMSE to compare fit between models with different invariance restriction \hyperlink{fit}{\beamerbutton{Alternative fit measures}}
+\item Restricting only thresholds and loadings provides a good fit
   \bi \item We can compare the scale (variance) of the latent factors \ei
-\item Models with restricted intercepts do \emph{not} pass MI test
+\item Model with restricted intercepts do \emph{not} pass MI test
   \bi \item We cannot compare the location of latent factors in different groups \ei
 \ei
 \begin{center}
@@ -660,11 +662,18 @@ print(xtable(table,
 
 \textbf{Q2}: Can we derive \textbf{comparable measures} of socioemotional skills?
 \bi
-\item We can use the model with non-invariant intercepts to score the latent factors (externalising and internalising dimensions)
-\item Estimated parameters: \hyperlink{measpars}{\beamerbutton{Measurement}}\hyperlink{lvpars}{\beamerbutton{Latent variable}}
-\item Use Empirical Bayes approach to predict individual scores \citep{Wu2013}
-\item All scores are coded so that \emph{\textbf{a higher value means better socioemotional skills}}
-\item \textbf{CAUTION}: location differences by cohort/gender are not interpretable!
+\item We can use the model with non-invariant intercepts to \emph{score} the latent factors
+  \bi
+  \item Assign a predicted value to each child's externalising and internalising skills
+  \item Empirical Bayes approach method \citep{Wu2013}
+  \ei
+\item Estimated parameters \hyperlink{measpars}{\beamerbutton{Measurement}}\hyperlink{lvpars}{\beamerbutton{Latent variable}}
+\pause
+\item \textbf{CAUTION}:
+  \bi
+  \item Scores coded so that \emph{\textbf{a higher value means better socioemotional skills}}
+  \item \textbf{Location differences} by cohort/gender are not interpretable! 
+  \ei
 \ei
 \end{frame}
 
@@ -673,11 +682,11 @@ print(xtable(table,
 \frametitle{Measurement Invariance}\label{miscores2}
 \framesubtitle{Factor scores vs. Sum scores}
 \bi
-\item Is this an improvement on using simple sum scores?
+\item Is this an improvement on using simple \textbf{sum scores}?
   \bi
   \item Sum scores assume that each item conveys the same information, and that everything is invariant
   \item Scores obtained from the model exploit the covariance structure of the whole 11-item scale
-  \item Every 11-dimensional pattern of response in the data can be assigned a different score
+  \item Every 11-dimensional pattern of response in the data is assigned a different score
   \item Substantial increase in variability \hyperlink{facraw}{\beamerbutton{Graph}}
   \ei
 \ei
@@ -816,28 +825,15 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 
 \begin{frame}
 \frametitle{Inequality}\label{ineq_ps}
-\framesubtitle{Mother compulsory education \hyperlink{ineq_ys}{\beamerbutton{Age left education}}}
+\framesubtitle{Mother compulsory education 
+\hyperlink{ineq_ys}{\beamerbutton{Age left education}}
+\hyperlink{ineq_mecs}{\beamerbutton{Education + employment}}
+}
 \vspace{-.2cm}
 \begin{figure}
 <<FACINEQ_PS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=10, out.width='.9\\linewidth'>>=
 # plot
 fi <- fi_ps # select result
-gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]], 
-                        fi$ineqlist[[3]],fi$ineqlist[[4]],
-                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
-                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
-@
-\end{figure}
-\end{frame}
-
-\begin{frame}
-\frametitle{Inequality}\label{ineq_mecs}
-\framesubtitle{Maternal education and employment}
-\vspace{-.2cm}
-\begin{figure}
-<<FACINEQ_MECS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=11, out.width='\\linewidth'>>=
-# plot
-fi <- fi_mecs # select result
 gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]], 
                         fi$ineqlist[[3]],fi$ineqlist[[4]],
                         fi$histlist[[1]],fi$histlist[[2]], fi$legend,
@@ -869,7 +865,7 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 \textbf{Q3}: How has \textbf{inequality} in early-life socioemotional skills evolved in the UK between 1975 and 2005?
 
 \bi
-\item Unconditionally, the distribution is more spread out (except for girls' internalising)
+\item Unconditionally, the distribution is more spread out (except for girls' internalising skills)
 \item Inequality across socioeconomic indicators has increased, especially
   \bi
   \item for boys rather than girls
@@ -901,12 +897,33 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 \textbf{Q4}: Have the \textbf{determinants} of socioemotional skills changed across cohorts?
 \bi 
 \item Previous work has mostly focused on single cohorts, and not estabilished invariance
-\item \cite{McCulloch2000,Blanden2008,Fitzsimons2017}
-\item Linear regression (Tobit results are very similar)
-\item Merge information from the birth and 5 year surveys \hyperlink{detvars}{\beamerbutton{Variables}}
+  \bi \item \cite{McCulloch2000,Blanden2008,Fitzsimons2017} \ei
+\item We regress externalising and internalising socioemotional skills on contemporaneous and past determinants
+  \bi
+  \item Merge information from the surveys at birth and 5 years
+  \item Linear regression (Tobit results are very similar)
+  \ei
 \ei
 \end{frame}
 
+\begin{frame}
+\frametitle{Determinants of socioemotional skills} \label{detvars}
+\framesubtitle{Variable groups}
+
+\begin{table}
+\footnotesize
+\begin{tabular}{L{.25\textwidth}C{.1\textwidth}L{.5\textwidth}}
+Group & Age &  \\
+\midrule
+Maternal education & 5 & Post-compulsory schooling \\ \\[-1.5em]
+Maternal employment & 5 & Employed \\ \\[-1.5em]
+Father occupation & 5 & White collar (SC I-IIINM) \newline Blue collar (SC IIIM-V-other) \newline No father figure \\ \\[-1.5em]
+Maternal background & 0/5 & Age, height \newline Nonwhite ethnicity (child) \newline Unmarried at birth \newline Number of children in HH \\ \\[-1.5em]
+Pregnancy & 0 & Firstborn child, number of previous stillbirths \newline Mother smoked in pregnancy \newline Preterm birth, (log) birth weight \\ \\[-1.5em]
+\end{tabular}
+\end{table}
+
+\end{frame}
 
 \begin{frame}
 \frametitle{Determinants of socioemotional skills}
@@ -1018,16 +1035,16 @@ texreg::texreg(regs,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
-\frametitle{Decomposition}
-\framesubtitle{Gelbach (2016)}
+\frametitle{Decomposition}\label{gelb}
 
 \bi
-\item We decompose the difference between children of mothers with compulsory education vs. post-compulsory
-\item Use the same groups of covariates as above
-\item Approach by \cite{Gelbach2016}
+\item Stark differences in skills between children of high vs low educated mothers \hyperlink{ineq_ps}{\beamerbutton{Graph}}
+\item We decompose these difference into components attributable to different groups of factors (using the same groups as above)
+\item Approach by \cite{Gelbach2016} \hyperlink{gelb_det}{\beamerbutton{Details}}
   \bi
   \item Based on simple omitted variable bias expression
   \item Invariant to the ordering of variables
+  \item No causal interpretation
   \ei
 \ei
 
@@ -1039,8 +1056,8 @@ texreg::texreg(regs,
 @
 
 \begin{frame}
-\frametitle{Decomposition (EXT)}\label{gelb_ext_f}
-\framesubtitle{Maternal compulsory schooling \hyperlink{gelb_ext}{\beamerbutton{Table}}}
+\frametitle{Decomposition}\label{gelb_ext_f}
+\framesubtitle{Externalising \hyperlink{gelb_ext}{\beamerbutton{Table}}}
 \begin{figure}
 <<GELB_FIG_EXT, dependson="GELB_FIG", dev='tikz', fig.height=4.5, fig.width=9, out.width='\\linewidth'>>=
 # plot
@@ -1050,8 +1067,8 @@ gelbplot_ext
 \end{frame}
 
 \begin{frame}
-\frametitle{Decomposition (INT)}\label{gelb_int_f}
-\framesubtitle{Maternal compulsory schooling \hyperlink{gelb_int}{\beamerbutton{Table}}}
+\frametitle{Decomposition}\label{gelb_int_f}
+\framesubtitle{Internalising \hyperlink{gelb_int}{\beamerbutton{Table}}}
 \begin{figure}
 <<GELB_FIG_INT, dependson="GELB_FIG", dev='tikz', fig.height=4.5, fig.width=9, out.width='\\linewidth'>>=
 # plot
@@ -1082,18 +1099,18 @@ gelbplot_int
 \textbf{Q5}: Has the mapping of socioemotional skills into \textbf{adolescent/adult outcomes} changed?
 
 \bi
-\item We examine how sociemotional skills at age 5 map into outcomes later in the life course
+\item Previous work has mostly looked at single cohorts \citep{Carneiro2007,Conti2010a,Joshi2014}
+\item We examine how sociemotional skills at age 5 map into later outcomes
   \bi 
   \item BCS: Age 16, 30, 38, 42
   \item MCS: Age 14 (last available survey)
   \ei
-\item Previous work has mostly focused on single cohorts\cite{Carneiro2007,Conti2010a,Joshi2014}
-\item Focus on behaviours and labour market outcomes
+\item Regress behaviours and labour market outcomes on socioemotional skills and same groups of early-life covariates as above
 \pause
 \item Include a \textbf{cognitive factor} at age 5, using available tests
   \bi 
   \item BCS: English Picture Vocabulary Test, Human Figure Drawing, Copy Designs
-  \item MCS: British Ability Scales (Naming Vocabulary, Picture Similarities, Pattern Construction)
+  \item MCS: British Ability Scales (Naming Vocab., Picture Simil., Pattern Constr.)
   \item Bartlett scoring
   \ei
 \ei
@@ -1312,7 +1329,7 @@ printoutctab(table)
 \frametitle{Conclusion}
 
 \bi
-\item Using a novel psychometric method, we derived two measures of non-cognitive skills at age five that is comparable across two UK cohorts
+\item Using a novel psychometric method, we derived two measures of socioemotional skills at age five that are comparable across two UK cohorts
 \item We have shown that inequality in these skills at five years of age by parental background has increased between children born in 1970 and 2000
   \bi
   \item Profile has become steeper (particularly for males)
@@ -1323,7 +1340,7 @@ printoutctab(table)
   \item Father's occupation is less important
   \item Maternal and pregnancy factors are predominant
   \ei
-\item For both cohorts, socioemotional skills predict adolescent outcomes, for health outcomes over and above cognitive skills
+\item In both cohorts, socioemotional skills predict adolescent outcomes -- for health outcomes, this is true over and above cognitive skills
 \ei
 
 \end{frame}
@@ -1453,7 +1470,7 @@ printmeantab(table)
 \setstretch{1.1}
 Categorical Item Factor Analysis (IFA) model
 \bi
-\item Latent propensity to endorse each item $i$ for child $j$ in group $c$ \citep{Muthen1984}
+\item Latent propensity to endorse item $i$ for child $j$ in group $c$ \citep{Muthen1984}
 \begin{align}\label{eq:propens}
 \begin{split}
 X^*_{ijc} &=\nu_{ci} + \lambda_{ci}\theta^{EXT}_{jc} + u_{ijc} \qquad \text{for} \; i=1,\dots, 6 \\
@@ -1712,34 +1729,51 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 \end{figure}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%% DETERMINANTS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \begin{frame}[noframenumbering]
-\frametitle{Determinants of socioemotional skills} \label{detvars}
-\framesubtitle{Variables \hyperlink{detintro}{\beamerreturnbutton{Back}}}
-
-Variable groupings
-
-\begin{table}
-\footnotesize
-\begin{tabular}{L{.25\textwidth}C{.1\textwidth}L{.5\textwidth}}
-Group & Age &  \\
-\midrule
-Maternal education & 5 & Post-compulsory schooling \\
-Maternal employment & 5 & Employed \\
-Father occupation & 5 & White collar (SC I-IIINM) \newline Blue collar (SC IIIM-V-other) \newline No father figure \\
-Maternal background & 0/5 & Age, height \newline Nonwhite ethnicity (child) \newline Number of children in HH \\
-Pregnancy & 0 & Firstborn child, number of previous stillbirths \newline Mother smoked in pregnancy \newline Preterm birth, (log) birth weight \\
-\end{tabular}
-\end{table}
-
+\frametitle{Inequality}\label{ineq_mecs}
+\framesubtitle{Maternal education and employment \hyperlink{ineq_ps}{\beamerreturnbutton{Back}}}
+\vspace{-.2cm}
+\begin{figure}
+<<FACINEQ_MECS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=7.5, fig.width=11, out.width='\\linewidth'>>=
+# plot
+fi <- fi_mecs # select result
+gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]], 
+                        fi$ineqlist[[3]],fi$ineqlist[[4]],
+                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
+                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
+@
+\end{figure}
 \end{frame}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%% GELBACH DECOMPOSITION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[noframenumbering]
+\frametitle{Gelbach (2016) \hyperlink{gelb}{\beamerreturnbutton{Back}}}\label{gelb_det}
+\setstretch{1.1}
+
+\textbf{Base} model -- conditional on covariates $\bm{X}$: \hfill $Y = \alpha + \beta_1 T + \veps$
+
+\textbf{Full} model: \hfill $Y = \alpha + \beta_1 T + \bm{M} \bm{\beta}_2 + \veps $
+\vspace{.2cm}
+
+OLS estimate of $\beta_1$ in the base model: $$ \beta_1^{\text{base}} = \beta_1 + \bm{\Gamma} \bm{\beta}_2 = \beta_1 + \delta $$
+
+where $\delta$ is \textbf{omitted variable bias} due to omission of mediators $\bm{M}$
+
+and $\bm{\Gamma}$ are coefficients from a linear projection of $\bm{M}$ on $T$: \hfill $\bm{M} = T\bm{\Gamma} + \bm{u} $
+
+with \hfill
+$M^1 = \gamma_0^1 + \gamma_1^1 T + u^1  \qquad \dots \qquad M^k = \gamma_0^{k_m} + \gamma_1^{k_m} T + u^{k_m} $
+
+Decomposition of the bias term across mediators
+$$\delta = \beta_1^{\text{base}} - \beta_1 = \gamma_1^1 \beta_2^1 + \dots +  \gamma_1^{k_m} \beta_2^{k_m} = \sum_{j=1}^{k_m} \gamma_1^j \beta_2^j $$
+where $\delta^j =  \gamma_1^j \beta_2^j$ is the component due to each mediator.
+
+\end{frame}
+
 
 \begin{frame}[noframenumbering]
 \frametitle{Decomposition (EXT)}\label{gelb_ext}
@@ -1820,7 +1854,7 @@ printoutctab(table)
 %%%%%%%% BIBLIOGRAPHY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[allowframebreaks]
+\begin{frame}[allowframebreaks,noframenumbering]
 \bibliographystyle{chicago}
 \def\bibfont{\tiny}
 \bibliography{/Users/giacomomason/Dropbox/Zotero/cohorts.bib}

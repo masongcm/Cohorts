@@ -53,7 +53,7 @@ addopts_gelb <- function(x) {
     geom_bar(stat = "identity", alpha=.7, width = 0.5) + 
     geom_vline(xintercept = 2.5) +
     coord_flip(ylim = c(0.0,0.3)) +
-    scale_y_continuous(name = "Difference") + xlab("") +
+    scale_y_continuous(name = "Difference (high vs low educated mothers)") + xlab("") +
     scale_fill_manual(values = gcols, name = "") +
     geom_text(aes(label=ifelse(value >= .02, paste0(sprintf("%.1f", perc),"\\%"),"")), position=position_stack(vjust=0.5)) +
     guides(fill=guide_legend(ncol=1,byrow=TRUE)) +

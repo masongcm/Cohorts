@@ -1,7 +1,7 @@
 ## ---- FA_FIT
 
 # assemble AFIs indices for table
-indsel <- c("npar", "chisq", "rmsea", "mfi", "cfi.scaled")
+indsel <- c("npar", "chisq", "rmsea", "srmr", "mfi", "cfi.scaled")
 mnames <- c("Configural", "Threshold + Loading Invariance", "Threshold, Loading, + Intercept Invariance")
 
 afitab <- list()
@@ -14,15 +14,26 @@ for (i in 1:length(fa.c)) {
   afitab[[i]]$npar  <- as.character(afitab[[i]]$npar)
   afitab[[i]]$chisq <- as.character(round(afitab[[i]]$chisq,1))
   
+  # anova to get pval of chisquare
+  pv.tl <- anova(fa.c[[i]], fa.tl[[i]])$`Pr(>Chisq)`[2]
+  pv.tli <- anova(fa.c[[i]], fa.tli[[i]])$`Pr(>Chisq)`[2]
+  
   # add deltas
+  drmsea <- NA
+  dsrmr <- NA
   dmfi <- NA
   dcfi <- NA
   dgam <- NA
   for (r in 2:nrow(afitab[[i]])) {
+    drmsea <- c(drmsea, afitab[[i]][r,"rmsea"] -  afitab[[i]][1,"rmsea"])
+    dsrmr <- c(dsrmr, afitab[[i]][r,"srmr"] -  afitab[[i]][1,"srmr"])
     dmfi <- c(dmfi, afitab[[i]][r,"mfi"] -  afitab[[i]][1,"mfi"])
     dcfi <- c(dcfi, afitab[[i]][r,"cfi.scaled"] -  afitab[[i]][1,"cfi.scaled"])
     dgam <- c(dgam, afitab[[i]][r,"gammaHat"] -  afitab[[i]][1,"gammaHat"])
   }
+  afitab[[i]]$pchisq <- as.matrix(c(NA,pv.tl,pv.tli))
+  afitab[[i]]$drmsea <- as.matrix(drmsea)
+  afitab[[i]]$dsrmr <- as.matrix(dsrmr)
   afitab[[i]]$dmfi <- as.matrix(dmfi)
   afitab[[i]]$dcfi <- as.matrix(dcfi)
   afitab[[i]]$dgam <- as.matrix(dgam)

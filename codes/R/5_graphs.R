@@ -104,7 +104,7 @@ for (p in 1:4) {
     annotate("text", x = minx+1, y = .5, label = "Kolmog.-Smirnov") + 
     annotate("text", x = minx+1, y = .45, label = paste0("$p$",ksp[[p]]))
 }
-pcol <- plot_grid( denslist[[1]], denslist[[2]], denslist[[3]], denslist[[4]],
+pcol <- plot_grid( denslist[[1]], denslist[[3]], denslist[[2]], denslist[[4]],
                    align = 'vh',
                    hjust = -1,
                    nrow = 2

@@ -87,9 +87,13 @@ for (i in 1:ncol(bcs5rutc)) bcs5rutcf[,i] <- as.ordered(bcs5rutc[,i])
 
 # auxiliary variables
 bcs5aux <- cbind(bcs5data[,c("bcsid", 
-                             auxvars)]
+                             auxvars,
+                             "epvt_z", "copy_z", "hfd_z")]
 )
-names(bcs5aux)[names(bcs5aux)=="bcsid"] <- "id"
+names(bcs5aux)[names(bcs5aux)=="bcsid"]  <- "id"
+names(bcs5aux)[names(bcs5aux)=="epvt_z"] <- "C1" # vocabulary test
+names(bcs5aux)[names(bcs5aux)=="copy_z"] <- "C2"
+names(bcs5aux)[names(bcs5aux)=="hfd_z"]  <- "C3"
 bcs5aux$rwtd <- 1
 
 # MCS -------------------------------------------
@@ -130,9 +134,13 @@ for (i in 1:ncol(mcs5sdqc)) mcs5sdqcf[,i] <- as.ordered(mcs5sdqc[,i])
 # add SES and cognitive data
 mcs5aux <- cbind(mcs5data[,c("mcsid", 
                              auxvars, 
-                             "rwtd")]
+                             "rwtd",
+                             "nvoc_bastz", "psim_bastz", "patc_bastz")]
 )
 names(mcs5aux)[names(mcs5aux)=="mcsid"] <- "id"
+names(mcs5aux)[names(mcs5aux)=="nvoc_bastz"] <- "C1" # vocabulary test
+names(mcs5aux)[names(mcs5aux)=="psim_bastz"] <- "C2"
+names(mcs5aux)[names(mcs5aux)=="patc_bastz"]  <- "C3"
 
 # MERGE -------------------------------------------
 
@@ -155,7 +163,8 @@ X.all <- data.frame(rbind(Xtemp.bcs, Xtemp.mcs))
 
 # assemble final data
 items.c <- X.all[,c(grep("X", names(X.all), value=T), 
-                    "id", "cohort", auxvars, "rwtd")]
+                    "id", "cohort", auxvars, "rwtd",
+                    "C1", "C2", "C3")]
 colnames(items.c)[colnames(items.c) == "ageint5"] <- "age"
 items.c$sex <- factor(items.c$sex)
 levels(items.c$sex) = c("M", "F")

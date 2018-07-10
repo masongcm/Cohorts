@@ -1,3 +1,4 @@
+
 ********************************************************************************
 *****                MCS                   *************************************
 ********************************************************************************
@@ -328,11 +329,11 @@ gen dateb = ym(chcdbya0, chcdbma0)
 format datetest5 dateb %tm
 gen agetest5 = datetest5 - dateb
 
-rename cdnvtscr		nvoc_bast
-rename cdpstscr		psim_bast
-rename cdpctscr		patc_bast
-recode *_bast (-1=.)
-keep mcsid *_bast agetest5
+rename ccnsco00		nvoc_bas
+rename ccpsco00 	psim_bas
+rename cccsco00		patc_bas
+recode *_bas (-1=.)
+keep mcsid *_bas agetest5
 tempfile mcscog5y
 save `mcscog5y'
 
@@ -525,7 +526,7 @@ rename epsdte00 mcs11_sdq25
 ********************************************************************************
 
 * Standardise cognitive scores at 5
-foreach x in nvoc_bast psim_bast patc_bast {
+foreach x in nvoc_bas psim_bas patc_bas {
 	egen `x'z = std(`x')
 	}
 
@@ -681,7 +682,7 @@ local covarstokeep country region ///
 preserve
 egen ncmiss=rowmiss(mcs5_sdq*)
 drop if ncmiss >21
-keep mcsid sentry pttype2 mcs5_sdq* nvoc_bastz psim_bastz patc_bastz age*5 rwtd `covarstokeep'
+keep mcsid sentry pttype2 mcs5_sdq* *_basz *_bas age*5 rwtd `covarstokeep'
 saveold "$rdata/mcs5yeng.dta", replace version(12)
 keep if rwtd==1
 saveold "$rdata/mcs5yeng_rwt.dta", replace version(12)

@@ -135,12 +135,12 @@ for (i in 1:ncol(mcs5sdqc)) mcs5sdqcf[,i] <- as.ordered(mcs5sdqc[,i])
 mcs5aux <- cbind(mcs5data[,c("mcsid", 
                              auxvars, 
                              "rwtd",
-                             "nvoc_bastz", "psim_bastz", "patc_bastz")]
+                             "nvoc_basz", "psim_basz", "patc_basz")]
 )
 names(mcs5aux)[names(mcs5aux)=="mcsid"] <- "id"
-names(mcs5aux)[names(mcs5aux)=="nvoc_bastz"] <- "C1" # vocabulary test
-names(mcs5aux)[names(mcs5aux)=="psim_bastz"] <- "C2"
-names(mcs5aux)[names(mcs5aux)=="patc_bastz"]  <- "C3"
+names(mcs5aux)[names(mcs5aux)=="nvoc_basz"] <- "C1" # vocabulary test
+names(mcs5aux)[names(mcs5aux)=="psim_basz"] <- "C2"
+names(mcs5aux)[names(mcs5aux)=="patc_basz"]  <- "C3"
 
 # MERGE -------------------------------------------
 

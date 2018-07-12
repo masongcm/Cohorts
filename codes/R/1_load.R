@@ -370,7 +370,10 @@ for (g in c(1,2)) {
   meantab_cc3[[g]][meantab_cc3[[g]]$fac=="INT","mcs.text"] <- paste0("{\\color{Orange}", meantab_cc3[[g]][meantab_cc3[[g]]$fac=="INT","mcs.text"], "}")
 }
 
-rm(mcskeepb, ncats, ncomm, t, t2, X.all, X.allg, means, facnms)
 
-
+# clean up
+rm(mcskeepb, ncats, ncomm, t, t2, X.all, X.allg, means, facnms, Xtemp.bcs, Xtemp.mcs,
+   mcs5aux, mcs5sdqb, mcs5sdqbf, mcs5sdqc, mcs5sdqcf,
+   bcs5aux, bcs5rutb, bcs5rutbf, bcs5rutc, bcs5rutcf
+)
 

@@ -2,6 +2,39 @@
 ## ---- FA_INV_AUX
 # auxiliary models for robustness
 
+# CONFIGURAL
+c.th.2a <- glue::collapse(readLines(paste0(dir_syntax, "c_th_2a.lav")), sep=" \n  ")
+c.th.2ac <- glue::collapse(readLines(paste0(dir_syntax, "c_th_2ac.lav")), sep=" \n  ")
+c.th.2 <- glue::collapse(readLines(paste0(dir_syntax, "c_th_2.lav")), sep=" \n  ")
+c.th.4a <- glue::collapse(readLines(paste0(dir_syntax, "c_th_4a.lav")), sep=" \n  ")
+c.th.4ac <- glue::collapse(readLines(paste0(dir_syntax, "c_th_4ac.lav")), sep=" \n  ")
+c.mimic <- paste(c.th.4, "EXT ~ age", "INT ~ age",  sep=" \n  ")
+
+# THRESHOLD
+t.th.2a <- glue::collapse(readLines(paste0(dir_syntax, "t_th_2a.lav")), sep=" \n  ")
+t.th.2ac <- glue::collapse(readLines(paste0(dir_syntax, "t_th_2ac.lav")), sep=" \n  ")
+t.th.2 <- glue::collapse(readLines(paste0(dir_syntax, "t_th_2.lav")), sep=" \n  ")
+t.th.4a <- glue::collapse(readLines(paste0(dir_syntax, "t_th_4a.lav")), sep=" \n  ")
+t.th.4ac <- glue::collapse(readLines(paste0(dir_syntax, "t_th_4ac.lav")), sep=" \n  ")
+t.mimic <- paste(t.th.4, "EXT ~ age", "INT ~ age",  sep=" \n  ")
+
+# THRESHOLD+LOADING
+tl.th.2a <- glue::collapse(readLines(paste0(dir_syntax, "tl_th_2a.lav")), sep=" \n  ")
+tl.th.2ac <- glue::collapse(readLines(paste0(dir_syntax, "tl_th_2ac.lav")), sep=" \n  ")
+tl.th.2 <- glue::collapse(readLines(paste0(dir_syntax, "tl_th_2.lav")), sep=" \n  ")
+tl.th.4a <- glue::collapse(readLines(paste0(dir_syntax, "tl_th_4a.lav")), sep=" \n  ")
+tl.th.4ac <- glue::collapse(readLines(paste0(dir_syntax, "tl_th_4ac.lav")), sep=" \n  ")
+tl.mimic <- paste(tl.th.4, "EXT ~ age", "INT ~ age",  sep=" \n  ")
+
+# THRESHOLD+LOADING+INTERCEPT
+tli.th.2a <- glue::collapse(readLines(paste0(dir_syntax, "tli_th_2a.lav")), sep=" \n  ")
+tli.th.2ac <- glue::collapse(readLines(paste0(dir_syntax, "tli_th_2ac.lav")), sep=" \n  ")
+tli.th.2 <- glue::collapse(readLines(paste0(dir_syntax, "tli_th_2.lav")), sep=" \n  ")
+tli.th.4a <- glue::collapse(readLines(paste0(dir_syntax, "tli_th_4a.lav")), sep=" \n  ")
+tli.th.4ac <- glue::collapse(readLines(paste0(dir_syntax, "tli_th_4ac.lav")), sep=" \n  ")
+tli.mimic <- paste(tli.th.4, "EXT ~ age", "INT ~ age",  sep=" \n  ")
+
+
 # MODEL 3: WHOLE SAMPLE, no gender split, not age adjusted
 fa.c[[3]]   <- cfa(c.th.2, data = items[[3]], group = "cohort", estimator="wlsmv", parameterization="theta")
 fa.tl[[3]]  <- cfa(tl.th.2, data = items[[3]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')

@@ -1,0 +1,40 @@
+EXT =~ c(1, 1, 1, 1)*X1 + X2 + X3 + X4 + X5 + X6
+INT =~ c(1, 1, 1, 1)*X7 + X8 + X9 + X10 + X11
+X2 | c(t1_2, t1_2, t1_2, t1_2)*t1 + c(t2_2, t2_2, t2_2, t2_2)*t2
+X1 | c(t1_1, t1_1, t1_1, t1_1)*t1 + c(t2_1, t2_1, t2_1, t2_1)*t2
+X3 | c(t1_3, t1_3, t1_3, t1_3)*t1 + c(t2_3, t2_3, t2_3, t2_3)*t2
+X4 | c(t1_4, t1_4, t1_4, t1_4)*t1 + c(t2_4, t2_4, t2_4, t2_4)*t2
+X5 | c(t1_5, t1_5, t1_5, t1_5)*t1
+X6 | c(t1_6, t1_6, t1_6, t1_6)*t1
+X8 | c(t1_8, t1_8, t1_8, t1_8)*t1 + c(t2_8, t2_8, t2_8, t2_8)*t2
+X7 | c(t1_7, t1_7, t1_7, t1_7)*t1 + c(t2_7, t2_7, t2_7, t2_7)*t2
+X9 | c(t1_9, t1_9, t1_9, t1_9)*t1 + c(t2_9, t2_9, t2_9, t2_9)*t2
+X10 | c(t1_10, t1_10, t1_10, t1_10)*t1 + c(t2_10, t2_10, t2_10, t2_10)*t2
+X11 | c(t1_11, t1_11, t1_11, t1_11)*t1
+X1  ~ c(0, 0, 0, 0)*1
+X2  ~ c(0, NA, NA, NA)*1
+X3  ~ c(0, NA, NA, NA)*1
+X4  ~ c(0, NA, NA, NA)*1
+X5  ~ c(0, NA, NA, NA)*1
+X6  ~ c(0, NA, NA, NA)*1
+X7  ~ c(0, 0, 0, 0)*1
+X8  ~ c(0, NA, NA, NA)*1
+X9  ~ c(0, NA, NA, NA)*1
+X10  ~ c(0, NA, NA, NA)*1
+X11  ~ c(0, NA, NA, NA)*1
+X1 ~~ c(1,NA, NA, NA)*X1
+X2 ~~ c(1,NA, NA, NA)*X2
+X3 ~~ c(1,NA, NA, NA)*X3
+X4 ~~ c(1,NA, NA, NA)*X4
+X5 ~~ c(1,1,1,1)*X5
+X6 ~~ c(1,1,1,1)*X6
+X7 ~~ c(1,NA, NA, NA)*X7
+X8 ~~ c(1,NA, NA, NA)*X8
+X9 ~~ c(1,NA, NA, NA)*X9
+X10 ~~ c(1,NA, NA, NA)*X10
+X11 ~~ c(1,1,1,1)*X11
+EXT ~~ c(NA,NA,NA,NA)*EXT
+INT ~~ c(NA,NA,NA,NA)*INT
+EXT ~~ NA*INT
+EXT ~ c(0, NA, NA, NA)*1
+INT ~ c(0, NA, NA, NA)*1

@@ -1,22 +1,31 @@
 ## ---- FA_FIT
 
-# assemble AFIs indices for table
-indsel <- c("npar", "chisq", "rmsea", "srmr", "mfi", "cfi.scaled")
-mnames <- c("Configural", "Threshold + Loading Invariance", "Threshold, Loading, + Intercept Invariance")
+# function to produce table
+# modlist: list of nested models (first model is configural)
+# mlabels: label for each model
 
-afitab <- list()
-for (i in 1:length(fa.c)) {
-  afitab[[i]] <- data.frame(rbind(
-    round(c( fitMeasures(fa.c[[i]], indsel), moreFitIndices(fa.c[[i]])["gammaHat"] ),5),
-    round(c( fitMeasures(fa.tl[[i]], indsel), moreFitIndices(fa.tl[[i]])["gammaHat"] ),5),
-    round(c( fitMeasures(fa.tli[[i]], indsel), moreFitIndices(fa.tli[[i]])["gammaHat"] ),5)
-  ))
-  afitab[[i]]$npar  <- as.character(afitab[[i]]$npar)
-  afitab[[i]]$chisq <- as.character(round(afitab[[i]]$chisq,1))
+afitab <- function(modlist, mlabels) {
+  
+  # AFIs to select
+  indsel <- c("npar", "chisq", "rmsea", "srmr", "mfi", "cfi.scaled")
+
+  # assemble AFIs indices for table
+  tabout <- matrix(NA, length(modlist), 7)
+  for (i in 1:length(modlist)) {
+    tabout[i,] <- round(c( 
+      fitMeasures(modlist[[i]], indsel), 
+      moreFitIndices(modlist[[i]])["gammaHat"] ),5)
+  }
+  tabout <- data.frame(tabout)
+  colnames(tabout) <- c(indsel, "gammaHat")
+  tabout$npar  <- as.character(tabout$npar)
+  tabout$chisq <- as.character(round(tabout$chisq,1))
   
   # anova to get pval of chisquare
-  pv.tl <- anova(fa.c[[i]], fa.tl[[i]])$`Pr(>Chisq)`[2]
-  pv.tli <- anova(fa.c[[i]], fa.tli[[i]])$`Pr(>Chisq)`[2]
+  pval <- NA
+  for (i in 2:length(modlist)) {
+    pval <- c(pval, anova(modlist[[1]], modlist[[i]])$`Pr(>Chisq)`[2])
+  }
   
   # add deltas
   drmsea <- NA
@@ -24,20 +33,37 @@ for (i in 1:length(fa.c)) {
   dmfi <- NA
   dcfi <- NA
   dgam <- NA
-  for (r in 2:nrow(afitab[[i]])) {
-    drmsea <- c(drmsea, afitab[[i]][r,"rmsea"] -  afitab[[i]][1,"rmsea"])
-    dsrmr <- c(dsrmr, afitab[[i]][r,"srmr"] -  afitab[[i]][1,"srmr"])
-    dmfi <- c(dmfi, afitab[[i]][r,"mfi"] -  afitab[[i]][1,"mfi"])
-    dcfi <- c(dcfi, afitab[[i]][r,"cfi.scaled"] -  afitab[[i]][1,"cfi.scaled"])
-    dgam <- c(dgam, afitab[[i]][r,"gammaHat"] -  afitab[[i]][1,"gammaHat"])
+  for (r in 2:length(modlist)) {
+    drmsea <- c(drmsea, tabout[r,"rmsea"] -  tabout[1,"rmsea"])
+    dsrmr <- c(dsrmr, tabout[r,"srmr"] -  tabout[1,"srmr"])
+    dmfi <- c(dmfi, tabout[r,"mfi"] -  tabout[1,"mfi"])
+    dcfi <- c(dcfi, tabout[r,"cfi.scaled"] -  tabout[1,"cfi.scaled"])
+    dgam <- c(dgam, tabout[r,"gammaHat"] -  tabout[1,"gammaHat"])
   }
-  afitab[[i]]$pchisq <- as.matrix(c(NA,pv.tl,pv.tli))
-  afitab[[i]]$drmsea <- as.matrix(drmsea)
-  afitab[[i]]$dsrmr <- as.matrix(dsrmr)
-  afitab[[i]]$dmfi <- as.matrix(dmfi)
-  afitab[[i]]$dcfi <- as.matrix(dcfi)
-  afitab[[i]]$dgam <- as.matrix(dgam)
+  tabout$pchisq <- as.matrix(pval)
+  tabout$drmsea <- as.matrix(drmsea)
+  tabout$dsrmr <- as.matrix(dsrmr)
+  tabout$dmfi <- as.matrix(dmfi)
+  tabout$dcfi <- as.matrix(dcfi)
+  tabout$dgam <- as.matrix(dgam)
   
   # add names
-  afitab[[i]] <- data.frame(cbind(mnames = as.matrix(mnames), afitab[[i]]))
+  tabout <- data.frame(cbind(mlabels = as.matrix(mlabels), tabout))
+  return(tabout)
+
 }
+
+# MAKE FIT TABLES
+fit_main <- afitab(list(fa.c[[1]], fa.tl[[1]], fa.tli[[1]], fa.tlip[[1]]), 
+       c("Configural", 
+         "Threshold + Loading Inv", 
+         "Threshold, Loading, + Intercept Inv",
+         "Threshold, Loading, + Partial Int Inv")
+)
+
+fit_agesub <- afitab(list(fa.c[[2]], fa.tl[[2]], fa.tli[[2]], fa.tlip[[2]]), 
+                   c("Configural", 
+                     "Threshold + Loading Inv", 
+                     "Threshold, Loading, + Intercept Inv",
+                     "Threshold, Loading, + Partial Int Inv")
+)

@@ -105,7 +105,7 @@ getlvpars <- function(fit, groups = 2) {
   
   lv.means <- inspect(fit, what="mean.lv") # means
   lv.covs <- inspect(fit, what="cov.lv")   # covariances
-  for (j in 1:2) upperTriangle(lv.covs[[j]]) <- NA
+  for (j in 1:groups) gdata::upperTriangle(lv.covs[[j]]) <- NA
   lv.corrs <- lapply(lv.covs,cov2cor)
   
   if (groups == 2) {

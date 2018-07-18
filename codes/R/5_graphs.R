@@ -156,7 +156,8 @@ demean <- function(data, refvar, reflev, suffix) {
 # data = dataset
 # categ = categorical variable (factor)
 # suffix = string appended to demeaned variable
-plotineq <- function(data, categ, suffix, 
+plotineq <- function(data, categ, 
+                     suffix = NULL, 
                      ylab = "Y axis", 
                      xlab = "X axis", 
                      ylim = c(-.4, .4),
@@ -164,7 +165,8 @@ plotineq <- function(data, categ, suffix,
 ) {
   
   # extract relevant variables
-  datatemp <- data[, c("cohort", "sex", categ, paste0("EXT", suffix), paste0("INT", suffix))]
+  if (!is.null(suffix)) datatemp <- data[, c("cohort", "sex", categ, paste0("EXT", suffix), paste0("INT", suffix))]
+  if (is.null(suffix)) datatemp <- data[, c("cohort", "sex", categ, "EXT", "INT")]
   colnames(datatemp) <- c("cohort", "sex", "categ", "EXT", "INT")
   datatemp <- datatemp[complete.cases(datatemp),] # just complete cases
   
@@ -243,13 +245,16 @@ scores2plot <- demean(scores2plot, "scl10b", "IIINM", "dsc")
 fi_sc <- plotineq(scores2plot, "scl10b", "dsc", ylab = "Score (IIINM = 0)", xlab = "Family Social Class (10)",
                   ylim = c(-.6,.4), vline=4.5)
 
+
+
 # FATHER SOCIAL CLASS at 5 --------------------
 # demean scores for lowest class
 scores2plot <- demean(scores2plot, "fscl5wb", "Blue collar", "dfsc")
 # make plots
 fi_fsc <- plotineq(scores2plot, "fscl5wb", "dfsc", ylab = "Score (Blue c. = 0)", xlab = "Father Occupation (5)",
                   ylim = c(-.4,.4))
-
+fi_fsc2 <- plotineq(scores2plot, "fscl5wb", ylab = "Score ", xlab = "Father Occupation (5)",
+                   ylim = c(-.4,1.0))
 
 # MATERNAL SCHOOLING -------------------------
 # demean scores for lowest level
@@ -261,6 +266,8 @@ fi_ys <- plotineq(scores2plot, "mysch5b", "dys", ylab = "Score (17-18 = 0)", xla
 scores2plot <- demean(scores2plot, "mpsla5", "Compulsory", "dps")
 fi_ps <- plotineq(scores2plot, "mpsla5", "dps", ylab = "Score (Compuls. = 0)", xlab = "Maternal schooling (5)",
                   ylim = c(-.1,.4))
+fi_ps2 <- plotineq(scores2plot, "mpsla5", ylab = "Score", xlab = "Maternal schooling (5)",
+                  ylim = c(-.1,.8))
 
 # MATERNAL EMPLOYMENT  -------------------------
 scores2plot <- demean(scores2plot, "mempl5", "Unempl./At home", "dme")

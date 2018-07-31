@@ -52,18 +52,3 @@ afitab <- function(modlist, mlabels) {
   return(tabout)
 
 }
-
-# MAKE FIT TABLES
-fit_main <- afitab(list(fa.c[[1]], fa.tl[[1]], fa.tli[[1]], fa.tlip[[1]]), 
-       c("Configural", 
-         "Threshold + Loading Inv", 
-         "Threshold, Loading, + Intercept Inv",
-         "Threshold, Loading, + Partial Int Inv")
-)
-
-fit_agesub <- afitab(list(fa.c[[2]], fa.tl[[2]], fa.tli[[2]], fa.tlip[[2]]), 
-                   c("Configural", 
-                     "Threshold + Loading Inv", 
-                     "Threshold, Loading, + Intercept Inv",
-                     "Threshold, Loading, + Partial Int Inv")
-)

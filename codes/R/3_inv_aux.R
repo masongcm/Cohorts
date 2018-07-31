@@ -1,6 +1,6 @@
 
-## ---- FA_INV_AUX
-# auxiliary models for robustness
+## ---- FA_INV_AUX_SYN
+# syntax for robustness checks
 
 # CONFIGURAL
 c.th.2a <- glue::collapse(readLines(paste0(dir_syntax, "c_th_2a.lav")), sep=" \n  ")
@@ -35,6 +35,9 @@ tli.th.4ac <- glue::collapse(readLines(paste0(dir_syntax, "tli_th_4ac.lav")), se
 tli.mimic <- paste(tli.th.4, "EXT ~ age", "INT ~ age",  sep=" \n  ")
 
 
+## ---- FA_INV_AUX_GEND
+# robustness checks with gender
+
 # MODEL 3: WHOLE SAMPLE, no gender split, not age adjusted
 fa.c[[3]]   <- cfa(c.th.2, data = items[[3]], group = "cohort", estimator="wlsmv", parameterization="theta")
 fa.tl[[3]]  <- cfa(tl.th.2, data = items[[3]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
@@ -49,6 +52,10 @@ fa.tli[[4]] <- cfa(tli.th.2, data = items[[4]], group = "cohort", estimator="wls
 fa.c[[5]]   <- cfa(c.th.2, data = items[[5]], group = "cohort", estimator="wlsmv", parameterization="theta")
 fa.tl[[5]]  <- cfa(tl.th.2, data = items[[5]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
 fa.tli[[5]] <- cfa(tli.th.2, data = items[[5]], group = "cohort", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+
+
+## ---- FA_INV_AUX_AGE
+# robustness checks with age adjustments
 
 # MODEL 6: WHOLE SAMPLE, no gender split, age adjusted
 fa.c[[6]]   <- cfa(c.th.2a, data = items[[6]], group = "cohort", estimator="wlsmv", parameterization="theta")

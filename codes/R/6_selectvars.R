@@ -26,7 +26,8 @@ decvars_int <- unname(unlist(decvarslist_int))
 decseq <- lapply(decvarslist, FUN = function(x) paste0(x, collapse="+"))
 
 # final data for analysis and decomposition
-finaldata <- scores2plot[complete.cases(scores2plot[,decvars]),]
+regdata <- finaldata[complete.cases(finaldata[,decvars]),]
 
 # export to stata for Gelbach
 export(finaldata, paste0(dir_data, "finaldata.dta"))
+export(regdata, paste0(dir_data, "regdata.dta"))

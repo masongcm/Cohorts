@@ -1,8 +1,39 @@
 ###################################################################
 ## ---- REGS_DEP
 
+# function to print pvals as strings in square brackets
+prnpval <- function(obj, dig=3) {
+  if (!is.na(obj)) paste0("[", sprintf(paste0("%.",dig,"f"), round(obj, digits = dig)), "]")
+  else ""
+}
+prnpval <- Vectorize(prnpval, vectorize.args = "obj")
+
 # function to collapse regressors in formula
 pplus <- function(x) paste0(x, collapse="+")
+
+# function to extract relevant pvalues from interacted model
+extractp <- function(mod) {
+  coefs <- summary(mod)$coefficients
+  coefs <- data.frame(tail(coefs, dim(coefs)[1]/2)) # select interactions (second half of table)
+  colnames(coefs) <- c("est", "se", "t", "pval")
+  
+  coefs2 <- coefs %>% 
+    tibble::rownames_to_column(var = "var") %>%
+    mutate(var2 = gsub(":cohortMCS", "", var)) %>%
+    filter(var2!="cohortMCS") %>% # eliminate string "cohortMCS"
+    filter(!grepl(omitcoefs, var2)) # remove coefficients to omit
+  
+  pvalvec <- prnpval(as.vector(coefs2$pval))
+  names(pvalvec) <- coefs2$var2
+  
+  # insert blanks corresponding to coefficient groups
+  pvalvec2 <- NULL
+  for (i in 1:length(grouplabs)) pvalvec2 <- c(pvalvec2, "", rep(NA, length(grouplabs[[i]])))
+  pvalvec2[is.na(pvalvec2)] <- pvalvec
+  
+  return(pvalvec2)
+}
+
 
 # REGRESSIONS OF EXT/INT ON CHILDHOOD VARIABLES
 # add region to vector of regressors
@@ -27,19 +58,38 @@ varlabs <- c("Post-compulsory",
 form_ext <- as.formula(paste("EXT ~ ", pplus(decvars_reg)))
 form_int <- as.formula(paste("INT ~ ", pplus(decvars_reg)))
 
+# formulas with full cohort interactions
+cohort_interactions <- paste0("cohort:", decvars_reg)
+form_exti <- as.formula(paste("EXT ~ ", pplus(decvars_reg), "+ cohort +", pplus(cohort_interactions)))
+form_inti <- as.formula(paste("INT ~ ", pplus(decvars_reg), "+ cohort +", pplus(cohort_interactions)))
+
+# variables to omit from output
+toomit <- c("region", "(Intercept)", "numch5", "mheight", "nprevst", "preterm")
+omitcoefs <- paste0(toomit, collapse = "|") # regexp
+
 # regressions
 r_ext <- list()
 r_int <- list()
-for (cs in c("BCS.M", "MCS.M", "BCS.F", "MCS.F")) {
-  r_ext[[cs]] <- list()
-  r_int[[cs]] <- list()
+for (s in c("M", "F")) {
+  for (c in c("BCS", "MCS")) {
+    cs <- paste0(c,".",s)
+    
+    r_ext[[cs]] <- list()
+    r_int[[cs]] <- list()
+    
+    # OLS
+    r_ext[[cs]][["OLS"]]  <- lm(form_ext,  data=subset(regdata, cohortsex==cs))
+    r_int[[cs]][["OLS"]]  <- lm(form_int,  data=subset(regdata, cohortsex==cs))
+    
+    # Tobit
+    r_ext[[cs]][["Tobit"]]  <- VGAM::vglm(form_ext, VGAM::tobit(Upper = max(regdata$EXT)), data=subset(regdata, cohortsex==cs))
+    r_int[[cs]][["Tobit"]]  <- VGAM::vglm(form_int, VGAM::tobit(Upper = max(regdata$INT)), data=subset(regdata, cohortsex==cs))
+    
+  }
   
-  # OLS
-  r_ext[[cs]][["OLS"]]  <- lm(form_ext,  data=subset(finaldata, cohortsex==cs))
-  r_int[[cs]][["OLS"]]  <- lm(form_int,  data=subset(finaldata, cohortsex==cs))
-  
-  # Tobit
-  r_ext[[cs]][["Tobit"]]  <- VGAM::vglm(form_ext, VGAM::tobit(Upper = max(finaldata$EXT)), data=subset(finaldata, cohortsex==cs))
-  r_int[[cs]][["Tobit"]]  <- VGAM::vglm(form_int, VGAM::tobit(Upper = max(finaldata$INT)), data=subset(finaldata, cohortsex==cs))
+  # extract pvalues of interactions
+  r_ext[[paste0(s,"p")]] <- extractp(lm(form_exti,  data=subset(regdata, sex==s)))
+  r_int[[paste0(s,"p")]] <- extractp(lm(form_inti,  data=subset(regdata, sex==s)))
   
 }
+

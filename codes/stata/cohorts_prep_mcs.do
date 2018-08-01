@@ -16,10 +16,87 @@ tempfile mcslong
 save `mcslong'
 
 ********************************************************************************
+// MOTHER AGE AT FIRST BIRTH
+
+// start from other children not in HH at wave 1
+use "$mcsraw/S1/mcs1_parent_interview.dta", clear
+keep if amotch00==1
+keep mcsid amotyr?0 amotmt?0
+local letters "a b c d e f g h i"
+local i = 1
+foreach let of local letters {
+	rename amotyr`let'0 yob`i'
+	rename amotmt`let'0 mob`i'
+	local i = `i' + 1
+}
+reshape long yob mob, i(mcsid) j(chnum)
+keep if yob>0 & mob>0
+gen ymoboth = ym(yob,mob)
+format ymoboth %tm
+collapse (min) ymoboth, by(mcsid)
+tempfile agefboth
+save `agefboth'
+
+********************************************************************************
+*household grid (DOB of siblings, mum age at first birth)
+use "$mcsraw/S1/mcs1_hhgrid.dta", clear
+rename _all, lower
+
+/* tag natural mother of cohort member */
+gen natmum = (ahcrel00 == 7 & ahpsex00 ==2)
+gen natmumnum = ahpnum00 if natmum==1
+bysort mcsid: egen natmumcode = max(natmumnum)
+gen natmumy = ahpdby00 if ahpdby00>0 & natmum==1
+gen natmumm = ahpdbm00 if ahpdbm00>0 & natmum==1
+bysort mcsid: egen natmumyob = max(natmumy)
+bysort mcsid: egen natmummob = max(natmumm)
+gen natmumymob = ym(natmumyob,natmummob)
+format natmumymob %tm 
+drop natmumnum natmumy natmumm
+
+/* identify children of natural mother */
+local i = 1
+local letters "a b c d e f g h i j k"
+foreach let of local letters {
+	rename ahprel0`let' rel`i'
+	local i = `i' + 1
+}
+gen childofnatmum = .
+forvalues i = 1(1)11 {
+	replace childofnatmum = 1 if natmumcode==`i' & rel`i'==3
+}
+
+/* YM of birth for each child */
+keep if childofnatmum == 1
+gen yob = ahpdby00
+gen mob = ahpdbm00
+replace yob = ahcdby00 if ahcrel00==96 // cohort member
+replace mob = ahcdbm00 if ahcrel00==96 // cohort member
+recode yob mob (-2 = .)
+gen ymob = ym(yob,mob)
+format ymob %tm
+collapse (min) ymob natmumymob, by(mcsid)
+
+// merge other children
+merge 1:1 mcsid using `agefboth', keep(1 3) nogen
+
+// check which is oldest
+gen ymob_oldestchild = min(ymob, ymoboth)
+format ymob_oldestchild %tm
+
+// calculate age
+gen mothagefb = floor((ymob_oldestchild-natmumymob)/12)
+keep mcsid mothagefb
+tempfile agefb
+save `agefb'
+
+********************************************************************************
 *birth parent interview (sex and parental education)
 use "$mcsraw/S1/mcs1_parent_interview.dta", clear
+
 rename ahcsexa0 sex
 recode amlfte00 aplfte00 (-9 -8 -1 =.)
+
 
 // smoke in pregnancy
 recode amcipr00 (-8/-1=.) (1/max=1), gen(smkprepreg)
@@ -126,6 +203,8 @@ save `mcsdem1'
 * derived (country, region, ethnicity)
 use "$mcsraw/S1/mcs1_derived_variables.dta", clear
 rename MCSID mcsid
+merge 1:1 mcsid using `agefb', nogen // merge age first birth
+
 gen region = ADREGN00
 recode region (1 2 = 1) (3=2) (4=3) (5=4) (9=5) (6 7 8=6)
 
@@ -199,7 +278,7 @@ lab var mweight			"Mother weight (kg)"
 lab var mbmi			"Mother BMI"
 lab var fscl			"Father SC"
 
-keep mcsid region ethn bwt lowbwt gestaw preterm mothageb teenm parity firstb mheight mweight mbmi fscl
+keep mcsid region ethn bwt lowbwt gestaw preterm mothagefb mothageb teenm parity firstb mheight mweight mbmi fscl
 tempfile mcsdem2
 save `mcsdem2'
 
@@ -247,10 +326,26 @@ keep mcsid ageint5 ?ysch5 ?psla5
 tempfile mcsdem3
 save `mcsdem3'
 
+********************************************************************************
+
+* 5y identify if has partner
+*household grid (DOB of siblings, mum age at first birth)
+use "$mcsraw/S3/mcs3_hhgrid.dta", clear
+rename _all, lower
+
+// natural/adoptive parent, step parent, parent of partner, male
+gen haspartner = (inlist(chcrel00,7,8,10) & chpsex00 ==1)
+replace haspartner = 0 if chpres00!=1 // not present in household
+collapse (max) haspartner, by(mcsid)
+tempfile partner5
+save `partner5'
+
 ******************************************************************
 * 5y derived 
 use "$mcsraw/S3/mcs3_derived_variables.dta", clear
 rename _all, lower
+merge 1:1 mcsid using `partner5', keep(3) nogen
+
 recode cmdres00 (-1=.) (2/max=0), gen(naturalmother5)
 rename cmdnvq00 hnvq_main
 recode hnvq_main (-1=.) (1/3=0) (4 5 = 1) (95=.) (96 = 0), gen(mhied5)
@@ -284,7 +379,8 @@ rename pscl5 fscl5
 
 replace mscl5 = 7 if cmpjob00==2 	// main not in work
 replace fscl5 = 7 if cppjob00==2 	// partner not in work
-replace fscl5 = 8 if cppjob00==. 	// partner not present
+replace fscl5 = 8 if haspartner==0 	// partner not in hh grid
+replace fscl5 = 8 if inlist(cdhtyp00, 15) 	// partner not present
 replace fscl5 = 7 if fscl5==. 		// remaining are other category
 
 lab val mscl5 scllab
@@ -674,7 +770,7 @@ append using `ethn'
 local covarstokeep country region ///
 					?scl ///
 					sex smkpr singlem malaise mempl nprevst caesbirth ///
-					ethn bwt lowbwt gestaw preterm mothageb teenm parity firstb mheight mweight mbmi ///
+					ethn bwt lowbwt gestaw preterm mothageb mothagefb teenm parity firstb mheight mweight mbmi ///
 					mysch5 fysch5 mhied5 numch5 mweight5 mheight5 mbmi5 mempl5 ?psla5 ?scl5 ///
 					scl10 incq10 faminc10_real faminc10_infl
 

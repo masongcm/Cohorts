@@ -20,6 +20,11 @@ rename a0166 parity
 gen firstb = parity==0 if parity!=.
 rename a0169 nprevst
 
+gen mothagefb = .
+replace mothagefb = mothageb if firstb==1
+replace mothagefb = (1900 + a0052) - myob if a0052>0
+replace mothagefb = . if mothagefb<10
+
 recode a0195b (-3 -2 = .), gen(gestaw)
 gen preterm = gestaw<37 if gestaw!=.
 recode a0012 (-2=.) (1 3 4 5 = 1) (2 = 0), gen(singlem)
@@ -58,6 +63,7 @@ lab var parity			"Parity"
 lab var nprevst			"Num previous stillbirths"
 lab var firstb			"First born"
 lab var mothageb		"Mother age at CM birth"
+lab var mothagefb		"Mother age at first birth"
 lab var teenm			"Teen mother"
 lab var smkpr			"Smoked during pregnancy"
 lab var gestaw			"Gestational age (weeks)"
@@ -88,7 +94,7 @@ lab var nprevms			"Num previous miscarriages"
 
 */
 
-keep bcsid sex bwt lowbwt smkpr mothageb teenm parity firstb nprevst ///
+keep bcsid sex bwt lowbwt smkpr mothageb mothagefb teenm parity firstb nprevst ///
 				gestaw preterm singlem mempl caesbirth mheight myob fscl mscl
 tempfile bcsdem1
 save `bcsdem1'
@@ -431,7 +437,7 @@ foreach x in epvt_z copy_z hfd_z {
 local covarstokeep country region ///
 					mscl fscl ///
 					sex smkpr singlem mempl nprevst caesbirth ///
-					ethn bwt lowbwt gestaw preterm mothageb teenm parity firstb mheight ///
+					ethn bwt lowbwt gestaw preterm mothageb mothagefb teenm parity firstb mheight ///
 					?ysch5 numch5 mhied5 ?empl5 ?psla5 ?scl5 ///
 					scl10 incq10 faminc10_real faminc10_infl
 

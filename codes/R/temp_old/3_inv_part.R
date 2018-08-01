@@ -1,4 +1,4 @@
-##---- FA_INV_PARTIAL
+##---- FA_INV_PART
 # partial intercept invariance analysis
 
 dif_comm <- "
@@ -29,8 +29,8 @@ X11 ~~ c(1,1,1,1)*X11
 EXT ~~ c(1,NA,NA,NA)*EXT
 INT ~~ c(1,NA,NA,NA)*INT
 EXT ~~ NA*INT
-EXT ~ c(0,NA,NA,NA)*1
-INT ~ c(0,NA,NA,NA)*1
+EXT ~ c(NA,NA,NA,NA)*1
+INT ~ c(NA,NA,NA,NA)*1
 "
 
 itm <- seq(1,11)
@@ -43,9 +43,9 @@ grid <- grid[grid[,1]!=grid[,2],]
 grid <- grid[grid[,3]!=grid[,4],]
 grid <- unique(grid)
 grid.sort <- t(apply(grid, 1, sort))
-grid <- grid[!duplicated(grid.sort),]
+#grid <- grid[!duplicated(grid.sort),] # to delete duplicate entries (when order does not matter)
 grid <- cbind(data.frame(seq(1,nrow(grid))), grid)
-colnames(grid) <- c("modnum", "EXT1", "EXT2", "INT1", "INT2")
+colnames(grid) <- c("modnum", "EXTa", "EXTf", "INTa", "INTf")
 
 # initialise
 dif <- list()
@@ -55,11 +55,15 @@ dif_fit <- list()
 dif_means <- list()
 
 for (i in 1:nrow(grid)) {
+  cat("\r Model", i, "of", nrow(grid))
   # separate fixed and free items
-  fixed <- as.vector(grid[i,c("EXT1", "EXT2", "INT1", "INT2")])
-  free  <- itm[! itm %in% fixed]
+  anchors <- as.vector(grid[i,c("EXTa", "INTa")])
+  fixed <- as.vector(grid[i,c("EXTf", "INTf")])
+  free  <- itm[! itm %in% c(fixed, anchors)]
   dif_add[[i]] <- paste0(
     paste0("X", free, " ~ c(0, NA, NA, NA)*1", collapse = "\n"),
+    "\n",
+    paste0("X", anchors, " ~ c(0, 0, 0, 0)*1", collapse = "\n"),
     "\n",
     paste0("X", fixed, " ~ c(0, 0, 0, 0)*1", collapse = "\n")
   )
@@ -81,14 +85,16 @@ partialfit <- cbind(grid, allfit, allmeans)
 rm(allfit, allmeans)
 
 # show models with best RMSEA
-head(res[order(res$rmsea),], 15)
-
-# pick best fitting model
-fa.tlip <- list()
-fa.tlip[[1]] <- dif[[110]]
+head(partialfit[order(partialfit$rmsea),], 28)
 
 
-##---- FA_INV_PARTIAL_SCORES
+partialfitA <- readRDS("partialfit0.rds")
+partialfitB <- readRDS("partialfit2.rds")
+partialfitC <- readRDS("partialfit1.rds")
+partialfitD <- readRDS("partialfit0b.rds")
+
+
+##---- FA_INV_PART_SCORES
 # partial intercept invariance analysis
 
 # examine scores
@@ -104,7 +110,7 @@ scores_dif2 <- scores_dif2 %>%
   dplyr::select(id, EXT, INT) %>%
   dplyr::rename(EXTd2 = EXT, INTd2 = INT)
 
-scores_dif3 <- lavPredict(dif[[117]], newdata = items[[1]])
+scores_dif3 <- lavPredict(dif[[102]], newdata = items[[1]])
 scores_dif3 <- cbind(items[[1]], do.call(rbind, scores_dif3))
 scores_dif3 <- scores_dif3 %>% 
   dplyr::select(id, EXT, INT) %>%

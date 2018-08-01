@@ -4,7 +4,7 @@
 # histogram of age (months) by cohort
 
 # make data
-aged <- aggregate(scores2plot$cohortsex, list(age = scores2plot$age, cohort = scores2plot$cohort), FUN = length)
+aged <- aggregate(finaldata$cohortsex, list(age = finaldata$age, cohort = finaldata$cohort), FUN = length)
 # convert to densities
 aged$dens[aged$cohort == "BCS"] <-  aged[aged$cohort == "BCS", "x"]/ sum(aged[aged$cohort == "BCS", "x"])
 aged$dens[aged$cohort == "MCS"] <-  aged[aged$cohort == "MCS", "x"]/ sum(aged[aged$cohort == "MCS", "x"])
@@ -36,10 +36,10 @@ addopts.raw <- function(x) {
   return(x)
 }
 
-rawext.m <- ggplot(subset(scores2plot, sex=="M"),aes(x=EXT_RAW, fill=cohort)) + ggtitle("EXT Scores (Males)") + coord_cartesian(ylim = c(0,.25))
-rawint.m <- ggplot(subset(scores2plot, sex=="M"),aes(x=INT_RAW, fill=cohort)) + ggtitle("INT Scores (Males)") + coord_cartesian(ylim = c(0,.4))
-rawext.f <- ggplot(subset(scores2plot, sex=="F"),aes(x=EXT_RAW, fill=cohort)) + ggtitle("EXT Scores (Females)") + coord_cartesian(ylim = c(0,.25))
-rawint.f <- ggplot(subset(scores2plot, sex=="F"),aes(x=INT_RAW, fill=cohort)) + ggtitle("INT Scores (Females)") + coord_cartesian(ylim = c(0,.4))
+rawext.m <- ggplot(subset(finaldata, sex=="M"),aes(x=EXT_RAW, fill=cohort)) + ggtitle("EXT Scores (Males)") + coord_cartesian(ylim = c(0,.25))
+rawint.m <- ggplot(subset(finaldata, sex=="M"),aes(x=INT_RAW, fill=cohort)) + ggtitle("INT Scores (Males)") + coord_cartesian(ylim = c(0,.4))
+rawext.f <- ggplot(subset(finaldata, sex=="F"),aes(x=EXT_RAW, fill=cohort)) + ggtitle("EXT Scores (Females)") + coord_cartesian(ylim = c(0,.25))
+rawint.f <- ggplot(subset(finaldata, sex=="F"),aes(x=INT_RAW, fill=cohort)) + ggtitle("INT Scores (Females)") + coord_cartesian(ylim = c(0,.4))
 rawlist <- list(rawext.m, rawint.m, rawext.f, rawint.f) 
 rawlist <- lapply(rawlist, addopts.raw) # apply options to all graphs
 
@@ -65,16 +65,16 @@ for (g in c("M", "F")) {
   for (f in c("EXT","INT")) {
     cs1 <- paste0("BCS.",g)
     cs2 <- paste0("MCS.",g)
-    pval <- round(ks.test(scores2plot[scores2plot$cohortsex==cs1,f],
-                                  scores2plot[scores2plot$cohortsex==cs2,f]
+    pval <- round(ks.test(finaldata[finaldata$cohortsex==cs1,f],
+                                  finaldata[finaldata$cohortsex==cs2,f]
     )$p.value,3)
     if (pval>.0001) ksp[[paste0(f,".",g)]] <- toString(pval)
     else ksp[[paste0(f,".",g)]] <- "$<0.0001$"
   }
 }
 # graph x axis boundaries
-maxx <- max(scores2plot[names(scores2plot) %in% c("EXT","INT")]) +.05
-minx <- min(scores2plot[names(scores2plot) %in% c("EXT","INT")]) -.05
+maxx <- max(finaldata[names(finaldata) %in% c("EXT","INT")]) +.05
+minx <- min(finaldata[names(finaldata) %in% c("EXT","INT")]) -.05
 
 # common options
 addopts.dens <- function(x) {
@@ -92,10 +92,10 @@ addopts.dens <- function(x) {
 }
 
 # densities of factor scores
-pdext.ebm.m <- ggplot(subset(scores2plot, sex=="M"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Males Externalising")
-pdint.ebm.m <- ggplot(subset(scores2plot, sex=="M"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Males Internalising")
-pdext.ebm.f <- ggplot(subset(scores2plot, sex=="F"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Females Externalising")
-pdint.ebm.f <- ggplot(subset(scores2plot, sex=="F"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Females Internalising")
+pdext.ebm.m <- ggplot(subset(finaldata, sex=="M"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Males Externalising")
+pdint.ebm.m <- ggplot(subset(finaldata, sex=="M"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Males Internalising")
+pdext.ebm.f <- ggplot(subset(finaldata, sex=="F"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Females Externalising")
+pdint.ebm.f <- ggplot(subset(finaldata, sex=="F"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Females Internalising")
 denslist <- list(pdext.ebm.m, pdint.ebm.m, pdext.ebm.f, pdint.ebm.f) 
 denslist <- lapply(denslist, addopts.dens) # apply options to all graphs
 # add KS pvalue
@@ -117,8 +117,8 @@ p
 ############################################################################################
 ## ---- FACRAW
 # see how scored factors compare with raw scores
-box.ext.bcs <- ggplot(data=subset(scores2plot, cohort=="BCS"), aes(x=as.factor(EXT_RAW), y=EXT)) + geom_boxplot() + ggtitle("BCS Externalising") + xlab("Sum score") + ylab("Factor score")
-box.int.bcs <- ggplot(data=subset(scores2plot, cohort=="BCS"), aes(x=as.factor(INT_RAW), y=INT)) + geom_boxplot() + ggtitle("BCS Internalising") + xlab("Sum score") + ylab("Factor score")
-box.ext.mcs <- ggplot(data=subset(scores2plot, cohort=="MCS"), aes(x=as.factor(EXT_RAW), y=EXT)) + geom_boxplot() + ggtitle("MCS Externalising") + xlab("Sum score") + ylab("Factor score")
-box.int.mcs <- ggplot(data=subset(scores2plot, cohort=="MCS"), aes(x=as.factor(INT_RAW), y=INT)) + geom_boxplot() + ggtitle("MCS Internalising") + xlab("Sum score") + ylab("Factor score")
+box.ext.bcs <- ggplot(data=subset(finaldata, cohort=="BCS"), aes(x=as.factor(EXT_RAW), y=EXT)) + geom_boxplot() + ggtitle("BCS Externalising") + xlab("Sum score") + ylab("Factor score")
+box.int.bcs <- ggplot(data=subset(finaldata, cohort=="BCS"), aes(x=as.factor(INT_RAW), y=INT)) + geom_boxplot() + ggtitle("BCS Internalising") + xlab("Sum score") + ylab("Factor score")
+box.ext.mcs <- ggplot(data=subset(finaldata, cohort=="MCS"), aes(x=as.factor(EXT_RAW), y=EXT)) + geom_boxplot() + ggtitle("MCS Externalising") + xlab("Sum score") + ylab("Factor score")
+box.int.mcs <- ggplot(data=subset(finaldata, cohort=="MCS"), aes(x=as.factor(INT_RAW), y=INT)) + geom_boxplot() + ggtitle("MCS Internalising") + xlab("Sum score") + ylab("Factor score")
 plot_grid(box.ext.bcs, box.int.bcs, box.ext.mcs, box.int.mcs, ncol=2, align="h")

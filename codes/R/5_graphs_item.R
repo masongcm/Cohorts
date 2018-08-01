@@ -3,7 +3,7 @@
 ## ---- ITEMINEQ_MAKE
 
 # make items binary and keep items + decomposition
-s2pb <- scores2plot %>%
+s2pb <- finaldata %>%
   mutate_at(paste0("X", c(1,2,3,4,7,8,9,10)), funs(b = recode(., "1"="1", "2"="0", "0"="1"))) %>% # 3 cat
   mutate_at(paste0("X", c(5,6,11)), funs(b = recode(., "1"="0", "0"="1"))) %>% # 2 cat
   select(id, cohort, sex, mpsla5, smkpr, fscl5wb, X1_b, X2_b, X3_b, X4_b, X5_b, X6_b, X7_b, X8_b, X9_b, X10_b, X11_b) %>%

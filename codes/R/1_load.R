@@ -41,7 +41,7 @@ printfit <- function(m) {
 # auxiliary variables to retain
 auxvars <- c("sex", "region", "ethn", "fscl", "mscl",
              "bwt", "lowbwt", "parity", "firstb", "nprevst", "caesbirth", "smkpr", "gestaw", "preterm", 
-             "mothageb", "teenm", "singlem", "mheight", "mempl",
+             "mothageb", "mothagefb", "teenm", "singlem", "mheight", "mempl",
              "mysch5", "fysch5", "numch5", "ageint5", "mhied5", "mempl5", "mpsla5", "fpsla5", "fscl5", "mscl5",
              "faminc10_real", "faminc10_infl", "incq10", "scl10"
              )

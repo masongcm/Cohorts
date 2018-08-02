@@ -49,7 +49,7 @@ grouplabs <- list("Maternal education (5)" = 1,
 # labels for variables (texreg)
 varlabs <- c("Post-compulsory",
              "Employed",
-             "Blue collar", "No father",
+             "Blue collar", "No father figure",
              "Age", "Unmarried", "Nonwhite child",
              "Firstborn", "Mother smoked in pregnancy", "(log) Birthweight"
 )

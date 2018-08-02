@@ -1,5 +1,6 @@
+##---- AUXFUN
+# auxiliary functions
 
-## ---- FUN_GETPARS
 
 ########################################################################
 # GETMEASPARS
@@ -83,14 +84,14 @@ getmeaspars <- function(fit, groups = 2, mode = "tli") {
   if (mode=="tli" & groups==2) colnames(allparout) <- c("measure", "lambda", "tau1", "tau2", "eps")
   if (mode=="tl" & groups==4) colnames(allparout) <- c("measure", "lambda", "tau1", "tau2", "nu2", "nu3", "nu4", "eps2", "eps3", "eps4")
   if (mode=="tli" & groups==4) colnames(allparout) <- c("measure", "lambda", "tau1", "tau2", "eps2", "eps3", "eps4")
-
+  
   # add latent factor and reorder
   allparout$factor <- as.matrix(c(rep("EXT",6), rep("INT",5)))
   allparout <- cbind(allparout[,c("measure", "factor")], allparout[,!names(allparout) %in% c("measure", "factor")])
   
   return(allparout)
 }
-  
+
 
 
 ########################################################################
@@ -144,15 +145,44 @@ getlvpars <- function(fit, groups = 2) {
     for (j in 1:2) {
       lvparsout[[j]] <- cbind(as.matrix(c("$\\theta^{EXT}$", "$\\theta^{INT}$")),lvparsout[[j]])
       names(lvparsout[[j]]) <- c("measure", 
-                                   "mean_BCS", "covext_BCS", "covint_BCS", "corr_BCS", 
-                                   "mean_MCS", "covext_MCS", "covint_MCS", "corr_MCS")
+                                 "mean_BCS", "covext_BCS", "covint_BCS", "corr_BCS", 
+                                 "mean_MCS", "covext_MCS", "covint_MCS", "corr_MCS")
     }
   }
   return(lvparsout)
 }
 
 
+########################################################################
+# printing for outcomes tables
 
-
-
+# function to print coefficients in correct format
+prcoef <- function(x) {
+  if (abs(x)<10) out <- sub("^(-?)0.", "\\1.", sprintf("%.3f", x))
+  else out <- sprintf("%.1f", x)
+  return(out)
+}
+# function to put stars
+stars <- function(t) {
+  if (abs(t) > 2.58) return("^{***}")
+  else if (abs(t) <= 2.58 & abs(t) > 1.96) return("^{**}")
+  else if (abs(t) <= 1.96 & abs(t) > 1.64) return("^{*}")
+  else return("")
+}
+# function to extract estimate, put stars and robust SE
+cellpr <- function(mod, vr) {
+  # mod: lm model
+  # vrs: variable to extract
+  coefs <- lmtest::coeftest(mod, vcov = sandwich::vcovHC(mod, type = "HC1"))
+  coefs2 <- coefs[vr,]
+  return(
+    paste0("$", prcoef(round(coefs2[1],3)), # estimate
+           stars(coefs2[3]), "$", # stars
+           " \\newline ($", prcoef(round(coefs2[2],3)), "$)")
+  ) # SE (on new line)
+}
+# print R2
+prr2 <- function(mod) {
+  return(sprintf("%.4f", summary(mod)$adj.r.squared))
+}
 

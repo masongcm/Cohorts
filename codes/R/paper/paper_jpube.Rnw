@@ -1,103 +1,4 @@
-
-<<MAIN,cache=FALSE,echo=FALSE,results='hide',message=FALSE,warning=FALSE>>=
-rm(list=ls())         # Clear all objects from memory 
-  opts_chunk$set(concordance=FALSE,
-                 echo=FALSE,
-                 tidy=FALSE,
-                 autodep=TRUE,
-                 cache=T, # REPLACE LATER
-                 message=FALSE, 
-                 warning=FALSE,
-                 size='scriptsize',
-                 results='hide',
-                 comment=NA, 
-                 fig.width=4,
-                 fig.height=4, 
-                 out.width='\\textwidth',
-                 fig.show='hold',
-                 tikzDefaultEngine='pdftex',
-                 tikzDocumentDeclaration = "\\documentclass[10pt]{article}",
-                 tikzMetricPackages = c("\\usepackage[utf8]{inputenc}","\\usepackage[T1]{fontenc}", "\\usetikzlibrary{calc}", "\\usepackage{amssymb}")
-                 )
-
-
-@
-
-
-<<READ, cache=FALSE >>=
-library(here)
-read_chunk(here("codes/R/1_load.R"))
-read_chunk(here("codes/R/2_efa.R"))
-read_chunk(here("codes/R/3_inv_main.R"))
-read_chunk(here("codes/R/3_inv_aux.R"))
-read_chunk(here("codes/R/3_inv_fit.R"))
-read_chunk(here("codes/R/4_scores.R"))
-read_chunk(here("codes/R/4_scores_aux.R"))
-read_chunk(here("codes/R/5_graphs.R"))
-read_chunk(here("codes/R/6_selectvars.R"))
-read_chunk(here("codes/R/8_regs_dep.R"))
-read_chunk(here("codes/R/8_regs_outc.R"))
-read_chunk(here("codes/R/9_gelbfig.R"))
-read_chunk(here("codes/R/getpars.R"))
-
-@
-
-<<PREAMBLE >>=
-@
-
-<<LOAD_DATA>>=
-@
-
-<<MEANTABLE>>=
-# make table with means
-@
-
-<<MEANTABLE_PRINT>>=
-# function to print mean table
-printmeantab <- function(tab) {
-  print(xtable(tab,
-               align="L{0cm}C{.04\\textwidth}C{.05\\textwidth}C{.05\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}L{.4\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
-               digits = 1
-  ), 
-  size="\\small",
-  include.rownames=F,
-  include.colnames=F,
-  booktabs = T,
-  add.to.row = list(pos = c(list(0)),
-                    command = c(
-                      # header
-                      paste(" & & &
-                            \\multicolumn{4}{c}{\\textbf{BCS}} &
-                            \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){4-7} \\cmidrule(lr){8-11} 
-                            Item & Factor & Num. Categ. &
-                            Wording & Cert. Appl. (\\%) & Smtm. Appl. (\\%) & Appl. (\\%) &
-                            Wording & Cert. True (\\%) & Smwt. True (\\%) & True (\\%) \\\\ \\midrule
-                            "
-                            , sep="")
-                    )),
-  sanitize.text.function = function(x){x},
-  sanitize.rownames.function = function(x){""}, # to not print row numbers
-  tabular.environment = "tabular", width = ".8\\textwidth",
-  floating = FALSE
-  )
-}
-
-@
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-<<FA_INV_MAIN>>=
-# main models only
-@
-
-<<FA_FIT>>=
-# assemble fit indices into matrices
-@
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\documentclass[pdftex,10pt,twoside,a4paper]{article}
+\documentclass[pdftex,10pt,a4paper]{article}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsfonts}
@@ -165,13 +66,12 @@ printmeantab <- function(tab) {
 
 % page setup (from Racine)
 \setlength{\topmargin}{0cm}
-\setlength{\textheight}{24cm}
+\setlength{\textheight}{23cm}
 \setlength{\oddsidemargin}{.0cm}
 \setlength{\evensidemargin}{.0cm}
 \setlength{\textwidth}{16.5cm}
 \setlength{\footskip}{1.5cm}
 \setlength{\footnotesep}{0.4cm}
-\linespread{1.3}
 
 % additional symbols
 \newcommand{\me}{\mathrm{e}}
@@ -208,6 +108,155 @@ printmeantab <- function(tab) {
 \begin{document}
 \maketitle
 
+
+<<MAIN,cache=FALSE,echo=FALSE,results='hide',message=FALSE,warning=FALSE>>=
+rm(list=ls())         # Clear all objects from memory 
+  opts_chunk$set(concordance=FALSE,
+                 echo=FALSE,
+                 tidy=FALSE,
+                 autodep=TRUE,
+                 cache=T, # REPLACE LATER
+                 message=FALSE, 
+                 warning=FALSE,
+                 size='scriptsize',
+                 results='hide',
+                 comment=NA, 
+                 fig.width=4,
+                 fig.height=4, 
+                 out.width='\\textwidth',
+                 fig.show='hold',
+                 tikzDefaultEngine='pdftex',
+                 tikzDocumentDeclaration = "\\documentclass[10pt]{article}",
+                 tikzMetricPackages = c("\\usepackage[utf8]{inputenc}","\\usepackage[T1]{fontenc}", "\\usetikzlibrary{calc}", "\\usepackage{amssymb}")
+                 )
+
+
+@
+
+
+<<READ, cache=FALSE >>=
+library(here)
+read_chunk(here("codes/R/1_load.R"))
+read_chunk(here("codes/R/2_efa.R"))
+read_chunk(here("codes/R/3_inv_main.R"))
+read_chunk(here("codes/R/3_inv_aux.R"))
+read_chunk(here("codes/R/3_inv_fit.R"))
+read_chunk(here("codes/R/4_scores.R"))
+read_chunk(here("codes/R/4_scores_aux.R"))
+read_chunk(here("codes/R/5_graphs.R"))
+read_chunk(here("codes/R/5_graphs_ineq.R"))
+read_chunk(here("codes/R/5_graphs_item.R"))
+read_chunk(here("codes/R/6_selectvars.R"))
+read_chunk(here("codes/R/8_regs_dep.R"))
+read_chunk(here("codes/R/8_regs_outc.R"))
+read_chunk(here("codes/R/99_auxfun.R"))
+
+@
+
+<<PREAMBLE >>=
+@
+
+<<LOAD_DATA>>=
+@
+
+<<AUXFUN>>=
+# load function that gets parameters
+@
+
+<<MEANTABLE>>=
+# make table with means
+@
+
+<<MEANTABLE_PRINT>>=
+# function to print mean table
+printmeantab <- function(tab) {
+  print(xtable(tab,
+               align="L{0cm}C{.04\\textwidth}C{.05\\textwidth}C{.05\\textwidth}L{.35\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}L{.35\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
+               digits = 1
+  ), 
+  size="\\small",
+  include.rownames=F,
+  include.colnames=F,
+  booktabs = T,
+  add.to.row = list(pos = c(list(0)),
+                    command = c(
+                      # header
+                      paste(" & & &
+                            \\multicolumn{4}{c}{\\textbf{BCS}} &
+                            \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){4-7} \\cmidrule(lr){8-11} 
+                            Item & Factor & Num. Categ. &
+                            Wording & Cert. Appl. (\\%) & Smtm. Appl. (\\%) & Appl. (\\%) &
+                            Wording & Cert. True (\\%) & Smwt. True (\\%) & True (\\%) \\\\ \\midrule
+                            "
+                            , sep="")
+                    )),
+  sanitize.text.function = function(x){x},
+  sanitize.rownames.function = function(x){""}, # to not print row numbers
+  tabular.environment = "tabular", width = ".8\\textwidth",
+  floating = FALSE
+  )
+}
+
+@
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<FA_INV_MAIN>>=
+# main models only
+@
+
+<<FA_INV_AUX_SYN>>=
+# syntax for robustness models
+@
+
+<<FA_INV_AUX_GEND>>=
+# robustness checks for gender alone
+@
+
+<<FA_FIT>>=
+# assemble fit indices into matrices
+@
+
+<<FA_SCORES_MAIN>>=
+# produce scores for main model
+@
+
+<<FA_SCORES_BIND>>=
+# bind scores with data
+@
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<FACINEQ_MAKE>>=
+# make factor inequality graphs
+@
+
+<<ITEMINEQ_MAKE>>=
+# make item-level inequality graphs
+@
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<SELECTVARS>>=
+# define variables and formulas for regression and decomposition
+@
+
+<<REGS_DEP, dependson="SELECTVARS">>=
+# run regressions explaining EXT INT
+@
+
+<<LOAD_DATA_OUTC, dependson="SELECTVARS">>=
+# load outcomes data
+@
+
+<<REGS_OUTC, dependson="LOAD_DATA_OUTC">>=
+# run regressions explaining adolescent/adult outcomes
+@
+
+<<REGS_OUTC_TAB, dependson="REGS_OUTC">>=
+# make tables from regressions
+@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
@@ -359,6 +408,7 @@ Threshold, Loading, and Intercept invariance
 \end{tabular}
 \end{table}
 
+% ADD PARTIAL INVARIANCE
 
 
 \clearpage
@@ -368,7 +418,7 @@ Threshold, Loading, and Intercept invariance
 
 \clearpage
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \clearpage
 
@@ -398,32 +448,60 @@ printmeantab(table)
 \end{table}
 \end{landscape}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{landscape}
 \begin{table}[ht]
 \caption{Measurement invariance fit comparison}\label{tab:fit}
-\centering\setstretch{1.2} \footnotesize
+\centering\setstretch{1.2} \scriptsize
 <<FA_FIT_RES, dependson="FA_FIT", results='asis'>>=
 require(xtable)
 
-table <- rbind(afitab[[1]],afitab[[2]])
+# MAKE FIT TABLES
+fit_main <- afitab(list(fa.c[[1]], fa.tl[[1]], fa.tli[[1]]), 
+       c("Configural", 
+         "Threshold + Loading Inv", 
+         "Threshold, Loading, + Intercept Inv")
+)
+
+fit_agesub <- afitab(list(fa.c[[2]], fa.tl[[2]], fa.tli[[2]]), 
+                   c("Configural", 
+                     "Threshold + Loading Inv", 
+                     "Threshold, Loading, + Intercept Inv")
+)
+fit_males <- afitab(list(fa.c[[4]], fa.tl[[4]], fa.tli[[4]]), 
+                   c("Configural", 
+                     "Threshold + Loading Inv", 
+                     "Threshold, Loading, + Intercept Inv")
+)
+fit_females <- afitab(list(fa.c[[5]], fa.tl[[5]], fa.tli[[5]]), 
+                   c("Configural", 
+                     "Threshold + Loading Inv", 
+                     "Threshold, Loading, + Intercept Inv")
+)
+
+
+table <- rbind(fit_main,fit_agesub,fit_males,fit_females)
 
 print(xtable(table,
-                    align="L{0cm}L{.20\\textwidth}C{.05\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}",
+                    align="L{0cm}L{.20\\textwidth}C{.05\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
                     digits = 4
                     ),
-             size="\\small",
+             size="\\footnotesize",
              include.rownames=F,
              include.colnames=F,
              booktabs = T,
-             add.to.row = list(pos = c(list(0,3)),
+             add.to.row = list(pos = c(list(0,3,6,9)),
                               command = c(
                               # header
             "& & \\multicolumn{6}{c}{\\textbf{Absolute fit}} & \\multicolumn{6}{c}{\\textbf{Relative fit}} 
                   \\\\ \\cmidrule(lr){3-8} \\cmidrule(lr){9-14}
-            Model & Num. params & $\\chi^2$ & RMSEA & SRMR & MFI & CFI & G-hat & $\\chi^2$ $p$ & \\textDelta RMSEA & \\textDelta SRMR &  \\textDelta MFI & \\textDelta CFI & \\textDelta G-hat \\\\ 
+            Model & Num. params & $\\chi^2$ & RMSE & SRMR & MFI & CFI & G-hat & $\\chi^2$ $p$ & \\textDelta RMSE & \\textDelta SRMR &  \\textDelta MFI & \\textDelta CFI & \\textDelta G-hat \\\\ 
 & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9) & (10) & (11) & (12) & (13) \\\\ \\midrule
-                       \\textbf{A: All ages} \\\\",
-                      "\\newline \\textbf{B: 59-61 months sample} \\\\ \\midrule "
+                       \\textbf{A: Entire sample} \\\\",
+                      "\\newline \\textbf{B: 59-61 months sample} \\\\ \\midrule ",
+                      "\\newline \\textbf{C: Males only} \\\\ \\midrule ",
+                      "\\newline \\textbf{D: Females only} \\\\ \\midrule "
                                     )),
              sanitize.text.function = function(x){x},
              sanitize.rownames.function = function(x){""}, # to not print row numbers
@@ -432,10 +510,398 @@ print(xtable(table,
 )
 
 @
-\justify {\scriptsize \emph{Notes}: The table presents fit indices for models of different invariance levels, following \cite{Wu2016a} Col. (1) displays the number of estimated parameters for each model. Col. (2) and (8) present the value of the $\chi^2$ statistic and the pvalue of the test of equality with respect to the configural model. Col. (3)-(7) and (9)-(13) present alternative fit indices (AFIs), in absolute values and differences from the configural model respectively. RMSEA = Root mean squared error of approximation; SRMR = standardised root mean residual; MFI = McDonald non-centrality index; CFI = comparative fit index; G-hat = gamma-hat. Panel A shows results for the whole sample of children in the BCS and MCS cohorts. Panel B is restricted to a subsample of children in the age range of maximum overlap between the two cohorts -- 59-61 months.
+\justify {\scriptsize \emph{Notes}: The table presents fit indices for models of different invariance levels, following \cite{Wu2016a} Col. (1) displays the number of estimated parameters for each model. Col. (2) and (8) present the value of the $\chi^2$ statistic and the pvalue of the test of equality with respect to the configural model. Col. (3)-(7) and (9)-(13) present alternative fit indices (AFIs), in absolute values and differences from the configural model respectively. RMSE = Root mean squared error of approximation; SRMR = standardised root mean residual; MFI = McDonald non-centrality index; CFI = comparative fit index; G-hat = gamma-hat. Panel A shows results for the whole sample of children in the BCS and MCS cohorts. Panel B is restricted to a subsample of children in the age range of maximum overlap between the two cohorts (59-61 months).
 \par}
 \end{table}
 \end{landscape}
+
+\clearpage
+\begin{table}
+\caption{Estimated parameters -- Threshold and loading invariance model (anchored)}\label{tab:measpars}
+\centering\setstretch{1.2}\footnotesize
+<<RES_FA_PAR, dependson="FA_FIT", results='asis'>>=
+
+table <- getmeaspars(fa.tlmt[[1]], groups = 4, mode = "tl")
+
+# sequences to add rows
+rws <- seq(2, (nrow(table)-1), by = 1) # start from row 2 (exclude model titles)
+rwsl <- as.list(rws)
+
+print.xtable(xtable(table,
+              align="C{0cm}C{.06\\textwidth}C{.04\\textwidth}C{.07\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}",
+              digits = 3
+                    ),
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0)),
+                              command = c(
+                              # header
+                                          " &
+                                            & \\textbf{Loadings}
+                                            & \\multicolumn{2}{c}{\\textbf{Thresholds}}
+                                            & \\multicolumn{3}{c}{\\textbf{Intercepts}}
+                                            & \\multicolumn{3}{c}{\\textbf{Variances}}
+                                            \\\\ \\cmidrule(lr){3-3} \\cmidrule(lr){4-5} \\cmidrule(lr){6-8} \\cmidrule(lr){9-11}
+
+                                            &
+                                            & $\\lambda$
+                                            & $\\tau_1$ & $\\tau_2$
+                                            & \\multicolumn{3}{c}{$\\nu$}
+                                            & \\multicolumn{3}{c}{$\\text{diag}(\\Psi)$} \\\\
+
+                                            Measure
+                                            & Factor
+                                            & All
+                                            & All & All
+                                            & BCS F & MCS M & MCS F
+                                            & BCS F & MCS M & MCS F
+                                            \\\\ "
+                      )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = "\\textwidth",
+             floating = FALSE
+)
+@
+\end{table}
+
+\begin{table}
+\caption{Estimated latent variable parameters -- Threshold and loading invariance model (anchored)}\label{tab:lvpars}
+\centering\setstretch{1.2}\footnotesize
+<<RES_FA_LV, dependson="FA_FIT", results='asis'>>=
+require(xtable)
+
+lvtab <- getlvpars(fa.tlmt[[1]], groups = 4)
+table <- rbind(lvtab$Males,lvtab$Females)
+
+
+print.xtable(xtable(table,
+                     align="C{0cm}L{.13\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
+                    digits = 3
+                    ),
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0,2,4)),
+                              command = c(
+                              # header
+                      "\\toprule
+                      & \\multicolumn{4}{c}{\\textbf{BCS}}
+                      & \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){2-5} \\cmidrule(lr){6-9}
+
+                      & Mean
+                      & \\multicolumn{2}{c}{Covariance}
+                      & \\multicolumn{1}{c}{Correlation}
+                      & Mean
+                      & \\multicolumn{2}{c}{Covariance}
+                      & \\multicolumn{1}{c}{Correlation} \\\\
+
+                      \\textbf{Males} \\\\",
+                      "\\textbf{Females} \\\\",
+                      "\\bottomrule"
+                                    )),
+             hline.after = NULL,  # remove default booktabs lines
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = "\\textwidth",
+             floating = FALSE
+)
+
+@
+\end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}
+<<FACDENS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
+@
+\caption{Scores}
+\justify {\scriptsize \emph{Notes}: Density of scores from final model.
+\par}
+\end{figure}
+
+\begin{figure}
+<<RAWHIST, dependson="FA_SCORES_BIND", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
+@
+\caption{Sum scores}
+\justify {\scriptsize \emph{Notes}: Density of sum scores without factor analysis.
+\par}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{table}
+\caption{Quantile differences in scores}\label{tab:iqdiff}
+\centering\setstretch{1.2}\footnotesize
+<<INEQ_STATS, dependson="FA_SCORES_BIND", results='asis'>>=
+
+# income 
+tb <- data.frame(
+  aggregate(finaldata$faminc10_infl, by=list(finaldata$cohort), FUN = function(x) quantile(x, c(.1, .25, .75, .9), na.rm=T))
+)
+tb$d9010 <- tb$x[,4]/tb$x[,1]
+tb$d7525 <- tb$x[,3]/tb$x[,2]
+
+
+tb.ext <- data.frame(
+  aggregate(finaldata$EXT, by=list(finaldata$cohortsex), FUN = function(x) quantile(x, c(.1, .25, .5, .75, .9), na.rm=T))
+)
+tb.ext$d9010 <- abs(tb.ext$x[,"90%"]-tb.ext$x[,"10%"])
+tb.ext$d7525 <- abs(tb.ext$x[,"75%"]-tb.ext$x[,"25%"])
+tb.ext$d9050 <- abs(tb.ext$x[,"90%"]-tb.ext$x[,"50%"])
+tb.ext$d5010 <- abs(tb.ext$x[,"50%"]-tb.ext$x[,"10%"])
+rownames(tb.ext) <- tb.ext$Group.1
+tb.ext <- t(tb.ext[,-c(1,2)]) # remove aggregated quantiles and transpose
+tb.ext <- tb.ext[,c("BCS.M","MCS.M","BCS.F","MCS.F")]
+
+tb.int <- data.frame(
+  aggregate(finaldata$INT, by=list(finaldata$cohortsex), FUN = function(x) quantile(x, c(.1, .25, .5, .75, .9), na.rm=T))
+)
+tb.int$d9010 <- abs(tb.int$x[,"90%"]-tb.int$x[,"10%"])
+tb.int$d7525 <- abs(tb.int$x[,"75%"]-tb.int$x[,"25%"])
+tb.int$d9050 <- abs(tb.int$x[,"90%"]-tb.int$x[,"50%"])
+tb.int$d5010 <- abs(tb.int$x[,"50%"]-tb.int$x[,"10%"])
+rownames(tb.int) <- tb.int$Group.1
+tb.int <- t(tb.int[,-c(1,2)]) # remove aggregated quantiles and transpose
+tb.int <- tb.int[,c("BCS.M","MCS.M","BCS.F","MCS.F")]
+
+
+# assemble and print
+table <- rbind(tb.ext,tb.int)
+table <- cbind(data.frame(as.matrix(rep(c("90-10", "75-25", "90-50", "50-10"),2))),
+               table)
+
+print(xtable(table,
+                    align="L{0cm}L{.15\\textwidth}C{.1\\textwidth}C{.1\\textwidth}C{.1\\textwidth}C{.1\\textwidth}",
+                    digits = 2
+                    ),
+             size="\\footnotesize",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0,4)),
+                              command = c(
+                              # header
+            " & \\multicolumn{2}{c}{\\textbf{Males}} & \\multicolumn{2}{c}{\\textbf{Females}} \\\\ \\cmidrule(lr){2-3}  \\cmidrule(lr){4-5} 
+                       & BCS & MCS & BCS & MCS  \\\\
+                      \\textbf{Externalising} \\\\ ",
+                      "\\textbf{Internalising} \\\\ \\midrule "
+                                    )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = "\\textwidth",
+             floating = FALSE
+)
+
+@
+\end{table}
+
+
+\begin{figure}
+<<FACINEQ_FSC, dependson="FA_SCORES_BIND", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
+fi <- fi_fsc # select result
+gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
+                        fi$ineqlist[[3]],fi$ineqlist[[4]],
+                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
+                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
+@
+\caption{Inequality by father occupation -- normalised}
+\end{figure}
+
+
+\begin{figure}
+<<FACINEQ_PS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
+fi <- fi_ps # select result
+gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
+                        fi$ineqlist[[3]],fi$ineqlist[[4]],
+                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
+                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
+@
+\caption{Inequality by mother education -- normalised}
+\end{figure}
+
+\begin{figure}
+<<FACINEQ_SM, dependson="FA_SCORES_BIND", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
+fi <- fi_sm # select result
+gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
+                        fi$ineqlist[[3]],fi$ineqlist[[4]],
+                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
+                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
+@
+\caption{Inequality by mother smoking in pregnancy -- normalised}
+\end{figure}
+
+
+\begin{figure}
+<<ITEMINEQ_PS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=8, fig.width=12, out.width='\\linewidth'>>=
+itempl_ps
+@
+\caption{Item-level changes in inequality -- mother education}
+\justify {\scriptsize \emph{Notes}: The graph displays the ratio between low and high SES in the prevalence of each behaviour, separately by cohort.
+\par}
+\end{figure}
+
+\begin{figure}
+<<ITEMINEQ_FSC, dependson="FA_SCORES_BIND", dev='tikz', fig.height=8, fig.width=12, out.width='\\linewidth'>>=
+itempl_fsc
+@
+\caption{Item-level changes in inequality -- father occupation}
+\justify {\scriptsize \emph{Notes}: The graph displays the ratio between low and high SES in the prevalence of each behaviour, separately by cohort.
+\par}
+\end{figure}
+
+\begin{figure}
+<<ITEMINEQ_SM, dependson="FA_SCORES_BIND", dev='tikz', fig.height=8, fig.width=12, out.width='\\linewidth'>>=
+itempl_sm
+@
+\caption{Item-level changes in inequality -- mother smoking in pregnancy}
+\justify {\scriptsize \emph{Notes}: The graph displays the ratio between low and high SES in the prevalence of each behaviour, separately by cohort.
+\par}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}
+\caption{Determinants of Externalising Skills}
+\centering\footnotesize
+<<REGS_EXT, results='asis', dependson="REGS_DEP">>=
+
+# select models
+regs <- list(r_ext$BCS.M[["OLS"]],r_ext$MCS.M[["OLS"]],r_ext$BCS.F[["OLS"]],r_ext$MCS.F[["OLS"]])
+
+# robust SEs
+robust_se <- list()
+robust_p  <- list()
+for (i in 1:length(regs)) {
+  cov1              <- sandwich::vcovHC(regs[[i]], type = "HC1")
+  ct                <- lmtest::coeftest(regs[[i]], vcov = cov1)
+  robust_se[[i]] <- ct[, 2]
+  robust_p[[i]] <- ct[, 4]
+}
+
+texreg::texreg(regs,
+               stars = c(0.1, 0.05, 0.01), digits = 3,
+               override.se = robust_se, override.pvalues = robust_p,
+               single.row = FALSE, scriptsize = TRUE,
+               caption = "", label = "",
+               omit.coef = omitcoefs,
+               groups = grouplabs,
+               custom.columns = list("p-value" = r_ext$Mp, "p-value" = r_ext$Fp), custom.col.pos = c(4,6),
+               custom.coef.names = varlabs,
+               custom.model.names = c("Males BCS", "Males MCS", "Females BCS", "Females MCS"),
+               custom.note = "",
+               include.rmse = FALSE,
+               table = FALSE
+               )
+
+@
+\justify {\scriptsize \emph{Notes}: Robust standard errors in parentheses. All estimates additionally control for region of birth, mother height, number of previous stillbirths at child's birth, preterm birth, a dummy for missing gestational age, and number of other children in the household at child age 5.
+\par}
+\end{table}
+
+
+\begin{table}
+\caption{Determinants of Internalising Skills}
+\centering\footnotesize
+<<REGS_INT, results='asis', dependson="REGS_DEP">>=
+
+# select models
+regs <- list(r_int$BCS.M[["OLS"]],r_int$MCS.M[["OLS"]],r_int$BCS.F[["OLS"]],r_int$MCS.F[["OLS"]])
+
+# robust SEs
+robust_se <- list()
+robust_p  <- list()
+for (i in 1:length(regs)) {
+  cov1              <- sandwich::vcovHC(regs[[i]], type = "HC1")
+  ct                <- lmtest::coeftest(regs[[i]], vcov = cov1)
+  robust_se[[i]] <- ct[, 2]
+  robust_p[[i]] <- ct[, 4]
+}
+
+texreg::texreg(regs,
+               stars = c(0.1, 0.05, 0.01), digits = 3,
+               override.se = robust_se, override.pvalues = robust_p,
+               single.row = FALSE, scriptsize = TRUE,
+               caption = "", label = "",
+               omit.coef = omitcoefs,
+               groups = grouplabs,
+               custom.columns = list("p-value" = r_int$Mp, "p-value" = r_int$Fp), custom.col.pos = c(4,6),
+               custom.coef.names = varlabs,
+               custom.model.names = c("Males BCS", "Males MCS", "Females BCS", "Females MCS"),
+               custom.note = "",
+               include.rmse = FALSE,
+               table = FALSE
+               )
+
+@
+\justify {\scriptsize \emph{Notes}: Robust standard errors in parentheses. All estimates additionally control for region of birth, mother height, number of previous stillbirths at child's birth, preterm birth, a dummy for missing gestational age, and number of other children in the household at child age 5.
+\par}
+\end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<REGS_OUTC_TABPR, dependson="REGS_OUTC">>=
+# function to display outcome regression tables
+# numoutc = number of outcomes
+printoutctab <- function(tab, numoutc) {
+print(xtable(tab,
+                    align="R{0cm}L{.2\\textwidth}C{.05\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}C{.075\\textwidth}",
+                    digits = 3
+                    ),
+             size="\\footnotesize",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = as.list(c(0, 8*seq(1,numoutc-1))),
+                              command = c(
+                              # header
+            " & \\multicolumn{4}{c}{\\textbf{Males}} & \\multicolumn{4}{c}{\\textbf{Females}} \\\\ \\cmidrule(lr){2-5}  \\cmidrule(lr){6-9}
+& Mean & \\multicolumn{3}{c}{Coefficients} & Mean & \\multicolumn{3}{c}{Coefficients} \\\\ \\cmidrule(lr){3-5}  \\cmidrule(lr){7-9}
+            & (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) \\\\",
+            rep(" \\midrule", numoutc-1)
+            )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular",
+             floating = FALSE
+)
+}
+@
+
+
+\begin{table}
+\centering\footnotesize
+\caption{Predictors of adolescent and adult outcomes -- BCS}
+<<REGS_OUTC_BCS, results='asis', dependson="REGS_OUTC">>=
+
+# collapse to matrix
+bcs_outctab_mat <- do.call(rbind,lapply(bcs_outctab[c("smktry16", "bmi16", "hnvq30", "lhgrpay38")],matrix,ncol=9,byrow=FALSE))
+table <- bcs_outctab_mat
+printoutctab(table, 4)
+
+@
+\justify {\scriptsize \emph{Notes}: Robust standard errors in parentheses. All estimates additionally control for region of birth, maternal education (5), maternal employment (5), father occupation (5), maternal background (age, height, nonwhite ethnicity, number of children in HH), pregnancy (firstborn child, number of previous stillbirths, mother smoked in pregnancy, preterm birth, (log) birth weight).
+\par}
+\end{table}
+
+
+\begin{table}
+\centering\footnotesize
+\caption{Predictors of adolescent outcomes -- MCS}
+<<REGS_OUTC_MCS, results='asis', dependson="REGS_OUTC">>=
+
+# collapse to matrix
+mcs_outctab_mat <- do.call(rbind,lapply(mcs_outctab[c("smktry14", "bmi14")],matrix,ncol=9,byrow=FALSE))
+table <- mcs_outctab_mat
+printoutctab(table, 2)
+
+@
+\justify {\scriptsize \emph{Notes}: Robust standard errors in parentheses. All estimates additionally control for region of birth, maternal education (5), maternal employment (5), father occupation (5), maternal background (age, height, nonwhite ethnicity, number of children in HH), pregnancy (firstborn child, number of previous stillbirths, mother smoked in pregnancy, preterm birth, (log) birth weight).
+\par}
+\end{table}
 
 
 \end{document}

@@ -181,8 +181,8 @@ cellpr <- function(mod, vr) {
            " \\newline ($", prcoef(round(coefs2[2],3)), "$)")
   ) # SE (on new line)
 }
-# print R2
+# print R2 (with padding)
 prr2 <- function(mod) {
-  return(sprintf("%.4f", summary(mod)$adj.r.squared))
+  return(paste0("\\newline ", sprintf("%.4f", summary(mod)$adj.r.squared)))
 }
 

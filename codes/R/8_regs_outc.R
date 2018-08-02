@@ -7,27 +7,15 @@
 bcs16outc <- read.dta(paste0(dir_data, "bcsoutc.dta"), convert.factors = F) # all BCS data
 bcs16outc$id <- bcs16outc$bcsid
 bcs16outc$age16 <- factor(bcs16outc$age16)
-bcsoutc <- merge(finaldata, bcs16outc, by = "id", all.x = TRUE)
-# merge cognitive scores
-cogbcs <- bcs5data[,c("bcsid", "epvt_z", "hfd_z", "copy_z")]
-colnames(cogbcs)[1] <- "id"
-bcsoutc <- merge(bcsoutc, cogbcs, by = "id", all.x = TRUE)
-# make factor
-bcscogfa <- fa(bcsoutc[,c("epvt_z", "hfd_z", "copy_z")], factors=1)
-bcsoutc$cogscore <- factor.scores(bcsoutc[,c("epvt_z", "hfd_z", "copy_z")], bcscogfa, method = "Bartlett")$scores
+bcsoutc <- merge(regdata[regdata$cohort=="BCS",], bcs16outc, by = "id", all.x = TRUE)
+bcsoutc$cogscore <- factor.scores(bcsoutc[,c("C1", "C2", "C3")], fa(bcsoutc[,c("C1", "C2", "C3")], factors=1), method = "Bartlett")$scores
 
 # assemble outcomes data (MCS)
 mcs14outc <- read.dta(paste0(dir_data, "mcsoutc.dta"), convert.factors = F) # all BCS data
 mcs14outc$id <- mcs14outc$mcsid
 mcs14outc$age14 <- factor(mcs14outc$age14)
-mcsoutc <- merge(finaldata, mcs14outc, by="id")
-# merge cognitive scores
-cogmcs <- mcs5data[,c("mcsid", "nvoc_bastz", "psim_bastz", "patc_bastz")]
-colnames(cogmcs)[1] <- "id"
-mcsoutc <- merge(mcsoutc, cogmcs, by = "id", all.x = TRUE)
-# make factor
-mcscogfa <- fa(mcsoutc[,c("nvoc_bastz", "psim_bastz", "patc_bastz")], factors=1)
-mcsoutc$cogscore <- factor.scores(mcsoutc[,c("nvoc_bastz", "psim_bastz", "patc_bastz")], mcscogfa, method="Bartlett")$scores
+mcsoutc <- merge(regdata[regdata$cohort=="MCS",], mcs14outc, by="id", all.x = TRUE)
+mcsoutc$cogscore <- factor.scores(mcsoutc[,c("C1", "C2", "C3")], fa(mcsoutc[,c("C1", "C2", "C3")], factors=1), method = "Bartlett")$scores
 
 # recode
 bcsoutc$hscl42 <- NA # high social class

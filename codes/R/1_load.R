@@ -161,36 +161,36 @@ colnames(Xtemp.mcs) <- c(colnames(mcs5aux), "cohort", "X1", "X2", "X3", "X4", "X
 X.all <- data.frame(rbind(Xtemp.bcs, Xtemp.mcs))
 
 # assemble final data
-items.c <- X.all[,c(grep("X", names(X.all), value=T), 
+cohdata <- X.all[,c(grep("X", names(X.all), value=T), 
                     "id", "cohort", auxvars, "rwtd",
                     "C1", "C2", "C3")]
-colnames(items.c)[colnames(items.c) == "ageint5"] <- "age"
-items.c$sex <- factor(items.c$sex)
-levels(items.c$sex) = c("M", "F")
-items.c$cohortsex <- interaction(items.c[c("cohort","sex")]) # generate interaction
-items.c$cohortsex <- factor(items.c$cohortsex,levels(items.c$cohortsex)[c(1,3,2,4)]) # reorder
-levels(items.c$cohortsex) <- c("BCS.M", "BCS.F", "MCS.M", "MCS.F")
-items.c <- items.c[!is.na(items.c$cohortsex),] # drop missings
+colnames(cohdata)[colnames(cohdata) == "ageint5"] <- "age"
+cohdata$sex <- factor(cohdata$sex)
+levels(cohdata$sex) = c("M", "F")
+cohdata$cohortsex <- interaction(cohdata[c("cohort","sex")]) # generate interaction
+cohdata$cohortsex <- factor(cohdata$cohortsex,levels(cohdata$cohortsex)[c(1,3,2,4)]) # reorder
+levels(cohdata$cohortsex) <- c("BCS.M", "BCS.F", "MCS.M", "MCS.F")
+cohdata <- cohdata[!is.na(cohdata$cohortsex),] # drop missings
 
 # keep only complete cases in X
-items.c <- items.c[complete.cases(items.c[,c(grep("X[0-9]", names(X.all), value=T),"age","sex")]),]
+cohdata <- cohdata[complete.cases(cohdata[,c(grep("X[0-9]", names(X.all), value=T),"age","sex")]),]
 
 # add raw scores
-items.c$EXT_RAW <- rowSums(apply(items.c[,paste("X", seq(1,6), sep="")], 2, function(x) as.numeric(x)), na.rm = T)
-items.c$INT_RAW <- rowSums(apply(items.c[,paste("X", seq(7,11), sep="")], 2, function(x) as.numeric(x)), na.rm = T)
-items.c$EXT_RAWr <- residuals(lm(EXT_RAW ~ age, data=items.c, na.action = na.exclude))
-items.c$INT_RAWr <- residuals(lm(INT_RAW ~ age, data=items.c, na.action = na.exclude))
+cohdata$EXT_RAW <- rowSums(apply(cohdata[,paste("X", seq(1,6), sep="")], 2, function(x) as.numeric(x)), na.rm = T)
+cohdata$INT_RAW <- rowSums(apply(cohdata[,paste("X", seq(7,11), sep="")], 2, function(x) as.numeric(x)), na.rm = T)
+cohdata$EXT_RAWr <- residuals(lm(EXT_RAW ~ age, data=cohdata, na.action = na.exclude))
+cohdata$INT_RAWr <- residuals(lm(INT_RAW ~ age, data=cohdata, na.action = na.exclude))
 
 
 # FINAL CLEANING/RECODING
 
 # social class
-for (s in c("scl10", "mscl", "mscl5")) items.c[,s] <- factor(items.c[,s], labels = c("I", "II", "IIINM", "IIIM", "IV", "V", "other"))
-for (s in c("fscl", "fscl5")) items.c[,s] <- factor(items.c[,s], labels = c("I", "II", "IIINM", "IIIM", "IV", "V", "other", "no fath."))
+for (s in c("scl10", "mscl", "mscl5")) cohdata[,s] <- factor(cohdata[,s], labels = c("I", "II", "IIINM", "IIIM", "IV", "V", "other"))
+for (s in c("fscl", "fscl5")) cohdata[,s] <- factor(cohdata[,s], labels = c("I", "II", "IIINM", "IIIM", "IV", "V", "other", "no fath."))
 
 # collapsed social class (blue vs white collar)
 for (s in c("scl10","mscl","mscl5","fscl", "fscl5")) {
-  items.c[,paste0(s,"wb")] <- dplyr::recode(items.c[,s], 
+  cohdata[,paste0(s,"wb")] <- dplyr::recode(cohdata[,s], 
                                "I" = "White collar",
                                "II" = "White collar",
                                "IIINM" = "White collar",
@@ -203,44 +203,44 @@ for (s in c("scl10","mscl","mscl5","fscl", "fscl5")) {
 }
 
 # recode social class at 10
-items.c$scl10b <- NA
-items.c$scl10b[items.c$scl10 %in% c("I", "II")] <- 4
-items.c$scl10b[items.c$scl10 %in% c("IIINM")] <- 3
-items.c$scl10b[items.c$scl10 %in% c("IIIM")] <- 2
-items.c$scl10b[items.c$scl10 %in% c("IV", "V")] <- 1
-items.c$scl10b[items.c$scl10 %in% c("other")] <- 5
-items.c$scl10b <- factor(items.c$scl10b, labels = c("IV V","IIIM","IIINM","I II","oth"))
+cohdata$scl10b <- NA
+cohdata$scl10b[cohdata$scl10 %in% c("I", "II")] <- 4
+cohdata$scl10b[cohdata$scl10 %in% c("IIINM")] <- 3
+cohdata$scl10b[cohdata$scl10 %in% c("IIIM")] <- 2
+cohdata$scl10b[cohdata$scl10 %in% c("IV", "V")] <- 1
+cohdata$scl10b[cohdata$scl10 %in% c("other")] <- 5
+cohdata$scl10b <- factor(cohdata$scl10b, labels = c("IV V","IIIM","IIINM","I II","oth"))
 
 # recode years of schooling for plots
-items.c$mysch5b <- cut(items.c$mysch5, c(-1,15,16,18,21,31))
-levels(items.c$mysch5b) <- c("15", "16", "17-18", "19-21", "$>$21")
+cohdata$mysch5b <- cut(cohdata$mysch5, c(-1,15,16,18,21,31))
+levels(cohdata$mysch5b) <- c("15", "16", "17-18", "19-21", "$>$21")
 
 # convert to factor
 facnms <- c("smkpr", "region", "lowbwt", "caesbirth", "preterm", "firstb", "teenm", "singlem", "mempl", "mempl5", "mhied5", "mpsla5", "fpsla5")
-items.c[,facnms] <- lapply(items.c[,facnms] , factor)
-items.c$incq10 <- ordered(items.c$incq10)
-levels(items.c$mempl5) <- c("Unempl./At home", "Part time", "Full time")
-items.c$mempl5b <- dplyr::recode(items.c$mempl5, "Full time" = "Employed", "Part time" = "Employed")
-levels(items.c$mpsla5) <- c("Compulsory", "Post-Compulsory")
-levels(items.c$singlem) <- c("Married", "Not married")
-levels(items.c$smkpr) <- c("Non-smoker", "Smoker")
+cohdata[,facnms] <- lapply(cohdata[,facnms] , factor)
+cohdata$incq10 <- ordered(cohdata$incq10)
+levels(cohdata$mempl5) <- c("Unempl./At home", "Part time", "Full time")
+cohdata$mempl5b <- dplyr::recode(cohdata$mempl5, "Full time" = "Employed", "Part time" = "Employed")
+levels(cohdata$mpsla5) <- c("Compulsory", "Post-Compulsory")
+levels(cohdata$singlem) <- c("Married", "Not married")
+levels(cohdata$smkpr) <- c("Non-smoker", "Smoker")
 
 # log birthweight
-items.c$lbwt <- log(items.c$bwt)
+cohdata$lbwt <- log(cohdata$bwt)
 
 # missing gestational age
-items.c$preterm2 <- as.character(items.c$preterm)
-items.c[is.na(items.c$preterm2),"preterm2"] <- "Missing"
-items.c$preterm <- factor(items.c$preterm2)
-levels(items.c$preterm) <- c("Term", "Preterm", "Missing")
-items.c <- items.c[ , !(names(items.c) %in% "preterm2")]
+cohdata$preterm2 <- as.character(cohdata$preterm)
+cohdata[is.na(cohdata$preterm2),"preterm2"] <- "Missing"
+cohdata$preterm <- factor(cohdata$preterm2)
+levels(cohdata$preterm) <- c("Term", "Preterm", "Missing")
+cohdata <- cohdata[ , !(names(cohdata) %in% "preterm2")]
 
 # save dataset
-export(items.c[,!names(items.c) %in% c("INT_RAW", "EXT_RAW", "INT_RAWr", "EXT_RAWr")], paste0(dir_data,"cohorts_all.dta"))
+export(cohdata[,!names(cohdata) %in% c("INT_RAW", "EXT_RAW", "INT_RAWr", "EXT_RAWr")], paste0(dir_data,"cohorts_all.dta"))
 
 # KEEP ONLY REWEIGHTED SAMPLE
-items.c2 <- items.c
-items.c <- items.c[items.c$rwtd==1,]
+cohdata2 <- cohdata
+cohdata <- cohdata[cohdata$rwtd==1,]
 
 # MODEL LIST
 # 1 (MAIN) : separate gender groups, no age adjustment (4 groups, BCS.M BCS.F MCS.M MCS.F)
@@ -257,21 +257,23 @@ items.c <- items.c[items.c$rwtd==1,]
 # 11: MIMIC model with age as regressor (4 groups, BCS.M BCS.F MCS.M MCS.F)
 
 # list of items for different models
-items <- list()
-items[[1]] <- items.c
-items[[2]] <- subset(items.c, age>=59 & age<=62)
-items[[3]] <- items.c
-items[[4]] <- subset(items.c, sex=="M")
-items[[5]] <- subset(items.c, sex=="F")
-items[[6]] <- items.c
-items[[7]] <- subset(items.c, sex=="M")
-items[[8]] <- subset(items.c, sex=="F")
-items[[9]] <- items.c
-items[[10]] <- items.c
-items[[11]] <- items.c
+fadata_temp <- cohdata[c(grep("X", names(X.all), value=T), "id", "sex", "cohort", "cohortsex", "age")]
+fadata <- list()
+fadata[[1]] <- fadata_temp
+fadata[[2]] <- subset(fadata_temp, age>=59 & age<=62)
+fadata[[3]] <- fadata_temp
+fadata[[4]] <- subset(fadata_temp, sex=="M")
+fadata[[5]] <- subset(fadata_temp, sex=="F")
+fadata[[6]] <- fadata_temp
+fadata[[7]] <- subset(fadata_temp, sex=="M")
+fadata[[8]] <- subset(fadata_temp, sex=="F")
+fadata[[9]] <- fadata_temp
+fadata[[10]] <- fadata_temp
+fadata[[11]] <- fadata_temp
+rm(fadata_temp)
 
 # order to merge correctly with scores
-for (i in 1:length(items)) items[[i]] <- items[[i]][order(items[[i]][,"cohortsex"]) , ]
+for (i in 1:length(fadata)) fadata[[i]] <- fadata[[i]][order(fadata[[i]][,"cohortsex"]) , ]
 
 
 ## ---- MEANTABLE

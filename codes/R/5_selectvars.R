@@ -26,6 +26,7 @@ decvars_int <- unname(unlist(decvarslist_int))
 decseq <- lapply(decvarslist, FUN = function(x) paste0(x, collapse="+"))
 
 # final data for analysis and decomposition
+finaldata <- merge(cohdata, fascores[,c("INT","EXT","id")], by = "id")
 regdata <- finaldata[complete.cases(finaldata[,decvars]),]
 
 # export to stata for Gelbach

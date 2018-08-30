@@ -29,18 +29,18 @@ fa.tli <- list()
 fa.tlip <- list()
 
 # MODEL 1: separate gender groups, not age adjusted
-fa.c[[1]]   <- cfa(c.th.4, data = items[[1]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
-fa.tl[[1]]  <- cfa(tl.th.4, data = items[[1]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
-fa.tlmt[[1]]  <- cfa(tl.mt.4, data = items[[1]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
-fa.tli[[1]] <- cfa(tli.th.4, data = items[[1]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
-fa.tlip[[1]] <- cfa(tlip.th.4, data = items[[1]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.c[[1]]   <- cfa(c.th.4, data = fadata[[1]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
+fa.tl[[1]]  <- cfa(tl.th.4, data = fadata[[1]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tlmt[[1]]  <- cfa(tl.mt.4, data = fadata[[1]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli[[1]] <- cfa(tli.th.4, data = fadata[[1]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tlip[[1]] <- cfa(tlip.th.4, data = fadata[[1]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
 
 # MODEL 2: separate gender groups, overlapping ages, no age adjustment
-fa.c[[2]]   <- cfa(c.th.4, data = items[[2]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
-fa.tl[[2]]  <- cfa(tl.th.4, data = items[[2]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
-fa.tlmt[[2]]  <- cfa(tl.mt.4, data = items[[2]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
-fa.tli[[2]] <- cfa(tli.th.4, data = items[[2]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
-fa.tlip[[2]] <- cfa(tlip.th.4, data = items[[2]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.c[[2]]   <- cfa(c.th.4, data = fadata[[2]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
+fa.tl[[2]]  <- cfa(tl.th.4, data = fadata[[2]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tlmt[[2]]  <- cfa(tl.mt.4, data = fadata[[2]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tli[[2]] <- cfa(tli.th.4, data = fadata[[2]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
+fa.tlip[[2]] <- cfa(tlip.th.4, data = fadata[[2]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
 
 # select final model
 finalmod <- fa.tl[[1]]
@@ -49,5 +49,4 @@ finalmod <- fa.tl[[1]]
 ############################################################################################
 ## ---- FA_SCORES_MAIN
 # score model selected as final
-scores.final <- lavPredict(finalmod, newdata = items[[1]])
-finaldata <- cbind(items[[1]], do.call(rbind, scores.final))
+fascores <- cbind(fadata[[1]], do.call(rbind, lavPredict(finalmod, newdata = fadata[[1]])))

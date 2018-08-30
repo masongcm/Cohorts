@@ -805,7 +805,8 @@ restore
 use "$data/CohortsHarmonised/raw/mcs_closer_wp1.dta", clear // income
 keep if visitage==11
 rename bmi bmi11
-keep mcsid bmi11
+rename xage agebmi11
+keep mcsid bmi11 agebmi11
 tempfile mcsbmi11
 save `mcsbmi11'
 
@@ -814,7 +815,8 @@ use "$mcsraw/S6/mcs6_cm_measurement.dta", clear
 rename _all, lower
 keep if fcnum00==1 // CM number 1
 gen bmi14 = fcwtcm00/((fchtcm00/100)^2) if fcwtcm00>0 & fchtcm00>0
-keep mcsid bmi14
+rename fccage00 agebmi14
+keep mcsid bmi14 agebmi14
 tempfile mcsbmi14
 save `mcsbmi14'
 

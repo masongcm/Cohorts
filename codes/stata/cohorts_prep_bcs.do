@@ -470,8 +470,9 @@ restore
 *BMI (harmonised)	 **********************************************
 use "$data/CohortsHarmonised/raw/bcs70_closer_wp1.dta", clear // income
 keep if inlist(visitage, 10, 16, 42)
-keep bcsid bmi visitage
-reshape wide bmi, i(bcsid) j(visitage)
+keep bcsid bmi visitage xage
+reshape wide bmi xage, i(bcsid) j(visitage)
+rename xage?? agebmi??
 tempfile bcsbmi
 save `bcsbmi'
 
@@ -516,15 +517,14 @@ save `bcsoutc38y'
 
 *BEHAVIOURS AT 16	 ***********************************************************
 
-use "$bcsraw/1986/bcs4derived.dta", clear
-rename _all, lower
-gen age16 = floor(bd4age)
-replace age16 = 98 if age16==-1 // missing age, use factor
-keep bcsid age16
-tempfile bcs16age
-save `bcs16age'
 
 use "$bcsraw/1986/bcs7016x.dta", clear
+
+/* age (use date of document O) */
+gen ymb = ym(1970,4)
+gen ymo = ym(1900+odoc_yr,odoc_mt) if odoc_yr>0 & odoc_mt>0
+gen age16 = round((ymo-ymb)/12,.1)
+
 recode f44 (-2 -1 =.) (1/4 =1), gen(smktry16a)
 recode gh1 (-2 -1 =.) (1=0) (2/4 =1), gen(smktry16b)
 gen smktry16 =  smktry16a
@@ -542,6 +542,7 @@ recode jc13 (-2 -1=.) (2=0), gen(read16)
 recode q22_1 (-2 -1=.) (6=0) (1/5=1), gen(propdam16)
 recode q22_7 (-2 -1=.) (6=0) (1/5=1), gen(shplift16)
 
+lab var age16			"Age at parent interview (16)"
 lab var smktry16		"Tried smoking (16)"
 lab var alctry16		"Tried alcohol (16)"
 lab var alcoh16			"Alcohol in past week (16)"
@@ -556,9 +557,8 @@ lab var shplift16		"Shoplifted >5£ in past year (16)"
 
 egen tokeep = rownonmiss(smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16)
 drop if tokeep==0
-keep bcsid smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16 canntry16
+keep bcsid smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16 canntry16 age16
 
-merge 1:1 bcsid using `bcs16age', nogen keep(3)
 merge 1:1 bcsid using `bcsoutc30y', nogen keep(1 3)
 merge 1:1 bcsid using `bcsoutc38y', nogen keep(1 3)
 merge 1:1 bcsid using `bcsscl42y', nogen keep(1 3)

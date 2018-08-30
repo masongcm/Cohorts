@@ -1,16 +1,6 @@
 ###################################################################
 ## ---- REGS_DEP
 
-# function to print pvals as strings in square brackets
-prnpval <- function(obj, dig=3) {
-  if (!is.na(obj)) paste0("[", sprintf(paste0("%.",dig,"f"), round(obj, digits = dig)), "]")
-  else ""
-}
-prnpval <- Vectorize(prnpval, vectorize.args = "obj")
-
-# function to collapse regressors in formula
-pplus <- function(x) paste0(x, collapse="+")
-
 # function to extract relevant pvalues from interacted model
 extractp <- function(mod) {
   coefs <- summary(mod)$coefficients
@@ -81,6 +71,10 @@ for (s in c("M", "F")) {
     r_ext[[cs]][["OLS"]]  <- lm(form_ext,  data=subset(regdata, cohortsex==cs))
     r_int[[cs]][["OLS"]]  <- lm(form_int,  data=subset(regdata, cohortsex==cs))
     
+    # OLS Bootstrap
+    #bsamp <- merge
+    # r_ext[[cs]][["OLSbootse"]]
+    
     # Tobit
     r_ext[[cs]][["Tobit"]]  <- VGAM::vglm(form_ext, VGAM::tobit(Upper = max(regdata$EXT)), data=subset(regdata, cohortsex==cs))
     r_int[[cs]][["Tobit"]]  <- VGAM::vglm(form_int, VGAM::tobit(Upper = max(regdata$INT)), data=subset(regdata, cohortsex==cs))
@@ -93,3 +87,32 @@ for (s in c("M", "F")) {
   
 }
 
+# bootstrap SEs
+nboot <- length(bootscores)
+
+for (s in c("M", "F")) {
+  for (c in c("BCS", "MCS")) {
+    
+    bootcoefs_ext <- NULL
+    bootcoefs_int <- NULL
+    
+    for (b in 1:nboot) {
+      cs <- paste0(c,".",s)
+      
+      # fetch scores from bootstrap samples
+      bsamp <- regdata %>%
+        select(-EXT, -INT) %>%
+        right_join(bootscores[[b]], by = "id")
+      
+      # regressions
+      bootcoefs_ext <- cbind(bootcoefs_ext, as.matrix(lm(form_ext,  data=subset(bsamp, cohortsex==cs))$coefficients))
+      bootcoefs_int <- cbind(bootcoefs_int, as.matrix(lm(form_int,  data=subset(bsamp, cohortsex==cs))$coefficients))
+      
+    }
+    
+    # standard errors
+    r_ext[[cs]][["OLSbootse"]] <- apply(bootcoefs_ext, MARGIN = 1, FUN = sd)
+    r_int[[cs]][["OLSbootse"]] <- apply(bootcoefs_int, MARGIN = 1, FUN = sd)
+    
+  }
+}

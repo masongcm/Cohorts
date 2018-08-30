@@ -45,3 +45,9 @@ fa.tlip[[2]] <- cfa(tlip.th.4, data = items[[2]], group = "cohortsex", estimator
 # select final model
 finalmod <- fa.tl[[1]]
 
+
+############################################################################################
+## ---- FA_SCORES_MAIN
+# score model selected as final
+scores.final <- lavPredict(finalmod, newdata = items[[1]])
+finaldata <- cbind(items[[1]], do.call(rbind, scores.final))

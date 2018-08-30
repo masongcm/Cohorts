@@ -186,3 +186,12 @@ prr2 <- function(mod) {
   return(paste0("\\newline ", sprintf("%.4f", summary(mod)$adj.r.squared)))
 }
 
+# function to print pvals as strings in square brackets
+prnpval <- function(obj, dig=3) {
+  if (!is.na(obj)) paste0("[", sprintf(paste0("%.",dig,"f"), round(obj, digits = dig)), "]")
+  else ""
+}
+prnpval <- Vectorize(prnpval, vectorize.args = "obj")
+
+# function to collapse regressors in formula
+pplus <- function(x) paste0(x, collapse="+")

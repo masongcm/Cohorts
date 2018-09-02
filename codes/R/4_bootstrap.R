@@ -3,11 +3,11 @@
 ## ---- FA_BOOTSCORES
 # bootstrap scores and save samples
 
-nboot <- 5                    # number of bootstraps
+nboot <- 1000                 # number of bootstraps
 bootscores <- list()          # store samples
 for (b in 1:nboot) {
   bootdata <- fadata[[1]]
-  cat("\r Bootstrap number",b, "of", nboot)
+  cat("\r Bootstrap number", b, "of", nboot)
   bootsamp <- bootdata[sort(sample(nrow(bootdata), replace = TRUE)),]
   bootmod <- lavaan::cfa(tl.th.4, data = bootsamp, group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
   bootscores[[b]] <- cbind(bootsamp, do.call(rbind, lavaan::lavPredict(finalmod, newdata = bootdata)))

@@ -99,6 +99,8 @@ for (s in c("M", "F")) {
     for (b in 1:nboot) {
       cs <- paste0(c,".",s)
       
+      cat("\r SEs for", cs, "- Bootstrap sample", b, "of", nboot)
+      
       # fetch scores from bootstrap samples
       bsamp <- regdata %>%
         select(-EXT, -INT) %>%

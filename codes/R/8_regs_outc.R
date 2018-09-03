@@ -1,85 +1,97 @@
 
 ###################################################################
-## ---- LOAD_DATA_OUTC
-# LOAD OUTCOMES DATA
-
-# assemble outcomes data (BCS)
-bcs16outc <- read.dta(paste0(dir_data, "bcsoutc.dta"), convert.factors = F) # all BCS data
-bcs16outc$id <- bcs16outc$bcsid
-bcs16outc$age16 <- factor(bcs16outc$age16)
-bcsoutc <- merge(regdata[regdata$cohort=="BCS",], bcs16outc, by = "id", all.x = TRUE)
-bcsoutc$cogscore <- factor.scores(bcsoutc[,c("C1", "C2", "C3")], fa(bcsoutc[,c("C1", "C2", "C3")], factors=1), method = "Bartlett")$scores
-
-# assemble outcomes data (MCS)
-mcs14outc <- read.dta(paste0(dir_data, "mcsoutc.dta"), convert.factors = F) # all BCS data
-mcs14outc$id <- mcs14outc$mcsid
-mcs14outc$age14 <- factor(mcs14outc$age14)
-mcsoutc <- merge(regdata[regdata$cohort=="MCS",], mcs14outc, by="id", all.x = TRUE)
-mcsoutc$cogscore <- factor.scores(mcsoutc[,c("C1", "C2", "C3")], fa(mcsoutc[,c("C1", "C2", "C3")], factors=1), method = "Bartlett")$scores
-
-# recode
-bcsoutc$hscl42 <- NA # high social class
-bcsoutc$hscl42[bcsoutc$scl42 %in% c(1,2)] <- 1
-bcsoutc$hscl42[bcsoutc$scl42 %in% 3:7] <- 0
-bcsoutc$hnvq30 <- NA # high NVQ
-bcsoutc$hnvq30[bcsoutc$nvq30 %in% c(4,5)] <- 1
-bcsoutc$hnvq30[bcsoutc$nvq30 %in% 0:3] <- 0
-
-# select variables
-bcsoutclabs <- c(smktry16 = "Tried smoking (16)",
-                 alcoh16 = "Alcohol last week (16)",
-                 canntry16 = "Tried cannabis (16)",
-                 bmi16 = "BMI (16)",
-                 hnvq30 = "Higher education (30)",
-                 lhgrpay38 = "(log) Gross hr. pay (38)",
-                 hscl42 = "Social class I/II (42)",
-                 bmi42 = "BMI (42)"
-)
-bcsoutcvars <- names(bcsoutclabs)
-
-# select variables
-mcsoutclabs <- c(smktry14 = "Tried smoking (14)",
-                 alctry14 = "Tried alcohol (14)",
-                 canntry14 = "Tried cannabis (14)",
-                 selfharm14 = "Self-harmed in past year (14)",
-                 bmi14 = "BMI (14)"
-)
-mcsoutcvars <- names(mcsoutclabs)
-
-
-###################################################################
 ## ---- REGS_OUTC
 # REGRESSIONS OF ADOLESCENT OUTCOMES ON EXT/INT & CHILDHOOD VARIABLES
 
+nboot <- length(bootscores)
+
 # estimate BCS models
-bcsoutcmod_b <- list()
-bcsoutcmod_bc <- list()
-bcsoutcmod_bcr <- list()
-for (o in 1:length(bcsoutcvars)) {
-  form_outc_b    <- as.formula(paste0(bcsoutcvars[o]," ~ EXT + INT + age16 + region +", pplus(decvars)))
-  form_outc_bc   <- as.formula(paste0(bcsoutcvars[o]," ~ EXT + INT + age16 + region + cogscore +", pplus(decvars)))
-  form_outc_bcr  <- as.formula(paste0(bcsoutcvars[o]," ~ EXT_RAW + INT_RAW + age16 + region + cogscore +", pplus(decvars)))
+bcsoutcmod <- list()
+bcsoutcsum <- list()
+for (o in 1:length(bcsoutcvars)) { # length(bcsoutcvars)
+  outc <- bcsoutcvars[o]
+  
+  # formulas
+  form_outc <- list()
+  form_outc$b    <- as.formula(paste0(outc, " ~ EXT + INT + age16 + region +", pplus(decvars)))
+  form_outc$bc   <- as.formula(paste0(outc, " ~ EXT + INT + age16 + region + cogscore +", pplus(decvars)))
+  form_outc$bcr  <- as.formula(paste0(outc, " ~ EXT_RAW + INT_RAW + age16 + region + cogscore +", pplus(decvars)))
+  
   for (s in c("M", "F")) {
-    bcsoutcmod_b[[s]][[bcsoutcvars[o]]]   <- lm(form_outc_b, data = subset(bcsoutc, sex==s))
-    bcsoutcmod_bc[[s]][[bcsoutcvars[o]]]   <- lm(form_outc_bc, data = subset(bcsoutc, sex==s))
-    bcsoutcmod_bcr[[s]][[bcsoutcvars[o]]]   <- lm(form_outc_bcr, data = subset(bcsoutc, sex==s))
+    # bootstrap SEs
+    cat("\nInference for", bcsoutcvars[o], "BCS", s, "\n")
+    bootcoefs <- list(b = NULL, bc = NULL, bcr = NULL)
+    # bootstrap
+    for (b in 1:nboot) {
+      cat("\r Bootstrap sample", b, "of", nboot)
+      # fetch scores from bootstrap samples
+      bsamp <- bcsoutc %>%
+        select(-EXT, -INT) %>%
+        right_join(bootscores[[b]], by = "id")
+      # compute coefficients
+      for (t in c("b", "bc")) bootcoefs[[t]] <- cbind(bootcoefs[[t]], as.matrix(lm(form_outc[[t]], data = subset(bsamp, sex==s))$coefficients))
+    }
+    # assemble estimates
+    for (t in c("b", "bc")) {
+      # compute main models
+      bcsoutcmod[[s]][[outc]][[t]]   <- lm(form_outc[[t]], data = subset(bcsoutc, sex==s))
+      bcsoutcsum[[s]][[outc]][[t]] <- summary(bcsoutcmod[[s]][[outc]][[t]])$coefficients[,c(1,2)]
+      # substitute SEs in summary of models
+      bootse <- apply(bootcoefs[[t]], MARGIN = 1, FUN = sd, na.rm=TRUE)
+      bcsoutcsum[[s]][[outc]][[t]][,2] <- bootse[!is.na(bootse)]
+      bcsoutcsum[[s]][[outc]][[t]] <- cbind(bcsoutcsum[[s]][[outc]][[t]], bcsoutcsum[[s]][[outc]][[t]][,1]/bcsoutcsum[[s]][[outc]][[t]][,2])
+      colnames(bcsoutcsum[[s]][[outc]][[t]]) <- c("Estimate","SE","tstat")
+    }
+    # this does not require bootstrapping
+    bcsoutcmod[[s]][[outc]][["bcr"]]   <- lm(form_outc[["bcr"]], data = subset(bcsoutc, sex==s))
+    bcsoutcsum[[s]][[outc]][["bcr"]]   <- summary(bcsoutcmod[[s]][[outc]][["bcr"]])$coefficients[,c(1,2,3)]
   }
 }
 
-# estimate BCS models
-mcsoutcmod_b <- list()
-mcsoutcmod_bc <- list()
-mcsoutcmod_bcr <- list()
-for (o in 1:length(mcsoutcvars)) {
-  form_outc_b    <- as.formula(paste0(mcsoutcvars[o]," ~ EXT + INT + age14 + region +", pplus(decvars)))
-  form_outc_bc   <- as.formula(paste0(mcsoutcvars[o]," ~ EXT + INT + age14 + region + cogscore +", pplus(decvars)))
-  form_outc_bcr  <- as.formula(paste0(mcsoutcvars[o]," ~ EXT_RAW + INT_RAW + age14 + region + cogscore +", pplus(decvars)))
+# estimate MCS models
+mcsoutcmod <- list()
+mcsoutcsum <- list()
+for (o in 1:length(mcsoutcvars)) { # length(bcsoutcvars)
+  outc <- mcsoutcvars[o]
+  
+  # formulas
+  form_outc <- list()
+  form_outc$b    <- as.formula(paste0(outc," ~ EXT + INT + age14 + region +", pplus(decvars)))
+  form_outc$bc   <- as.formula(paste0(mcsoutcvars[o]," ~ EXT + INT + age14 + region + cogscore +", pplus(decvars)))
+  form_outc$bcr  <- as.formula(paste0(mcsoutcvars[o]," ~ EXT_RAW + INT_RAW + age14 + region + cogscore +", pplus(decvars)))
+  bootcoefs <- list()
+  
   for (s in c("M", "F")) {
-    mcsoutcmod_b[[s]][[mcsoutcvars[o]]]   <- lm(form_outc_b, data = subset(mcsoutc, sex==s))
-    mcsoutcmod_bc[[s]][[mcsoutcvars[o]]]   <- lm(form_outc_bc, data = subset(mcsoutc, sex==s))
-    mcsoutcmod_bcr[[s]][[mcsoutcvars[o]]]   <- lm(form_outc_bcr, data = subset(mcsoutc, sex==s))
+    # bootstrap SEs
+    cat("\nInference for", mcsoutcvars[o], "MCS", s, "\n")
+    bootcoefs <- list(b = NULL, bc = NULL, bcr = NULL)
+    # bootstrap
+    for (b in 1:nboot) {
+      cat("\r Bootstrap sample", b, "of", nboot)
+      # fetch scores from bootstrap samples
+      bsamp <- mcsoutc %>%
+        select(-EXT, -INT) %>%
+        right_join(bootscores[[b]], by = "id")
+      # compute coefficients
+      for (t in c("b", "bc")) bootcoefs[[t]] <- cbind(bootcoefs[[t]], as.matrix(lm(form_outc[[t]], data = subset(bsamp, sex==s))$coefficients))
+    }
+    # assemble estimates
+    for (t in c("b", "bc")) {
+      # compute main models
+      mcsoutcmod[[s]][[outc]][[t]]   <- lm(form_outc[[t]], data = subset(mcsoutc, sex==s))
+      mcsoutcsum[[s]][[outc]][[t]]   <- summary(mcsoutcmod[[s]][[outc]][[t]])$coefficients[,c(1,2)]
+      # substitute SEs in summary of models
+      bootse <- apply(bootcoefs[[t]], MARGIN = 1, FUN = sd, na.rm=TRUE)
+      mcsoutcsum[[s]][[outc]][[t]][,2] <- bootse[!is.na(bootse)]
+      mcsoutcsum[[s]][[outc]][[t]]   <- cbind(mcsoutcsum[[s]][[outc]][[t]], mcsoutcsum[[s]][[outc]][[t]][,1]/mcsoutcsum[[s]][[outc]][[t]][,2])
+      colnames(mcsoutcsum[[s]][[outc]][[t]]) <- c("Estimate","SE","tstat")
+    }
+    # this does not require bootstrapping
+    mcsoutcmod[[s]][[outc]][["bcr"]]   <- lm(form_outc[["bcr"]], data = subset(mcsoutc, sex==s))
+    mcsoutcsum[[s]][[outc]][["bcr"]]   <- summary(mcsoutcmod[[s]][[outc]][["bcr"]])$coefficients[,c(1,2,3)]
   }
 }
+
 
 
 ###################################################################
@@ -96,26 +108,26 @@ for (i in 1:length(bcsoutcvars)) {
   lab <- paste0("\\textit{\\textbf{", bcsoutclabs[i], "}}")
   bcs_outctab[[bcsoutcvars[i]]] <- matrix(c(lab, dvmeans_bcs_m[i], "", "", "", dvmeans_bcs_f[i], "", "", "",   # outcome and means
                                             "Externalising (factor)", # row label
-                                            "", cellpr(bcsoutcmod_b$M[[i]], "EXT"), cellpr(bcsoutcmod_bc$M[[i]], "EXT"), "", # males EXT
-                                            "", cellpr(bcsoutcmod_b$F[[i]], "EXT"), cellpr(bcsoutcmod_bc$F[[i]], "EXT"), "", # females EXT
+                                            "", cellpr(bcsoutcsum$M[[i]]$b, "EXT"), cellpr(bcsoutcsum$M[[i]]$bc, "EXT"), "", # males EXT
+                                            "", cellpr(bcsoutcsum$F[[i]]$b, "EXT"), cellpr(bcsoutcsum$M[[i]]$bc, "EXT"), "", # females EXT
                                             "Internalising (factor)", # row label
-                                            "", cellpr(bcsoutcmod_b$M[[i]], "INT"), cellpr(bcsoutcmod_bc$M[[i]], "INT"), "", # males EXT
-                                            "", cellpr(bcsoutcmod_b$F[[i]], "INT"), cellpr(bcsoutcmod_bc$F[[i]], "INT"), "", # females EXT
+                                            "", cellpr(bcsoutcsum$M[[i]]$b, "INT"), cellpr(bcsoutcsum$M[[i]]$bc, "INT"), "", # males EXT
+                                            "", cellpr(bcsoutcsum$F[[i]]$b, "INT"), cellpr(bcsoutcsum$F[[i]]$bc, "INT"), "", # females EXT
                                             "Externalising (raw score)", # row label
-                                            "", "", "", cellpr(bcsoutcmod_bcr$M[[i]], "EXT_RAW"), # males EXT
-                                            "", "", "", cellpr(bcsoutcmod_bcr$F[[i]], "EXT_RAW"), # females EXT
+                                            "", "", "", cellpr(bcsoutcsum$M[[i]]$bcr, "EXT_RAW"), # males EXT
+                                            "", "", "", cellpr(bcsoutcsum$F[[i]]$bcr, "EXT_RAW"), # females EXT
                                             "Internalising (raw score)", # row label
-                                            "", "", "", cellpr(bcsoutcmod_bcr$M[[i]], "INT_RAW"), # males EXT
-                                            "", "", "", cellpr(bcsoutcmod_bcr$F[[i]], "INT_RAW"), # females EXT
+                                            "", "", "", cellpr(bcsoutcsum$M[[i]]$bcr, "INT_RAW"), # males EXT
+                                            "", "", "", cellpr(bcsoutcsum$F[[i]]$bcr, "INT_RAW"), # females EXT
                                             "Cognition (factor)", # row label
-                                            "", "", cellpr(bcsoutcmod_bc$M[[i]], "cogscore"), cellpr(bcsoutcmod_bcr$M[[i]], "cogscore"), # males COG
-                                            "", "", cellpr(bcsoutcmod_bc$F[[i]], "cogscore"), cellpr(bcsoutcmod_bcr$F[[i]], "cogscore"), # females COG
+                                            "", "", cellpr(bcsoutcsum$M[[i]]$bc, "cogscore"), cellpr(bcsoutcsum$M[[i]]$bcr, "cogscore"), # males COG
+                                            "", "", cellpr(bcsoutcsum$F[[i]]$bc, "cogscore"), cellpr(bcsoutcsum$F[[i]]$bcr, "cogscore"), # females COG
                                             "\\newline Adj. R$^2$", # row label
-                                            "", prr2(bcsoutcmod_b$M[[i]]), prr2(bcsoutcmod_bc$M[[i]]), prr2(bcsoutcmod_bcr$M[[i]]),
-                                            "", prr2(bcsoutcmod_b$F[[i]]), prr2(bcsoutcmod_bc$F[[i]]), prr2(bcsoutcmod_bcr$F[[i]]),
+                                            "", prr2(bcsoutcmod$M[[i]]$b), prr2(bcsoutcmod$M[[i]]$bc), prr2(bcsoutcmod$M[[i]]$bcr),
+                                            "", prr2(bcsoutcmod$F[[i]]$b), prr2(bcsoutcmod$F[[i]]$bc), prr2(bcsoutcmod$F[[i]]$bcr),
                                             "Observations", # row label
-                                            "", nobs(bcsoutcmod_b$M[[i]]), nobs(bcsoutcmod_bc$M[[i]]), nobs(bcsoutcmod_bcr$M[[i]]),
-                                            "", nobs(bcsoutcmod_b$F[[i]]), nobs(bcsoutcmod_bc$F[[i]]), nobs(bcsoutcmod_bcr$F[[i]])
+                                            "", nobs(bcsoutcmod$M[[i]]$b), nobs(bcsoutcmod$M[[i]]$bc), nobs(bcsoutcmod$M[[i]]$bcr),
+                                            "", nobs(bcsoutcmod$F[[i]]$b), nobs(bcsoutcmod$F[[i]]$bc), nobs(bcsoutcmod$F[[i]]$bcr)
                                             
   ), nrow=8, byrow=TRUE
   )
@@ -131,29 +143,28 @@ for (i in 1:length(mcsoutcvars)) {
   lab <- paste0("\\textit{\\textbf{", mcsoutclabs[i], "}}")
   mcs_outctab[[mcsoutcvars[i]]] <- matrix(c(lab, dvmeans_mcs_m[i], "", "", "", dvmeans_mcs_f[i], "", "", "",   # outcome and means
                                             "Externalising (factor)", # row label
-                                            "", cellpr(mcsoutcmod_b$M[[i]], "EXT"), cellpr(mcsoutcmod_bc$M[[i]], "EXT"), "", # males EXT
-                                            "", cellpr(mcsoutcmod_b$F[[i]], "EXT"), cellpr(mcsoutcmod_bc$F[[i]], "EXT"), "", # females EXT
+                                            "", cellpr(mcsoutcsum$M[[i]]$b, "EXT"), cellpr(mcsoutcsum$M[[i]]$bc, "EXT"), "", # males EXT
+                                            "", cellpr(mcsoutcsum$F[[i]]$b, "EXT"), cellpr(mcsoutcsum$M[[i]]$bc, "EXT"), "", # females EXT
                                             "Internalising (factor)", # row label
-                                            "", cellpr(mcsoutcmod_b$M[[i]], "INT"), cellpr(mcsoutcmod_bc$M[[i]], "INT"), "", # males EXT
-                                            "", cellpr(mcsoutcmod_b$F[[i]], "INT"), cellpr(mcsoutcmod_bc$F[[i]], "INT"), "", # females EXT
+                                            "", cellpr(mcsoutcsum$M[[i]]$b, "INT"), cellpr(mcsoutcsum$M[[i]]$bc, "INT"), "", # males EXT
+                                            "", cellpr(mcsoutcsum$F[[i]]$b, "INT"), cellpr(mcsoutcsum$F[[i]]$bc, "INT"), "", # females EXT
                                             "Externalising (raw score)", # row label
-                                            "", "", "", cellpr(mcsoutcmod_bcr$M[[i]], "EXT_RAW"), # males EXT
-                                            "", "", "", cellpr(mcsoutcmod_bcr$F[[i]], "EXT_RAW"), # females EXT
+                                            "", "", "", cellpr(mcsoutcsum$M[[i]]$bcr, "EXT_RAW"), # males EXT
+                                            "", "", "", cellpr(mcsoutcsum$F[[i]]$bcr, "EXT_RAW"), # females EXT
                                             "Internalising (raw score)", # row label
-                                            "", "", "", cellpr(mcsoutcmod_bcr$M[[i]], "INT_RAW"), # males EXT
-                                            "", "", "", cellpr(mcsoutcmod_bcr$F[[i]], "INT_RAW"), # females EXT
+                                            "", "", "", cellpr(mcsoutcsum$M[[i]]$bcr, "INT_RAW"), # males EXT
+                                            "", "", "", cellpr(mcsoutcsum$F[[i]]$bcr, "INT_RAW"), # females EXT
                                             "Cognition (factor)", # row label
-                                            "", "", cellpr(mcsoutcmod_bc$M[[i]], "cogscore"), cellpr(mcsoutcmod_bcr$M[[i]], "cogscore"), # males COG
-                                            "", "", cellpr(mcsoutcmod_bc$F[[i]], "cogscore"), cellpr(mcsoutcmod_bcr$F[[i]], "cogscore"), # females COG
+                                            "", "", cellpr(mcsoutcsum$M[[i]]$bc, "cogscore"), cellpr(mcsoutcsum$M[[i]]$bcr, "cogscore"), # males COG
+                                            "", "", cellpr(mcsoutcsum$F[[i]]$bc, "cogscore"), cellpr(mcsoutcsum$F[[i]]$bcr, "cogscore"), # females COG
                                             "\\newline Adj. R$^2$", # row label
-                                            "", prr2(mcsoutcmod_b$M[[i]]), prr2(mcsoutcmod_bc$M[[i]]), prr2(mcsoutcmod_bcr$M[[i]]),
-                                            "", prr2(mcsoutcmod_b$F[[i]]), prr2(mcsoutcmod_bc$F[[i]]), prr2(mcsoutcmod_bcr$F[[i]]),
+                                            "", prr2(mcsoutcmod$M[[i]]$b), prr2(mcsoutcmod$M[[i]]$bc), prr2(mcsoutcmod$M[[i]]$bcr),
+                                            "", prr2(mcsoutcmod$F[[i]]$b), prr2(mcsoutcmod$F[[i]]$bc), prr2(mcsoutcmod$F[[i]]$bcr),
                                             "Observations", # row label
-                                            "", nobs(mcsoutcmod_b$M[[i]]), nobs(mcsoutcmod_bc$M[[i]]), nobs(mcsoutcmod_bcr$M[[i]]),
-                                            "", nobs(mcsoutcmod_b$F[[i]]), nobs(mcsoutcmod_bc$F[[i]]), nobs(mcsoutcmod_bcr$F[[i]])
+                                            "", nobs(mcsoutcmod$M[[i]]$b), nobs(mcsoutcmod$M[[i]]$bc), nobs(mcsoutcmod$M[[i]]$bcr),
+                                            "", nobs(mcsoutcmod$F[[i]]$b), nobs(mcsoutcmod$F[[i]]$bc), nobs(mcsoutcmod$F[[i]]$bcr)
                                             
   ), nrow=8, byrow=TRUE
   )
 }
-
 

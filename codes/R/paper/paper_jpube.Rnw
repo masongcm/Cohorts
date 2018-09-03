@@ -141,12 +141,11 @@ read_chunk(here("codes/R/2_efa.R"))
 read_chunk(here("codes/R/3_inv_main.R"))
 read_chunk(here("codes/R/3_inv_aux.R"))
 read_chunk(here("codes/R/3_inv_fit.R"))
-read_chunk(here("codes/R/4_scores.R"))
-read_chunk(here("codes/R/4_scores_aux.R"))
-read_chunk(here("codes/R/5_graphs.R"))
-read_chunk(here("codes/R/5_graphs_ineq.R"))
-read_chunk(here("codes/R/5_graphs_item.R"))
-read_chunk(here("codes/R/6_selectvars.R"))
+read_chunk(here("codes/R/4_bootstrap.R"))
+read_chunk(here("codes/R/5_selectvars.R"))
+read_chunk(here("codes/R/6_graphs.R"))
+read_chunk(here("codes/R/6_graphs_ineq.R"))
+read_chunk(here("codes/R/6_graphs_item.R"))
 read_chunk(here("codes/R/8_regs_dep.R"))
 read_chunk(here("codes/R/8_regs_outc.R"))
 read_chunk(here("codes/R/99_auxfun.R"))
@@ -222,8 +221,16 @@ printmeantab <- function(tab) {
 # produce scores for main model
 @
 
-<<FA_SCORES_BIND>>=
-# bind scores with data
+<<FA_BOOTSCORES_READ>>=
+# read bootstrap data
+@
+
+<<SELECTDATA, dependson="FA_BOOTSCORES_READ">>=
+# define data, variables and formulas for regression and decomposition
+@
+
+<<SELECTDATA_OUTC, dependson="SELECTDATA">>=
+# load outcomes data
 @
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -238,19 +245,11 @@ printmeantab <- function(tab) {
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-<<SELECTVARS>>=
-# define variables and formulas for regression and decomposition
-@
-
-<<REGS_DEP, dependson="SELECTVARS">>=
+<<REGS_DEP, dependson="SELECTDATA">>=
 # run regressions explaining EXT INT
 @
 
-<<LOAD_DATA_OUTC, dependson="SELECTVARS">>=
-# load outcomes data
-@
-
-<<REGS_OUTC, dependson="LOAD_DATA_OUTC">>=
+<<REGS_OUTC, dependson="SELECTDATA_OUTC">>=
 # run regressions explaining adolescent/adult outcomes
 @
 
@@ -615,7 +614,7 @@ print.xtable(xtable(table,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}
-<<FACDENS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
+<<FACDENS, dependson="SELECTDATA", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
 @
 \caption{Scores}
 \justify {\scriptsize \emph{Notes}: Density of scores from final model.
@@ -623,7 +622,7 @@ print.xtable(xtable(table,
 \end{figure}
 
 \begin{figure}
-<<RAWHIST, dependson="FA_SCORES_BIND", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
+<<RAWHIST, dependson="SELECTDATA", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
 @
 \caption{Sum scores}
 \justify {\scriptsize \emph{Notes}: Density of sum scores without factor analysis.
@@ -635,7 +634,7 @@ print.xtable(xtable(table,
 \begin{table}
 \caption{Quantile differences in scores}\label{tab:iqdiff}
 \centering\setstretch{1.2}\footnotesize
-<<INEQ_STATS, dependson="FA_SCORES_BIND", results='asis'>>=
+<<INEQ_STATS, dependson="SELECTDATA", results='asis'>>=
 
 # income 
 tb <- data.frame(
@@ -700,7 +699,7 @@ print(xtable(table,
 
 
 \begin{figure}
-<<FACINEQ_FSC, dependson="FA_SCORES_BIND", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
+<<FACINEQ_FSC, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
 fi <- fi_fsc # select result
 gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
                         fi$ineqlist[[3]],fi$ineqlist[[4]],
@@ -712,7 +711,7 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 
 
 \begin{figure}
-<<FACINEQ_PS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
+<<FACINEQ_PS, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
 fi <- fi_ps # select result
 gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
                         fi$ineqlist[[3]],fi$ineqlist[[4]],
@@ -723,7 +722,7 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 \end{figure}
 
 \begin{figure}
-<<FACINEQ_SM, dependson="FA_SCORES_BIND", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
+<<FACINEQ_SM, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
 fi <- fi_sm # select result
 gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
                         fi$ineqlist[[3]],fi$ineqlist[[4]],
@@ -733,18 +732,8 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 \caption{Inequality by mother smoking in pregnancy -- normalised}
 \end{figure}
 
-
 \begin{figure}
-<<ITEMINEQ_PS, dependson="FA_SCORES_BIND", dev='tikz', fig.height=8, fig.width=12, out.width='\\linewidth'>>=
-itempl_ps
-@
-\caption{Item-level changes in inequality -- mother education}
-\justify {\scriptsize \emph{Notes}: The graph displays the ratio between low and high SES in the prevalence of each behaviour, separately by cohort.
-\par}
-\end{figure}
-
-\begin{figure}
-<<ITEMINEQ_FSC, dependson="FA_SCORES_BIND", dev='tikz', fig.height=8, fig.width=12, out.width='\\linewidth'>>=
+<<ITEMINEQ_FSC, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=11, out.width='\\linewidth'>>=
 itempl_fsc
 @
 \caption{Item-level changes in inequality -- father occupation}
@@ -753,7 +742,16 @@ itempl_fsc
 \end{figure}
 
 \begin{figure}
-<<ITEMINEQ_SM, dependson="FA_SCORES_BIND", dev='tikz', fig.height=8, fig.width=12, out.width='\\linewidth'>>=
+<<ITEMINEQ_PS, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=11, out.width='\\linewidth'>>=
+itempl_ps
+@
+\caption{Item-level changes in inequality -- mother education}
+\justify {\scriptsize \emph{Notes}: The graph displays the ratio between low and high SES in the prevalence of each behaviour, separately by cohort.
+\par}
+\end{figure}
+
+\begin{figure}
+<<ITEMINEQ_SM, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=11, out.width='\\linewidth'>>=
 itempl_sm
 @
 \caption{Item-level changes in inequality -- mother smoking in pregnancy}
@@ -774,6 +772,7 @@ regs <- list(r_ext$BCS.M[["OLS"]],r_ext$MCS.M[["OLS"]],r_ext$BCS.F[["OLS"]],r_ex
 # robust SEs
 robust_se <- list()
 robust_p  <- list()
+bootstrap_se  <- list(r_ext$BCS.M[["OLSbootse"]],r_ext$MCS.M[["OLSbootse"]],r_ext$BCS.F[["OLSbootse"]],r_ext$MCS.F[["OLSbootse"]])
 for (i in 1:length(regs)) {
   cov1              <- sandwich::vcovHC(regs[[i]], type = "HC1")
   ct                <- lmtest::coeftest(regs[[i]], vcov = cov1)
@@ -783,7 +782,7 @@ for (i in 1:length(regs)) {
 
 texreg::texreg(regs,
                stars = c(0.1, 0.05, 0.01), digits = 3,
-               override.se = robust_se, override.pvalues = robust_p,
+               override.se = bootstrap_se, override.pvalues = robust_p,
                single.row = FALSE, scriptsize = TRUE,
                caption = "", label = "",
                omit.coef = omitcoefs,
@@ -813,6 +812,7 @@ regs <- list(r_int$BCS.M[["OLS"]],r_int$MCS.M[["OLS"]],r_int$BCS.F[["OLS"]],r_in
 # robust SEs
 robust_se <- list()
 robust_p  <- list()
+bootstrap_se  <- list(r_int$BCS.M[["OLSbootse"]],r_int$MCS.M[["OLSbootse"]],r_int$BCS.F[["OLSbootse"]],r_int$MCS.F[["OLSbootse"]])
 for (i in 1:length(regs)) {
   cov1              <- sandwich::vcovHC(regs[[i]], type = "HC1")
   ct                <- lmtest::coeftest(regs[[i]], vcov = cov1)
@@ -822,7 +822,7 @@ for (i in 1:length(regs)) {
 
 texreg::texreg(regs,
                stars = c(0.1, 0.05, 0.01), digits = 3,
-               override.se = robust_se, override.pvalues = robust_p,
+               override.se = bootstrap_se, override.pvalues = robust_p,
                single.row = FALSE, scriptsize = TRUE,
                caption = "", label = "",
                omit.coef = omitcoefs,
@@ -874,13 +874,28 @@ print(xtable(tab,
 
 \begin{table}
 \centering\footnotesize
-\caption{Predictors of adolescent and adult outcomes -- BCS}
-<<REGS_OUTC_BCS, results='asis', dependson="REGS_OUTC">>=
+\caption{Predictors of adolescent outcomes -- BCS}\label{tab:bcs_adol}
+<<REGS_OUTC_BCS1, results='asis', dependson="REGS_OUTC">>=
 
 # collapse to matrix
-bcs_outctab_mat <- do.call(rbind,lapply(bcs_outctab[c("smktry16", "bmi16", "hnvq30", "lhgrpay38")],matrix,ncol=9,byrow=FALSE))
+bcs_outctab_mat <- do.call(rbind,lapply(bcs_outctab[c("smktry16", "bmi16", "thn16", "owt16")],matrix,ncol=9,byrow=FALSE))
 table <- bcs_outctab_mat
 printoutctab(table, 4)
+
+@
+\justify {\scriptsize \emph{Notes}: Robust standard errors in parentheses. All estimates additionally control for region of birth, maternal education (5), maternal employment (5), father occupation (5), maternal background (age, height, nonwhite ethnicity, number of children in HH), pregnancy (firstborn child, number of previous stillbirths, mother smoked in pregnancy, preterm birth, (log) birth weight).
+\par}
+\end{table}
+
+\begin{table}
+\centering\footnotesize
+\caption{Predictors of adult outcomes -- BCS}\label{tab:bcs_adult}
+<<REGS_OUTC_BCS2, results='asis', dependson="REGS_OUTC">>=
+
+# collapse to matrix
+bcs_outctab_mat <- do.call(rbind,lapply(bcs_outctab[c("hnvq30", "lhgrpay38", "obs42")],matrix,ncol=9,byrow=FALSE))
+table <- bcs_outctab_mat
+printoutctab(table, 3)
 
 @
 \justify {\scriptsize \emph{Notes}: Robust standard errors in parentheses. All estimates additionally control for region of birth, maternal education (5), maternal employment (5), father occupation (5), maternal background (age, height, nonwhite ethnicity, number of children in HH), pregnancy (firstborn child, number of previous stillbirths, mother smoked in pregnancy, preterm birth, (log) birth weight).
@@ -890,18 +905,27 @@ printoutctab(table, 4)
 
 \begin{table}
 \centering\footnotesize
-\caption{Predictors of adolescent outcomes -- MCS}
+\caption{Predictors of adolescent outcomes -- MCS}\label{tab:mcs_adol}
 <<REGS_OUTC_MCS, results='asis', dependson="REGS_OUTC">>=
 
 # collapse to matrix
-mcs_outctab_mat <- do.call(rbind,lapply(mcs_outctab[c("smktry14", "bmi14")],matrix,ncol=9,byrow=FALSE))
+mcs_outctab_mat <- do.call(rbind,lapply(mcs_outctab[c("smktry14", "bmi14", "thn14", "owt14")],matrix,ncol=9,byrow=FALSE))
 table <- mcs_outctab_mat
-printoutctab(table, 2)
+printoutctab(table, 4)
 
 @
 \justify {\scriptsize \emph{Notes}: Robust standard errors in parentheses. All estimates additionally control for region of birth, maternal education (5), maternal employment (5), father occupation (5), maternal background (age, height, nonwhite ethnicity, number of children in HH), pregnancy (firstborn child, number of previous stillbirths, mother smoked in pregnancy, preterm birth, (log) birth weight).
 \par}
 \end{table}
+
+\clearpage
+{\color{red} 
+\textbf{Interpretation of relationship between early-life socioemotional skills and adolescent/adult outcomes} \\
+Remember that a kid with good externalising skills is a kid that is NOT restless/hyperactive and does not have conduct problems (fighting, tantrums). (In fact in some factorisations of the Rutter, this factor separates into two separate factors similar to conduct and hyperactivity). A kid with good internalising skills is NOT neurotic, worried, fearful, or solitary.\\
+In this light, starting from \autoref{tab:bcs_adol}: better EXT at 5 implies less smoking at 16 (a less `rebellious' child with less conduct problems?), and better INT at 5 implies more smoking at 16 (a more `social' child?). A similar thing is observed for BMI and overweight (although in the latter INT is not significant), but notice that this is limited to females -- more neurotic and restless females are larger. Almost none of the BCS children are thin/underweight at 16. In most of these adolescent outcomes, cognition does not make a difference.\\
+A similar picture emerges for MCS in \autoref{tab:mcs_adol} -- note that here the age for the adolescent outcomes is 14 and not 16. But in MCS it seems that internalising skills matter less. There is some small indication that more neurotic females are more likely to be thin, but the prevalence is again really low. Also consider that all of these are LPM estimates.\\
+For BCS adult outcomes (\autoref{tab:bcs_adult}), cognition dominates. But there is some significance for higher education in females: MORE neurotic (perhaps more focused on studies, care about outcomes) and LESS restless females have a higher likelihood of achieving a higher degree.
+}
 
 
 \end{document}

@@ -57,3 +57,11 @@ Thumbs.db
 ###################
 .Rhistory
 .Rproj.user
+
+# folders
+###################
+codes/R/temp_old/
+codes/R/paper/cache/
+codes/R/slides/cache/
+
+

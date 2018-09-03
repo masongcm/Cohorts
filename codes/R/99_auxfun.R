@@ -169,18 +169,32 @@ stars <- function(t) {
   else if (abs(t) <= 1.96 & abs(t) > 1.64) return("^{*}")
   else return("")
 }
+
 # function to extract estimate, put stars and robust SE
-cellpr <- function(mod, vr) {
-  # mod: lm model
+cellpr2 <- function(mode, vr) {
+  # mod: estimates from ML model
   # vrs: variable to extract
   coefs <- lmtest::coeftest(mod, vcov = sandwich::vcovHC(mod, type = "HC1"))
   coefs2 <- coefs[vr,]
   return(
     paste0("$", prcoef(round(coefs2[1],3)), # estimate
            stars(coefs2[3]), "$", # stars
+           " \\newline ($", prcoef(round(coefs2[2],3)), "$)") # SE (on new line)
+  ) 
+}
+
+# function to extract estimate, put stars and (bootstrap) SE
+cellpr <- function(estimtab, vr) {
+  # estimtab: table with estimate, SE, tstat
+  # vrs: variable to extract
+  coefs2 <- estimtab[vr,]
+  return(
+    paste0("$", prcoef(round(coefs2[1],3)), # estimate
+           stars(coefs2[3]), "$", # stars
            " \\newline ($", prcoef(round(coefs2[2],3)), "$)")
   ) # SE (on new line)
 }
+
 # print R2 (with padding)
 prr2 <- function(mod) {
   return(paste0("\\newline ", sprintf("%.4f", summary(mod)$adj.r.squared)))

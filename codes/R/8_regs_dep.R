@@ -2,7 +2,8 @@
 ## ---- REGS_DEP
 
 # function to extract relevant pvalues from interacted model
-extractp <- function(mod) {
+# outstring: whether to output as string or as numeric (so can be averaged for bootstrap)
+extractp <- function(mod, outstring = FALSE) {
   coefs <- summary(mod)$coefficients
   coefs <- data.frame(tail(coefs, dim(coefs)[1]/2)) # select interactions (second half of table)
   colnames(coefs) <- c("est", "se", "t", "pval")
@@ -13,13 +14,16 @@ extractp <- function(mod) {
     filter(var2!="cohortMCS") %>% # eliminate string "cohortMCS"
     filter(!grepl(omitcoefs, var2)) # remove coefficients to omit
   
-  pvalvec <- prnpval(as.vector(coefs2$pval))
+  if (outstring==TRUE) pvalvec <- prnpval(as.vector(coefs2$pval))
+  if (outstring==FALSE) pvalvec <- as.vector(coefs2$pval)
   names(pvalvec) <- coefs2$var2
   
   # insert blanks corresponding to coefficient groups
   pvalvec2 <- NULL
-  for (i in 1:length(grouplabs)) pvalvec2 <- c(pvalvec2, "", rep(NA, length(grouplabs[[i]])))
+  if (outstring==TRUE) for (i in 1:length(grouplabs)) pvalvec2 <- c(pvalvec2, "", rep(NA, length(grouplabs[[i]])))
+  if (outstring==FALSE) for (i in 1:length(grouplabs)) pvalvec2 <- c(pvalvec2, 999, rep(NA, length(grouplabs[[i]])))
   pvalvec2[is.na(pvalvec2)] <- pvalvec
+  if (outstring==FALSE) pvalvec2[pvalvec2 == 999] <- NA
   
   return(pvalvec2)
 }
@@ -82,8 +86,8 @@ for (s in c("M", "F")) {
   }
   
   # extract pvalues of interactions
-  r_ext[[paste0(s,"p")]] <- extractp(lm(form_exti,  data=subset(regdata, sex==s)))
-  r_int[[paste0(s,"p")]] <- extractp(lm(form_inti,  data=subset(regdata, sex==s)))
+  r_ext[[paste0(s,"p")]] <- extractp(lm(form_exti,  data=subset(regdata, sex==s)), outstring = TRUE)
+  r_int[[paste0(s,"p")]] <- extractp(lm(form_inti,  data=subset(regdata, sex==s)), outstring = TRUE)
   
 }
 
@@ -96,25 +100,45 @@ for (s in c("M", "F")) {
     bootcoefs_ext <- NULL
     bootcoefs_int <- NULL
     
+    cs <- paste0(c,".",s)
+    
+    cat("\nInference for", cs, "\n")
     for (b in 1:nboot) {
-      cs <- paste0(c,".",s)
       
-      cat("\r SEs for", cs, "- Bootstrap sample", b, "of", nboot)
+      cat("\r Bootstrap sample", b, "of", nboot)
       
       # fetch scores from bootstrap samples
       bsamp <- regdata %>%
         select(-EXT, -INT) %>%
         right_join(bootscores[[b]], by = "id")
       
-      # regressions
+      # compute coefficients
       bootcoefs_ext <- cbind(bootcoefs_ext, as.matrix(lm(form_ext,  data=subset(bsamp, cohortsex==cs))$coefficients))
       bootcoefs_int <- cbind(bootcoefs_int, as.matrix(lm(form_int,  data=subset(bsamp, cohortsex==cs))$coefficients))
       
     }
     
-    # standard errors
+    # compute standard errors
     r_ext[[cs]][["OLSbootse"]] <- apply(bootcoefs_ext, MARGIN = 1, FUN = sd)
     r_int[[cs]][["OLSbootse"]] <- apply(bootcoefs_int, MARGIN = 1, FUN = sd)
     
   }
+  # 
+  # # pvalues of interactions
+  # bootpi_ext <- NULL
+  # bootpi_int <- NULL
+  # cat("\nInteraction pvalues for gender", s, "\n")
+  # for (b in 1:nboot) {
+  #   # fetch scores from bootstrap samples
+  #   bsamp <- regdata %>%
+  #     select(-EXT, -INT) %>%
+  #     right_join(bootscores[[b]], by = "id")
+  #   # extract pvalues
+  #   cat("\r Bootstrap sample", b, "of", nboot)
+  #   bootpi_ext <- cbind(bootpi_ext, extractp(lm(form_exti,  data=subset(bsamp, sex==s))))
+  #   bootpi_int <- cbind(bootpi_int, extractp(lm(form_inti,  data=subset(bsamp, sex==s))))
+  # }
+  # r_ext[[paste0(s,"pboot")]] <- apply(bootpi_ext, MARGIN = 1, FUN = mean)
+  # r_int[[paste0(s,"pboot")]] <- apply(bootpi_int, MARGIN = 1, FUN = mean)
+  
 }

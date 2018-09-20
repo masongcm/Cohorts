@@ -258,105 +258,8 @@ printmeantab <- function(tab) {
 @
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\clearpage
-\section{Measurement Invariance}
-
-Meaningful comparison of latent constructs across different groups of individuals and/or measurement occasions (in our case, cohorts) requires that the available measures have the same relationship with the latent factors. This property is denominated measurement invariance \citep{Vandenberg2000,Putnick2016}. 
-
-Measurement invariance (MI) is a \emph{formally testable} property. Two main frameworks have been used for assessing MI: item-response theory (IRT), or structural equation modeling (SEM). This paper focuses on the latter, as it is the most commonly employed.\footnote{For an introduction to MI in an IRT framework, see for example \cite{Tay2015}.} In general, MI analyses in a SEM framework are carried out by specifying and estimating factor models of different invariance levels, and comparing their relative fit. It starts with the estimation of a minimally restrictive model, where all measurement parameters are allowed to vary across groups -- net of the necessary normalisations -- and proceeds with progressively restricting sets of parameters to be equal across groups. If the fit of more restrictive models is comparable to the configural model, different levels of invariance can be established.
-
-In accordance with the SEM approach, we set up a (confirmatory) item factor analysis (IFA) model to examine measurement invariance. In our application, we observe 11 categorical items ($X_1$-$X_{11}$). Our exploratory analysis above shows that the correlation structure of these measures can be captured by a two-dimensional latent construct (factor) $\bm{\theta}$ -- externalising and internalising socioemotional skills. We make the commonly adopted assumption of a dedicated (or congeneric) factor structure, where each measure is assumed to load on only one latent dimension \citep{Attanasio2017c,Heckman2013}.
-
-To account for the ordered nature of the measures, we specify a threshold model \citep{Muthen1984}. Individual $j=1\dots N_c$ in group $c=\{A,B\}$ is assumed to have a latent continuous propensity $X^*_{ijc}$ for each item $i=1,\dots,I$. Thus, $X^*_{ijc}$ is the child's propensity to exhibit each of the behaviours described in \autoref{tab:comm}, as reported by the mother. This propensity is modelled as a function of item- and group-specific intercepts $\nu_{ic}$ and loadings $\bm{\lambda}_{ic}$, and the individual's level on the latent construct vector $\bm{\theta}_{jc}$, plus an independent error component $u_{ijc}$. In our application, the latent factor is bidimensional, and corresponds to the externalising ($\theta_{jc}^{EXT}$) and internalising ($\theta_{jc}^{INT}$) skills.
-
-The propensity for each item can be written as follows:\footnote{The dedicated factor structure is ensured by the sparsity of the loading matrix, i.e.: $$\bm{\Lambda}_{c} \coloneqq \begin{bmatrix} \lambda_{1c}, \dots, \lambda_{6c} & \bm{0} \\ \bm{0} & \lambda_{7c}, \dots, \lambda_{11c} \end{bmatrix}.$$}
-\be\label{eq:propens}
-X^*_{ijc} =\nu_{ic} + \bm{\lambda}_{ic}\bm{\theta}_{jc} + u_{ijc} \qquad \text{for} \quad i = 1,\dots,11 \\
-\ee
-
-or more compactly:
-$$\bm{X}^*_{jc} =\bm{\nu}_c + \bm{\Lambda}_{c}\bm{\theta}_{jc} + \bm{u}_{jc}$$
-
-Additional standard distributional assumptions are placed on the latent constructs and error terms:
-$$\bm{\theta}_{jc} \sim N(\bm{\kappa}_c, \bm{\Phi}_c) \qquad \text{and} \qquad \bm{u}_{jc} \sim N(\bm{0}, \bm{\Psi}_c)$$
-
-The model implies the following expression for the mean and covariance structure of the latent propensities:
-$$\bm{\mu}_c=\bm{\nu}_c + \bm{\Lambda}_c\bm{\kappa}_c \qquad \text{and} \qquad \Sigma_c = \bm{\Lambda}_c \bm{\Phi}_c \bm{\Lambda}_c^\prime + \bm{\Psi}_c.$$
-
-Finally, discreteness in the observed measures $X_{cji}$ is incorporated by introducing item- and group-specific threshold parameters $\tau_{ic}$. The observed measures as a function of the propensities $X^*$ can be then written as follows:
-$$X_{ijc} = s \qquad \text{if} \; \tau_{s,ic} \leq X^*_{ijc} < \tau_{s+1,ic} \qquad \text{for} \; s=0,1,2$$
-with $\tau_{0,ic}=-\infty$ and $\tau_{3,ic}=+\infty$.
-
-% FOOTNOTE\footnote{As a consequence of the normality assumption on the error terms $\veps$, the probability that individual $j$ in group $c$ exhibits item $i$ with ``intensity" $s$ is:
-% \begin{align*}
-% \Pr(X_{ijc}=0) &= 1- \Phi(-\tau_{1,ic} + \nu_{ic} + \lambda_{ic}\bm{\theta}_{jc}) \\
-% \Pr(X_{ijc}=1) &= \Phi(-\tau_{1,ic} + \nu_{ic} + \lambda_{ic}\bm{\theta}_{jc})
-% \end{align*}
-% for binary items and
-% \begin{align*}
-% \Pr(X_{ijc}=0) &= 1- \Phi(-\tau_{1,ic} + \nu_{ic} + \lambda_{ic}\bm{\theta}_{jc}) \\
-% \Pr(X_{ijc}=1) &= \Phi(-\tau_{1,ic} + \nu_{ic} + \lambda_{ic}\bm{\theta}_{jc}) - \Phi(-\tau_{2,ic} + \nu_{ic} + \lambda_{ic}\bm{\theta}_{jc})\\
-% \Pr(X_{ijc}=2) &= \Phi(-\tau_{2,ic} +  \nu_{ic} + \lambda_{ic}\bm{\theta}_{jc})
-% \end{align*}
-% for ordinal items. This IFA model can also be written as a 2-parameter Logit IRT model with item difficulty $b$ and item discrimination $a$. In the simplest case for a binary item $1$:
-% $$\text{Probit}(X_{1jc}=1) = a_{1c}(\bm{\theta}_{jc} - b_{1c})$$
-% such that $\tau_{1c}=a_{1c}b_{1c}$ and $a_{1c}=\lambda_{1c}$.}
-
-% Binary items take values:
-% \begin{equation}
-% X_{cji}=
-% \begin{cases}
-% \qquad 0 \qquad \text{if} \; X^*_{cji}<\tau_{1,ci} \\
-% \qquad 1 \qquad \text{if} \; X^*_{cji}\geq\tau_{1,ci}
-% \end{cases}
-% \end{equation}
-% 
-% An ordinal item takes values:
-% 
-% \begin{equation}
-% X_{cji}=
-% \begin{cases}
-% \qquad 0 \qquad \text{if} \; X^*_{cji}<\tau_{1,ci} \\
-% \qquad 1 \qquad \text{if} \; \tau_{1,ci} \leq X^*_{cji}<\tau_{2,ci} \\
-% \qquad 2 \qquad \text{if} \; X^*_{cji}\geq\tau_{2,ci}
-% \end{cases}
-% \end{equation}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-The model specification above cannot identify the parameters unless additional normalisations are imposed. A configural model is defined as a minimal set of restrictions that ensure identification of parameters across groups. There are infinite, equivalent ways in which the configural model can be parameterised -- the well-known issue of factor indeterminacy. Widely used parameterisations for the configural model are:
-\bi[label=$\diamond$]
-\item \underline{Delta parameterisation} {[WE{\textDelta}]} \citep{Wu2016a}
-
-For all groups: $$\text{diag}(\bm{\Phi}) = \bm{I}, \quad \bm{\kappa}=\bm{0}, \quad \bm{\nu}=\bm{0}, \quad \text{and} \; \text{diag}(\bm{\Sigma})=\bm{I}.$$
-
-\item \underline{Theta parameterisation} {[WE{\textTheta}]} \citep{Wu2016a}
-
-For all groups: $$\text{diag}(\bm{\Phi}) = \bm{I}, \quad \bm{\kappa}=\bm{0}, \quad \bm{\nu}=\bm{0}, \quad \text{and} \; \text{diag}(\bm{\Psi})=\bm{I}.$$
-
-\item \underline{Anchored parameterisation} {[MT]} \citep{Millsap2004}
-  \bi
-  \item For all groups, normalise a reference loading to 1 for each factor
-  \item Set invariant across groups one threshold per item (e.g. $\tau_{0,Ai} = \tau_{0,Bi}$), and an additional threshold in the reference items above
-  \item In the first group: $\bm{\kappa_A}=\bm{0}$, $\text{diag}(\bm{\Sigma}_A)=\bm{I}$
-  \item Set all intercepts $\bm{\nu}$ to zero
-  \ei
-\ei
-The first two parameterisations (WE{\textDelta} and WE{\textTheta}) normalise the mean and variance of factors to the same constants in both groups, and they leave all loadings and intercepts to be freely estimated; they only differ in whether the additional required normalisation is imposed on the variances of the error terms ($\bm{\Psi}$) or on the diagonal of the covariance matrix of the measures ($\bm{\Sigma}$). The MT parameterisation instead proceeds by identifying parameters in one group first, and then imposing cross-group equality constraints to identify parameters in other groups \citep{Wu2016a}.
-
-Once the configural model has been estimated, measurement invariance analysis proceeds by estimating nested models that place increasing restrictions on the item parameters, by constraining them to be equal across groups $c$. In the case where available measures are continuous, MI analysis is straightforward \citep{vandeSchoot2012}: one set of parameters is restricted at a time, and the fit of the resulting models are compared to the configural model. The hierarchy of the nested models usually proceeds by testing loadings first, and then intercepts (to establish \emph{metric} and \emph{scalar} invariance -- see \citealp{Vandenberg2000}).
-
-Invariance of systems with categorical measures is less well understood. In particular, the lack of explicit location and scale in the measures introduces an additional set of parameters (thresholds $\tau$) and makes identification reliant on more stringent normalisations. The first comprehensive approach for categorical measures is proposed by \cite{Millsap2004}. New identification results in \cite{Wu2016a} indicate that, in the categorical case, invariance properties cannot be examined by simply restricting one set of parameters at a time. This is because the identification conditions used in the configural baseline model, while being minimally restrictive on their own, become binding once certain additional restrictions are imposed. In light of this, they propose models that identify structures of different invariance levels. They find that some restrictions cannot be tested alone against the configural model, because the models they generate are statistically equivalent. This is true of loading invariance, and also of threshold invariance in the case when the number of categories of each ordinal item is 3 or less. Furthermore, they suggest that comparison of both latent means and variances requires invariance in loadings, thresholds, and intercepts.
-
-{\color{red} ADD SOME MORE COMMENTS ON IDENTIFICATION HERE, to make everything more palatable to economics audience.}
-
-We estimate the sequence of models detailed in \autoref{tab:invparam} by Weighted Least Squares.\footnote{Parameters are estimated by mean- and variance-adjusted weighted least squares (WLSMV) (see \citealp{Muthen2017a}); estimation starts from the items' polychoric correlation matrix, uses diagonally weighted least squares (DWLS), and exploits the full weight matrix to compute robust standard errors and test statistics. Robust WLS has proved in simulation studies to be moderately robust to small violations of the normality assumption in the latent underlying measures \citep{Flora2004}, and generally outperforms maximum likelihood in large samples \citep{Beauducel2006,Li2016}. All estimates are computed using the \texttt{lavaan} package in \textbf{\textsf{R}} \citep{Rosseel2012}.}
-For the purposes of the analysis, we define groups $c$ as cohort-gender cells, with the reference group being males in the BCS (1970) cohort. We then compare the fit of each model against the configural model (i.e. the least restrictive). According to recommended practice, we diplay a range of fit indices. Comparison of $\chi^2$ values across models is the most common strategy. However, tests based on $\Delta \chi^2$ are known to display increasing Type I error rates with sample size and model complexity \citep{Sass2014a}. The use of approximate fit indices (AFIs) has been proposed alongside $\chi^2$ to overcome these limitation. These indices do not have a known sampling distribution, thus making it necessary to rely on rules of thumb to assess what level of \textDelta AFI indicates invariance. Nevertheless, AFIs provide valuable corrections for model parsimony.\footnote{Commonly adopted AFIs in studies of measurement invariance are the root mean squared error of approximation (RMSEA) and the Tucker-Lewis index (TLI). Simulation evidence by \cite{Cheung2002} shows that these indices can show correlation between overall and relative fit, and suggest relying on additional indices, such as the comparative fit index (CFI, \citealp{Bentler1990}), McDonald non-centrality index (MFI, \citealp{McDonald1989}), and Gamma-hat index \citep{Steiger1989} for the case of ordered measures. Commonly accepted thresholds for rejection are $\Delta CFI < - 0.01$, $\Delta MFI < - 0.02$, and $\Delta Gamma hat < - 0.001$. \cite{Meade2008}, using the results from a simulation study, suggests stricter thresholds that should apply in a variety of conditions. For CFI, a single cutoff value of $.002$ is proposed, while cutoffs for MFI depend on the problem's characteristics; in our case (2 factors, 11 items), they suggest $.0066$. \cite{Sass2014a} however cast some doubts of the generalisability of these cutoffs to WLSMV estimators.}
-
-{\color{red} Motivation for choosing RMSEA (does not seem supported in literature, see above).}
-
-The fit of each estimated model using our full sample is compared in Panel A of \autoref{tab:fit}.\footnote{We do not present fit results for the threshold invariance model, as it is statistically equivalent to the configural model and thus its fit is mathematically the same.} The overall fit of the configural model is satisfactory according to widely accepted rules of thumb, with RMSEA close to $0.05$ and CFI close to $.95$ \citep{Hu1999}. For all invariance levels, a chi-squared difference would point to a lack of measurement invariance. However, as detailed above, this test is expected to lead to substantial Type I error with a relatively large sample size such as ours. For the model with restricted thresholds and loadings, most of the \textDelta AFIs indicate that this level of invariance is justified in our data. However, further restricting intercepts results in a model where invariance is rejected across the board.
 
 \begin{table}[]
 \centering\setstretch{1.2} \footnotesize
@@ -613,24 +516,6 @@ print.xtable(xtable(table,
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{figure}
-<<FACDENS, dependson="SELECTDATA", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
-@
-\caption{Scores}
-\justify {\scriptsize \emph{Notes}: Density of scores from final model.
-\par}
-\end{figure}
-
-\begin{figure}
-<<RAWHIST, dependson="SELECTDATA", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
-@
-\caption{Sum scores}
-\justify {\scriptsize \emph{Notes}: Density of sum scores without factor analysis.
-\par}
-\end{figure}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \begin{table}
 \caption{Quantile differences in scores}\label{tab:iqdiff}
 \centering\setstretch{1.2}\footnotesize
@@ -696,68 +581,6 @@ print(xtable(table,
 
 @
 \end{table}
-
-
-\begin{figure}
-<<FACINEQ_FSC, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
-fi <- fi_fsc # select result
-gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
-                        fi$ineqlist[[3]],fi$ineqlist[[4]],
-                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
-                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
-@
-\caption{Inequality by father occupation -- normalised}
-\end{figure}
-
-
-\begin{figure}
-<<FACINEQ_PS, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
-fi <- fi_ps # select result
-gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
-                        fi$ineqlist[[3]],fi$ineqlist[[4]],
-                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
-                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
-@
-\caption{Inequality by mother education -- normalised}
-\end{figure}
-
-\begin{figure}
-<<FACINEQ_SM, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
-fi <- fi_sm # select result
-gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
-                        fi$ineqlist[[3]],fi$ineqlist[[4]],
-                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
-                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
-@
-\caption{Inequality by mother smoking in pregnancy -- normalised}
-\end{figure}
-
-\begin{figure}
-<<ITEMINEQ_FSC, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=11, out.width='\\linewidth'>>=
-itempl_fsc
-@
-\caption{Item-level changes in inequality -- father occupation}
-\justify {\scriptsize \emph{Notes}: The graph displays the ratio between low and high SES in the prevalence of each behaviour, separately by cohort.
-\par}
-\end{figure}
-
-\begin{figure}
-<<ITEMINEQ_PS, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=11, out.width='\\linewidth'>>=
-itempl_ps
-@
-\caption{Item-level changes in inequality -- mother education}
-\justify {\scriptsize \emph{Notes}: The graph displays the ratio between low and high SES in the prevalence of each behaviour, separately by cohort.
-\par}
-\end{figure}
-
-\begin{figure}
-<<ITEMINEQ_SM, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=11, out.width='\\linewidth'>>=
-itempl_sm
-@
-\caption{Item-level changes in inequality -- mother smoking in pregnancy}
-\justify {\scriptsize \emph{Notes}: The graph displays the ratio between low and high SES in the prevalence of each behaviour, separately by cohort.
-\par}
-\end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -841,6 +664,7 @@ texreg::texreg(regs,
 \end{table}
 
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 <<REGS_OUTC_TABPR, dependson="REGS_OUTC">>=
@@ -918,14 +742,89 @@ printoutctab(table, 4)
 \par}
 \end{table}
 
-\clearpage
-{\color{red} 
-\textbf{Interpretation of relationship between early-life socioemotional skills and adolescent/adult outcomes} \\
-Remember that a kid with good externalising skills is a kid that is NOT restless/hyperactive and does not have conduct problems (fighting, tantrums). (In fact in some factorisations of the Rutter, this factor separates into two separate factors similar to conduct and hyperactivity). A kid with good internalising skills is NOT neurotic, worried, fearful, or solitary.\\
-In this light, starting from \autoref{tab:bcs_adol}: better EXT at 5 implies less smoking at 16 (a less `rebellious' child with less conduct problems?), and better INT at 5 implies more smoking at 16 (a more `social' child?). A similar thing is observed for BMI and overweight (although in the latter INT is not significant), but notice that this is limited to females -- more neurotic and restless females are larger. Almost none of the BCS children are thin/underweight at 16. In most of these adolescent outcomes, cognition does not make a difference.\\
-A similar picture emerges for MCS in \autoref{tab:mcs_adol} -- note that here the age for the adolescent outcomes is 14 and not 16. But in MCS it seems that internalising skills matter less. There is some small indication that more neurotic females are more likely to be thin, but the prevalence is again really low. Also consider that all of these are LPM estimates.\\
-For BCS adult outcomes (\autoref{tab:bcs_adult}), cognition dominates. But there is some significance for higher education in females: MORE neurotic (perhaps more focused on studies, care about outcomes) and LESS restless females have a higher likelihood of achieving a higher degree.
-}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}
+<<FACDENS, dependson="SELECTDATA", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
+@
+\caption{Scores}
+\justify {\scriptsize \emph{Notes}: Density of scores from final model.
+\par}
+\end{figure}
+
+\begin{figure}
+<<RAWHIST, dependson="SELECTDATA", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
+@
+\caption{Sum scores}
+\justify {\scriptsize \emph{Notes}: Density of sum scores without factor analysis.
+\par}
+\end{figure}
+
+\begin{figure}
+<<FACINEQ_FSC, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
+fi <- fi_fsc # select result
+gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
+                        fi$ineqlist[[3]],fi$ineqlist[[4]],
+                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
+                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
+@
+\caption{Inequality by father occupation -- normalised}
+\end{figure}
+
+
+\begin{figure}
+<<FACINEQ_PS, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
+fi <- fi_ps # select result
+gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
+                        fi$ineqlist[[3]],fi$ineqlist[[4]],
+                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
+                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
+@
+\caption{Inequality by mother education -- normalised}
+\end{figure}
+
+\begin{figure}
+<<FACINEQ_SM, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
+fi <- fi_sm # select result
+gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
+                        fi$ineqlist[[3]],fi$ineqlist[[4]],
+                        fi$histlist[[1]],fi$histlist[[2]], fi$legend,
+                        ncol=2, nrow=4, heights = c(4,4,2,0.5))
+@
+\caption{Inequality by mother smoking in pregnancy -- normalised}
+\end{figure}
+
+\begin{figure}
+<<ITEMINEQ_FSC, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=11, out.width='\\linewidth'>>=
+itempl_fsc
+@
+\caption{Item-level changes in inequality -- father occupation}
+\justify {\scriptsize \emph{Notes}: The graph displays the ratio between low and high SES in the prevalence of each behaviour, separately by cohort.
+\par}
+\end{figure}
+
+\begin{figure}
+<<ITEMINEQ_PS, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=11, out.width='\\linewidth'>>=
+itempl_ps
+@
+\caption{Item-level changes in inequality -- mother education}
+\justify {\scriptsize \emph{Notes}: The graph displays the ratio between low and high SES in the prevalence of each behaviour, separately by cohort.
+\par}
+\end{figure}
+
+\begin{figure}
+<<ITEMINEQ_SM, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=11, out.width='\\linewidth'>>=
+itempl_sm
+@
+\caption{Item-level changes in inequality -- mother smoking in pregnancy}
+\justify {\scriptsize \emph{Notes}: The graph displays the ratio between low and high SES in the prevalence of each behaviour, separately by cohort.
+\par}
+\end{figure}
+
+
+
 
 
 \end{document}

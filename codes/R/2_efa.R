@@ -6,18 +6,18 @@
 rotation <- "oblimin"
 
 # EFA with 11 item scale
-items.bcs <- items.c[items.c$cohort=="BCS",c(grep("X[0-9]", names(items.c), value=T))]
+items.bcs <- cohdata[cohdata$cohort=="BCS",c(grep("X[0-9]", names(cohdata), value=T))]
 nbcs <- dim(items.bcs)[1]
 bcscor <- hetcor(items.bcs, ML=TRUE, std.err = F)$correlations
 bcsfa <- fa(r=bcscor, nfactors=2, rotate = rotation, fm="wls")
 #bcsfa3 <- fa(r=bcscor, nfactors=3, rotate = rotation, fm="wls")
 
-items.bcs.m <- items.c[items.c$cohort=="BCS" & items.c$sex=="M",c(grep("X[0-9]", names(items.c), value=T))]
+items.bcs.m <- cohdata[cohdata$cohort=="BCS" & cohdata$sex=="M",c(grep("X[0-9]", names(cohdata), value=T))]
 nbcs.m <- dim(items.bcs.m)[1]
 bcscor.m <- hetcor(items.bcs.m, ML=TRUE, std.err = F)$correlations
 bcsfa.m <- fa(r=bcscor.m, nfactors=2, rotate = rotation, fm="wls")
 
-items.bcs.f <- items.c[items.c$cohort=="BCS" & items.c$sex=="F",c(grep("X[0-9]", names(items.c), value=T))]
+items.bcs.f <- cohdata[cohdata$cohort=="BCS" & cohdata$sex=="F",c(grep("X[0-9]", names(cohdata), value=T))]
 nbcs.f <- dim(items.bcs.f)[1]
 bcscor.f <- hetcor(items.bcs.f, ML=TRUE, std.err = F)$correlations
 bcsfa.f <- fa(r=bcscor.f, nfactors=2, rotate = rotation, fm="wls")
@@ -63,18 +63,18 @@ mr.bcs.int <- fisherz2r(mean(fz.bcs.int, na.rm=T))
 ## ---- MCSEFA
 
 # EFA with 11 item scale
-items.mcs <- items.c[items.c$cohort=="MCS",c(grep("X[0-9]", names(items.c), value=T))]
+items.mcs <- cohdata[cohdata$cohort=="MCS",c(grep("X[0-9]", names(cohdata), value=T))]
 nmcs <- dim(items.mcs)[1]
 mcscor <- hetcor(items.mcs, ML=TRUE, std.err = F)$correlations
 mcsfa <- fa(r=mcscor, nfactors=2, rotate = rotation, fm="wls")
 #mcsfa3 <- fa(r=mcscor, nfactors=3, rotate = rotation, fm="wls")
 
-items.mcs.m <- items.c[items.c$cohort=="MCS" & items.c$sex=="M",c(grep("X[0-9]", names(items.c), value=T))]
+items.mcs.m <- cohdata[cohdata$cohort=="MCS" & cohdata$sex=="M",c(grep("X[0-9]", names(cohdata), value=T))]
 nmcs.m <- dim(items.mcs.m)[1]
 mcscor.m <- hetcor(items.mcs.m, ML=TRUE, std.err = F)$correlations
 mcsfa.m <- fa(r=mcscor.m, nfactors=2, rotate = rotation, fm="wls")
 
-items.mcs.f <- items.c[items.c$cohort=="MCS" & items.c$sex=="F",c(grep("X[0-9]", names(items.c), value=T))]
+items.mcs.f <- cohdata[cohdata$cohort=="MCS" & cohdata$sex=="F",c(grep("X[0-9]", names(cohdata), value=T))]
 nmcs.f <- dim(items.mcs.f)[1]
 mcscor.f <- hetcor(items.mcs.f, ML=TRUE, std.err = F)$correlations
 mcsfa.f <- fa(r=mcscor.f, nfactors=2, rotate = rotation, fm="wls")

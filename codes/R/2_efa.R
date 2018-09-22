@@ -10,7 +10,6 @@ items.bcs <- cohdata[cohdata$cohort=="BCS",c(grep("X[0-9]", names(cohdata), valu
 nbcs <- dim(items.bcs)[1]
 bcscor <- hetcor(items.bcs, ML=TRUE, std.err = F)$correlations
 bcsfa <- fa(r=bcscor, nfactors=2, rotate = rotation, fm="wls")
-#bcsfa3 <- fa(r=bcscor, nfactors=3, rotate = rotation, fm="wls")
 
 items.bcs.m <- cohdata[cohdata$cohort=="BCS" & cohdata$sex=="M",c(grep("X[0-9]", names(cohdata), value=T))]
 nbcs.m <- dim(items.bcs.m)[1]
@@ -43,14 +42,6 @@ efatab.bcs <- cbind(
 rownames(efatab.bcs) <- c("Optimal Coordinates", "Acceleration Factor", "Parallel Analysis", "Kaiser", 
                           "VSS Compl. 1", "VSS Compl. 2", "Velicer MAP")
 
-# FACTOR ANALYSIS loadings
-cat("\n\n ----------------------- \n BCS Loadings - Males and Females")
-bcsfa$loadings
-cat("\n\n ----------------------- \n BCS Loadings - Males")
-bcsfa.m$loadings
-cat("\n\n ----------------------- \n BCS Loadings - Females")
-bcsfa.f$loadings
-
 ## ---- BCSREL
 # reliability 
 fz.bcs <- fisherz(bcscor)
@@ -67,7 +58,6 @@ items.mcs <- cohdata[cohdata$cohort=="MCS",c(grep("X[0-9]", names(cohdata), valu
 nmcs <- dim(items.mcs)[1]
 mcscor <- hetcor(items.mcs, ML=TRUE, std.err = F)$correlations
 mcsfa <- fa(r=mcscor, nfactors=2, rotate = rotation, fm="wls")
-#mcsfa3 <- fa(r=mcscor, nfactors=3, rotate = rotation, fm="wls")
 
 items.mcs.m <- cohdata[cohdata$cohort=="MCS" & cohdata$sex=="M",c(grep("X[0-9]", names(cohdata), value=T))]
 nmcs.m <- dim(items.mcs.m)[1]
@@ -100,14 +90,6 @@ efatab.mcs <- cbind(
 rownames(efatab.mcs) <- c("Optimal Coordinates", "Acceleration Factor", "Parallel Analysis", "Kaiser", 
                           "VSS Compl. 1", "VSS Compl. 2", "Velicer MAP")
 
-# FACTOR ANALYSIS
-cat("\n\n ----------------------- \n MCS Loadings - Males and Females")
-mcsfa$loadings
-cat("\n\n ----------------------- \n MCS Loadings - Males")
-mcsfa.m$loadings
-cat("\n\n ----------------------- \n MCS Loadings - Females")
-mcsfa.f$loadings
-
 ## ---- MCSREL
 # reliability 
 fz.mcs <- fisherz(mcscor)
@@ -116,4 +98,5 @@ fz.mcs.ext <- fz.mcs[1:6,1:6]
 mr.mcs.ext <- fisherz2r(mean(fz.mcs.ext, na.rm=T))
 fz.mcs.int <- fz.mcs[7:11,7:11]
 mr.mcs.int <- fisherz2r(mean(fz.mcs.int, na.rm=T))
+
 

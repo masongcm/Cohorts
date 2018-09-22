@@ -95,7 +95,7 @@
 \newcommand{\ee}{\end{equation}}
 
 \usepackage{authblk}
-\title{Inequality in non-cognitive skills: a cross-cohort comparison}
+\title{Inequality in socioemotional skills: a cross-cohort comparison}
 \author[1,2]{Orazio Attanasio}
 \author[1,2]{Richard Blundell}
 \author[1,2]{Gabriella Conti}
@@ -107,6 +107,12 @@
 
 \begin{document}
 \maketitle
+
+\begin{abstract}
+abstract here
+\end{abstract}
+
+% We are grateful to The Centre for Longitudinal Studies, UCL Institute of Education for the use of these data and to the UK Data Archive and UK Data Service for making them available. However, they bear no responsibility for the analysis or interpretation of these data.
 
 
 <<MAIN,cache=FALSE,echo=FALSE,results='hide',message=FALSE,warning=FALSE>>=
@@ -159,45 +165,26 @@ read_chunk(here("codes/R/99_auxfun.R"))
 @
 
 <<AUXFUN>>=
-# load function that gets parameters
+# load auxiliary functions
 @
 
 <<MEANTABLE>>=
 # make table with means
 @
 
-<<MEANTABLE_PRINT>>=
-# function to print mean table
-printmeantab <- function(tab) {
-  print(xtable(tab,
-               align="L{0cm}C{.04\\textwidth}C{.05\\textwidth}C{.05\\textwidth}L{.35\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}L{.35\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
-               digits = 1
-  ), 
-  size="\\small",
-  include.rownames=F,
-  include.colnames=F,
-  booktabs = T,
-  add.to.row = list(pos = c(list(0)),
-                    command = c(
-                      # header
-                      paste(" & & &
-                            \\multicolumn{4}{c}{\\textbf{BCS}} &
-                            \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){4-7} \\cmidrule(lr){8-11} 
-                            Item & Factor & Num. Categ. &
-                            Wording & Cert. Appl. (\\%) & Smtm. Appl. (\\%) & Appl. (\\%) &
-                            Wording & Cert. True (\\%) & Smwt. True (\\%) & True (\\%) \\\\ \\midrule
-                            "
-                            , sep="")
-                    )),
-  sanitize.text.function = function(x){x},
-  sanitize.rownames.function = function(x){""}, # to not print row numbers
-  tabular.environment = "tabular", width = ".8\\textwidth",
-  floating = FALSE
-  )
-}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+<<BCSEFA, dependson='LOAD_DATA'>>=
 @
 
+<<BCSEFARES, dependson='BCSEFA'>>=
+@
+
+<<MCSEFA, dependson='LOAD_DATA'>>=
+@
+
+<<MCSEFARES, dependson='MCSEFA'>>=
+@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -259,8 +246,13 @@ printmeantab <- function(tab) {
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\clearpage
+\bibliographystyle{chicago}
+\bibliography{/Users/giacomomason/Dropbox/Zotero/cohorts.bib}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\clearpage
 \begin{table}[]
 \centering\setstretch{1.2} \footnotesize
 \caption{Parameterisations for measurement invariance}\label{tab:invparam}
@@ -310,15 +302,6 @@ Threshold, Loading, and Intercept invariance
 \end{tabular}
 \end{table}
 
-% ADD PARTIAL INVARIANCE
-
-
-\clearpage
-\bibliographystyle{chicago}
-\bibliography{/Users/giacomomason/Dropbox/Zotero/cohorts.bib}
-
-
-\clearpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -326,29 +309,98 @@ Threshold, Loading, and Intercept invariance
 
 \begin{landscape}
 \begin{table}[]
-\caption{Item wording and prevalence, by cohort -- females}\label{tab:meantab_f}
+\caption{Item prevalence, by cohort and gender}\label{tab:meantab}
 \centering\setstretch{1.2} \footnotesize
-<<MEANTAB_F, dependson="MEANTABLE", results='asis'>>=
+<<MEANTAB, dependson="MEANTABLE", results='asis'>>=
 require(xtable)
-table <- meantab[[2]] # females
-table <- table[,!names(table) %in% c("bcs.num", "mcs.num")] # drop if unneeded
-printmeantab(table)
+table <- meantab # females
+table <- table[,!names(table) %in% c("bcs.text", "bcs.num", "mcs.text", "mcs.num")] # drop if unneeded
+
+  print(xtable(table,
+               align="L{0cm}C{.04\\textwidth}C{.05\\textwidth}C{.05\\textwidth}L{.12\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
+               digits = 1
+  ), 
+  include.rownames=F,
+  include.colnames=F,
+  booktabs = T,
+  add.to.row = list(pos = c(list(0)),
+                    command = c(
+                      # header
+                      paste(" & & & &
+                            \\multicolumn{6}{c}{\\textbf{Males}} & \\multicolumn{6}{c}{\\textbf{Females}}
+                            \\\\ \\cmidrule(lr){5-10} \\cmidrule(lr){11-16} 
+                            & & & & 
+                            \\multicolumn{3}{c}{\\textbf{BCS}} & \\multicolumn{3}{c}{\\textbf{MCS}}
+                            & \\multicolumn{3}{c}{\\textbf{BCS}} & \\multicolumn{3}{c}{\\textbf{MCS}}
+                            \\\\ \\cmidrule(lr){5-7} \\cmidrule(lr){8-10} \\cmidrule(lr){11-13} \\cmidrule(lr){14-16} 
+                            & & & &
+                            Cert. Appl. & Smtm. Appl. & Appl. &  Cert. True & Smwt. True & True &
+                            Cert. Appl. & Smtm. Appl. & Appl. &  Cert. True & Smwt. True & True 
+                            \\\\
+                            Itm. & Factor & Cat. & Title & (\\%) & (\\%) & (\\%) & (\\%) & (\\%) & (\\%) & (\\%) & (\\%) & (\\%) & (\\%) & (\\%) & (\\%) \\\\
+                            "
+                            , sep="")
+                    )),
+  sanitize.text.function = function(x){x},
+  sanitize.rownames.function = function(x){""}, # to not print row numbers
+  tabular.environment = "tabular",
+  floating = FALSE
+  )
+
 @
+\justify {\scriptsize \emph{Notes}: The table shows the prevalence by gender and cohort for each item of our novel subscale. \emph{Itm.} is item number. \emph{Factor} is the latent construct to which the item loads -- EXT is Externalising skills, INT is Internalising skills. \emph{Cat.} is the number of categories in which the item is coded -- 2 denotes a binary item (applies/does not apply) and 3 denotes a 3-category item. \emph{Title} is a short label for the item. \emph{Cert. / Smtm. Appl.} =  Certainly / sometimes applies. \emph{Cert. / Smwt. True} = Certainly / somewhat true.
+\par}
 \end{table}
 \end{landscape}
 
-\begin{landscape}
-\begin{table}[]
-\caption{Item wording and prevalence, by cohort -- males}\label{tab:meantab_m}
-\centering\setstretch{1.2} \footnotesize
-<<MEANTAB_M, dependson="MEANTABLE", results='asis'>>=
-require(xtable)
-table <- meantab[[1]] # males
-table <- table[,!names(table) %in% c("bcs.num", "mcs.num")] # drop if unneeded
-printmeantab(table)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{table}
+\caption{Suggested number of factors to retain}\label{tab:numfac}
+\centering\setstretch{1.2}\footnotesize
+<<NUMFACTAB, dependson='MCSEFARES', results='asis'>>=
+# combine results
+efatab <- data.frame(cbind(efatab.bcs,efatab.mcs))
+
+efatab %>%
+  tibble::rownames_to_column() %>%
+  kable("latex", escape = F, booktabs = T, linesep = "", align=c('l','c','c','c','c','c','c'),
+        col.names = c("Approach", "All", "Males", "Females", "All", "Males", "Females")) %>%
+  add_header_above(c(" " = 1,  "BCS (1970)" = 3, "MCS (2000/1)" = 3)) %>%
+  column_spec(2:7, width = "3em")
+
 @
+\justify {\scriptsize \emph{Notes}: The table compares the optimal number of factors suggested by different aprroaches for our novel scale; scree test based approaches (optimal coordinates, acceleration factor -- \citealp{Raiche2013}), parallel analysis \citep{Horn1965}, Kaiser's eigenvalue rule \citep{Kaiser1960}, Very Simple Structure (VSS, \citealp{Revelle1979}), Velicer Minimum Average Partial test (MAP, \citealp{Velicer1976}).
+\par}
 \end{table}
-\end{landscape}
+
+
+\begin{table}
+\caption{Loadings from exploratory factor analysis}\label{tab:load}
+\centering\setstretch{1.2}\footnotesize
+<<EFALOADTAB, dependson='MCSEFARES', results='asis'>>=
+# combine results
+library(kableExtra)
+loadtab <- cbind(meantab$num, meantab$title, data.frame(cbind(bcsfa$loadings, mcsfa$loadings)))
+colnames(loadtab) <- c("item", "title", "bcs1", "bcs2", "mcs1", "mcs2")
+
+loadtab %>%
+  mutate_at(vars(matches("cs")), round, 3) %>%
+  mutate(
+    bcs1 = cell_spec(bcs1, "latex", bold = ifelse(abs(bcs1) > .25, TRUE, FALSE)),
+    bcs2 = cell_spec(bcs2, "latex", bold = ifelse(abs(bcs2) > .25, TRUE, FALSE)),
+    mcs1 = cell_spec(mcs1, "latex", bold = ifelse(abs(mcs1) > .25, TRUE, FALSE)),
+    mcs2 = cell_spec(mcs2, "latex", bold = ifelse(abs(mcs2) > .25, TRUE, FALSE))
+  ) %>%
+  kable("latex", escape = F, booktabs = T, linesep = "", align=c('c','l','c','c','c'),
+        col.names = c("Item", "Title", "Factor 1 (EXT)", "Factor 2 (INT)", "Factor 1 (EXT)", "Factor 2 (INT)")) %>%
+  add_header_above(c(" " = 2,  "BCS (1970)" = 2, "MCS (2000/1)" = 2))
+
+@
+\justify {\scriptsize \emph{Notes}: The table displays the factor loadings obtained from exploratory factor analysis (EFA) on our novel scale, separately by cohort. The EFA is based on the decomposition of the polychoric correlation matrix, and uses weighted least squares and oblimin rotation.
+\par}
+\end{table}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

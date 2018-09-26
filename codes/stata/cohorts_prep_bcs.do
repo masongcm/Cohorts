@@ -494,6 +494,14 @@ keep bcsid scl42
 tempfile bcsscl42y
 save `bcsscl42y'
 
+*SMOKING at 42 
+use "$bcsraw/2012/bcs70_2012_flatfile.dta", clear
+rename _all, lower
+recode b9smokig (-9/-1 = .) (1 2 3 = 0) (4 = 1), gen(smoke42)
+keep bcsid smoke42
+tempfile bcsoutc42y
+save `bcsoutc42y'
+
 *QUALIFICATIONS AT 30	 *******************************************************
 
 use "$bcsraw/2000/bcs6derived.dta", clear
@@ -504,13 +512,45 @@ recode nvq30 (-9=.)
 tempfile bcsoutc30y
 save `bcsoutc30y'
 
+
+*EARNINGS AT 34	 *******************************************************
+
+use "$bcsraw/2004/bcs_2004_followup.dta", clear
+
+// smoking
+recode bd7smoke (-7 = .) (0 1 2 = 0) (3/6 = 1), gen(smoke34)
+
+// income
+recode b7cgropd (1 = 1) (2 = 0.5) (3 = 0.25) (4 = 0.23333) (5 = 0.019178) (6 9 = .), gen(towgpay)
+gen gpay7 = b7cgropy*towgpay if b7cgropy>0
+recode b7cnetpd (1 = 1) (2 = 0.5) (3 = 0.25) (4 = 0.23333) (5 = 0.019178) (6 9 = .), gen(townpay)
+gen npay7 = b7cnetpy*townpay if b7cnetpy>0
+gen gprof7 = b7seprit/52 if b7seprit>=0 // profit
+gen gearn7 = b7seearn/52 if b7seearn>=0 // earnings
+egen ginc7 = rowtotal(gpay7 gprof7 gearn7), mi
+replace ginc7 = 0 if !inlist(bd7ecact,1,2,3,4,.) & ginc7==. // not working
+gen lginc7 = log(ginc7)
+
+lab var lginc7		"(log) gross weekly income (pay+profit+earnings) (34y)"
+lab var smoke34		"Daily smoker (34y)"
+rename lginc7 lginc34
+keep bcsid lginc34 smoke34
+tempfile bcsoutc34y
+save `bcsoutc34y'
+
 *EARNINGS AT 38	 *******************************************************
 
 use "$bcsraw/2008/bcs_2008_followup.dta", clear
+
 gen hgrpay38 = b8cgrowk/b8chour1 if b8chour1>0 & b8cgrowk>=0
 gen lhgrpay38 = log(hgrpay38)
-keep bcsid lhgrpay38
+
+// smoking
+recode bd8smoke (-8/-1 = .) (0 1 2 = 0) (3/6 = 1), gen(smoke38)
+
 lab var lhgrpay38		"Log gross hourly pay (38y)"
+lab var smoke38			"Daily smoker (38y)"
+keep bcsid lhgrpay38 smoke38
 tempfile bcsoutc38y
 save `bcsoutc38y'
 
@@ -560,7 +600,9 @@ drop if tokeep==0
 keep bcsid smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16 canntry16 age16
 
 merge 1:1 bcsid using `bcsoutc30y', nogen keep(1 3)
+merge 1:1 bcsid using `bcsoutc34y', nogen keep(1 3)
 merge 1:1 bcsid using `bcsoutc38y', nogen keep(1 3)
+merge 1:1 bcsid using `bcsoutc42y', nogen keep(1 3)
 merge 1:1 bcsid using `bcsscl42y', nogen keep(1 3)
 merge 1:1 bcsid using `bcsbmi', nogen keep(1 3)
 

@@ -29,21 +29,21 @@ addopts.raw <- function(x) {
       axis.title.y=element_blank(),
       legend.position="none"
     ) +
-    scale_x_continuous(name = "Raw score", breaks = seq(0,10,1)) +
+    scale_x_continuous(name = "Sum score", breaks = seq(0,10,1)) +
     scale_fill_discrete("") + # remove fill guide title
     scale_colour_discrete(guide=FALSE) +  # remove colour legend
     geom_bar(position="dodge", aes(y = ..prop..)) # PLOTS
   return(x)
 }
 
-rawext.m <- ggplot(subset(finaldata, sex=="M"),aes(x=EXT_RAW, fill=cohort)) + ggtitle("EXT Scores (Males)") + coord_cartesian(ylim = c(0,.25))
-rawint.m <- ggplot(subset(finaldata, sex=="M"),aes(x=INT_RAW, fill=cohort)) + ggtitle("INT Scores (Males)") + coord_cartesian(ylim = c(0,.4))
-rawext.f <- ggplot(subset(finaldata, sex=="F"),aes(x=EXT_RAW, fill=cohort)) + ggtitle("EXT Scores (Females)") + coord_cartesian(ylim = c(0,.25))
-rawint.f <- ggplot(subset(finaldata, sex=="F"),aes(x=INT_RAW, fill=cohort)) + ggtitle("INT Scores (Females)") + coord_cartesian(ylim = c(0,.4))
+rawext.m <- ggplot(subset(finaldata, sex=="M"),aes(x=EXT_RAW, fill=cohort)) + ggtitle("Males EXT") + coord_cartesian(ylim = c(0,.25))
+rawint.m <- ggplot(subset(finaldata, sex=="M"),aes(x=INT_RAW, fill=cohort)) + ggtitle("Males INT") + coord_cartesian(ylim = c(0,.4))
+rawext.f <- ggplot(subset(finaldata, sex=="F"),aes(x=EXT_RAW, fill=cohort)) + ggtitle("Females EXT") + coord_cartesian(ylim = c(0,.25))
+rawint.f <- ggplot(subset(finaldata, sex=="F"),aes(x=INT_RAW, fill=cohort)) + ggtitle("Females INT") + coord_cartesian(ylim = c(0,.4))
 rawlist <- list(rawext.m, rawint.m, rawext.f, rawint.f) 
 rawlist <- lapply(rawlist, addopts.raw) # apply options to all graphs
 
-pcol <- plot_grid( rawlist[[1]], rawlist[[2]], rawlist[[3]], rawlist[[4]],
+pcol <- plot_grid( rawlist[[1]], rawlist[[3]], rawlist[[2]], rawlist[[4]],
                    align = 'vh',
                    hjust = -1,
                    nrow = 2
@@ -92,10 +92,10 @@ addopts.dens <- function(x) {
 }
 
 # densities of factor scores
-pdext.ebm.m <- ggplot(subset(finaldata, sex=="M"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Males Externalising")
-pdint.ebm.m <- ggplot(subset(finaldata, sex=="M"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Males Internalising")
-pdext.ebm.f <- ggplot(subset(finaldata, sex=="F"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Females Externalising")
-pdint.ebm.f <- ggplot(subset(finaldata, sex=="F"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Females Internalising")
+pdext.ebm.m <- ggplot(subset(finaldata, sex=="M"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Males EXT")
+pdint.ebm.m <- ggplot(subset(finaldata, sex=="M"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Males INT")
+pdext.ebm.f <- ggplot(subset(finaldata, sex=="F"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Females EXT")
+pdint.ebm.f <- ggplot(subset(finaldata, sex=="F"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Females INT")
 denslist <- list(pdext.ebm.m, pdint.ebm.m, pdext.ebm.f, pdint.ebm.f) 
 denslist <- lapply(denslist, addopts.dens) # apply options to all graphs
 # add KS pvalue

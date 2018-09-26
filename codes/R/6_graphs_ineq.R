@@ -51,6 +51,7 @@ plotineq <- function(data, categ,
     x <- x + xlab(xlab) +
       scale_y_continuous(name = ylab, breaks = round(seq(-.8,.8,.2),1)) +
       coord_cartesian(ylim = ylim) +
+      geom_hline(yintercept=0, color = "black", linetype = "dashed", size=0.5) +
       stat_summary(geom="errorbar", fun.data=mean_cl_normal, width=.2, position=position_dodge(.5)) +
       stat_summary(fun.y=mean, geom="point", size=4, aes(colour=cohort), position=position_dodge(.5)) +
       labs(list(colour="")) + theme(legend.position="none")

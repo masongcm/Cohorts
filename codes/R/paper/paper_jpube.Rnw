@@ -39,11 +39,17 @@
 \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \renewcommand{\arraystretch}{1.2}%
 
-% appendices/numeration/references
+% CAPTIONS
+\usepackage[textfont={bf,normalsize},labelfont={bf,normalsize}]{caption}     % to allow multiple lines in captions, and customize the look
+\captionsetup{justification=raggedright,singlelinecheck=false}
+
+% APPENDICES AND SECTION NUMERATION
 \usepackage[nottoc,numbib]{tocbibind} 		% bibliography in TOC
-\usepackage[toc,page]{appendix} %appendix
+\usepackage[toc,page,title]{appendix}       % appendix ('title' makes sections into 'APPENDIX A')
 \newcommand{\tocless}[2]{\bgroup\let\addcontentsline=\nocontentsline#1{#2}\egroup} % for empty section
 \numberwithin{equation}{section} %for section eq numeration
+
+% CROSSREFERENCING
 \usepackage{hyperref}                            % references
 \AtBeginDocument{%
 \renewcommand\sectionautorefname{Section}        % custom autoref names
@@ -51,7 +57,6 @@
 }
 \newcommand{\aref}[1]{\hyperref[#1]{Appendix~\ref{#1}}} % for appendix sections
 \usepackage{cleveref}
-
 %tikz
 \usepackage{tikz}
 \usetikzlibrary{shapes,intersections}
@@ -62,7 +67,6 @@
 \setlist{noitemsep}
 \setlist[enumerate]{labelsep=*, leftmargin=*}
 \setlist[itemize]{labelsep=*, leftmargin=*}
-\usepackage[textfont={small},labelfont={bf,small},justification=centering]{caption}     % to allow multiple lines in captions, and customize the look
 
 % page setup (from Racine)
 \setlength{\topmargin}{0cm}
@@ -464,7 +468,7 @@ print(xtable(table,
 )
 
 @
-\justify {\scriptsize \emph{Notes}: The table presents fit indices for models of different invariance levels, following \cite{Wu2016a} Col. (1) displays the number of estimated parameters for each model. Col. (2) and (8) present the value of the $\chi^2$ statistic and the pvalue of the test of equality with respect to the configural model. Col. (3)-(7) and (9)-(13) present alternative fit indices (AFIs), in absolute values and differences from the configural model respectively. RMSE = Root mean squared error of approximation; SRMR = standardised root mean residual; MFI = McDonald non-centrality index; CFI = comparative fit index; G-hat = gamma-hat. Panel A shows results for the whole sample of children in the BCS and MCS cohorts. Panel B is restricted to a subsample of children in the age range of maximum overlap between the two cohorts (59-61 months).
+\justify {\scriptsize \emph{Notes}: The table presents fit indices for models of different invariance levels, following \cite{Wu2016a} Col. (1) displays the number of estimated parameters for each model. Col. (2) and (8) present the value of the $\chi^2$ statistic and the pvalue of the test of equality with respect to the configural model. Col. (3)-(7) and (9)-(13) present alternative fit indices (AFIs), in absolute values and differences from the configural model respectively. RMSE = Root mean squared error of approximation; SRMR = standardised root mean residual; MFI = McDonald non-centrality index; CFI = comparative fit index; G-hat = gamma-hat. Panel A shows results for the whole sample of children in the BCS and MCS cohorts. Panel B is restricted to a subsample of children in the age range of maximum overlap between the two cohorts (59-61 months). Panel C and D are limited to the samples of male and female children respectively.
 \par}
 \end{table}
 \end{landscape}
@@ -473,16 +477,17 @@ print(xtable(table,
 \begin{table}
 \caption{Estimated parameters -- Threshold and loading invariance model (anchored)}\label{tab:measpars}
 \centering\setstretch{1.2}\footnotesize
+\flushleft\textbf{Panel A: Measurement parameters}
 <<RES_FA_PAR, dependson="FA_FIT", results='asis'>>=
 
-table <- getmeaspars(fa.tlmt[[1]], groups = 4, mode = "tl")
+table <- getmeaspars(finalmod, groups = 4, mode = "tl")
 
 # sequences to add rows
 rws <- seq(2, (nrow(table)-1), by = 1) # start from row 2 (exclude model titles)
 rwsl <- as.list(rws)
 
 print.xtable(xtable(table,
-              align="C{0cm}C{.06\\textwidth}C{.04\\textwidth}C{.07\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}C{.057\\textwidth}",
+              align="C{0cm}C{.08\\textwidth}C{.09\\textwidth}C{.07\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
               digits = 3
                     ),
              include.rownames=F,
@@ -494,8 +499,8 @@ print.xtable(xtable(table,
                                           " &
                                             & \\textbf{Loadings}
                                             & \\multicolumn{2}{c}{\\textbf{Thresholds}}
-                                            & \\multicolumn{3}{c}{\\textbf{Intercepts}}
-                                            & \\multicolumn{3}{c}{\\textbf{Variances}}
+                                            & \\multicolumn{3}{c}{\\textbf{Intercepts} (BCS M = 0)}
+                                            & \\multicolumn{3}{c}{\\textbf{Variances} (BCS M = 1)}
                                             \\\\ \\cmidrule(lr){3-3} \\cmidrule(lr){4-5} \\cmidrule(lr){6-8} \\cmidrule(lr){9-11}
 
                                             &
@@ -504,7 +509,7 @@ print.xtable(xtable(table,
                                             & \\multicolumn{3}{c}{$\\nu$}
                                             & \\multicolumn{3}{c}{$\\text{diag}(\\Psi)$} \\\\
 
-                                            Measure
+                                            Item
                                             & Factor
                                             & All
                                             & All & All
@@ -518,20 +523,19 @@ print.xtable(xtable(table,
              floating = FALSE
 )
 @
-\end{table}
-
-\begin{table}
-\caption{Estimated latent variable parameters -- Threshold and loading invariance model (anchored)}\label{tab:lvpars}
-\centering\setstretch{1.2}\footnotesize
+\vspace{3pt}
+\flushleft\textbf{Panel B: Latent variable parameters}
 <<RES_FA_LV, dependson="FA_FIT", results='asis'>>=
 require(xtable)
 
-lvtab <- getlvpars(fa.tlmt[[1]], groups = 4)
+lvtab <- getlvpars(finalmod, groups = 4)
 table <- rbind(lvtab$Males,lvtab$Females)
-
+table <- table[,c("measure", "mean_BCS", "mean_MCS", 
+                  "covext_BCS", "covint_BCS", "covext_MCS", "covint_MCS", 
+                  "corr_BCS", "corr_MCS")] # rearrange
 
 print.xtable(xtable(table,
-                     align="C{0cm}L{.13\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
+                     align="C{0cm}L{.13\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.08\\textwidth}",
                     digits = 3
                     ),
              include.rownames=F,
@@ -541,15 +545,14 @@ print.xtable(xtable(table,
                               command = c(
                               # header
                       "\\toprule
-                      & \\multicolumn{4}{c}{\\textbf{BCS}}
-                      & \\multicolumn{4}{c}{\\textbf{MCS}} \\\\ \\cmidrule(lr){2-5} \\cmidrule(lr){6-9}
+                      & \\multicolumn{2}{c}{\\textbf{Mean}}
+                      & \\multicolumn{4}{c}{\\textbf{Covariance}}
+                      & \\multicolumn{2}{c}{Correlation} \\\\
+                      \\cmidrule(lr){2-3} \\cmidrule(lr){4-7} \\cmidrule(lr){8-9}
 
-                      & Mean
-                      & \\multicolumn{2}{c}{Covariance}
-                      & \\multicolumn{1}{c}{Correlation}
-                      & Mean
-                      & \\multicolumn{2}{c}{Covariance}
-                      & \\multicolumn{1}{c}{Correlation} \\\\
+                      & \\multicolumn{2}{c}{$\\bm{\\kappa}$} & \\multicolumn{4}{c}{$\\bm{\\Phi}$} & & \\\\
+
+                      & BCS & MCS & \\multicolumn{2}{c}{BCS} & \\multicolumn{2}{c}{MCS} & BCS & MCS \\\\
 
                       \\textbf{Males} \\\\",
                       "\\textbf{Females} \\\\",
@@ -563,6 +566,8 @@ print.xtable(xtable(table,
 )
 
 @
+\justify {\scriptsize \emph{Notes}: The table presents estimates for the factor model with loadings $\lambda$ and thresholds $\tau$ restricted to be equal across cohorts. Panel A shows estimates of the measurement parameters. Loadings and thresholds are the same across all cohorts. Intercepts are restricted to zero in the reference group, i.e. males in BCS (not shown). Variances of the error terms are restricted to one in the reference group, i.e. males in BCS (not shown), and for the items that only have two categories (5, 6, 11). Panel B shows estimates of the latent variable parameters. Means are restricted to zero in all cohort-gender groups, while variances are restricted to one only in the reference group, i.e. males in BCS.
+\par}
 \end{table}
 
 
@@ -664,14 +669,17 @@ texreg::texreg(regs,
                groups = grouplabs,
                custom.columns = list("p-value" = r_ext$Mp, "p-value" = r_ext$Fp), custom.col.pos = c(4,6),
                custom.coef.names = varlabs,
-               custom.model.names = c("Males BCS", "Males MCS", "Females BCS", "Females MCS"),
+               custom.model.names = c("\\multicolumn{3}{c}{\\textbf{Males}} & \\multicolumn{3}{c}{\\textbf{Females}} \\\\ 
+                                        \\cmidrule(lr){2-4} \\cmidrule(lr){5-7} 
+                                      & (1) & (2) & (3) & (4) & (5) & (6) \\\\
+                                      & BCS", "MCS", "BCS", "MCS"),
                custom.note = "",
                include.rmse = FALSE,
                table = FALSE
                )
 
 @
-\justify {\scriptsize \emph{Notes}: Robust standard errors in parentheses. All estimates additionally control for region of birth, mother height, number of previous stillbirths at child's birth, preterm birth, a dummy for missing gestational age, and number of other children in the household at child age 5.
+\justify {\scriptsize \emph{Notes}: The table shows coefficients from linear regressions of children's externalising socioemotional skills at five years of age on family background information. The dependent variable is a factor score obtained from the factor model in \autoref{sec:methods}. Col. (1) and (2) show coefficients and standard errors in parentheses, for male children in the BCS and MCS cohorts separately. The latter are obtained using 1,000 bootstrap repetitions, taking into account the factor estimation stage that precedes the regression. Col. (3) shows the p-value of a test that the coefficient is the same in the two cohorts. Col. (4) to (6) repeat for female children. All estimates additionally control for region of birth, mother height, number of previous stillbirths at child's birth, preterm birth, a dummy for missing gestational age, and number of other children in the household at child age 5. See \autoref{tab:harmvar} for a description of the variables used.
 \par}
 \end{table}
 
@@ -704,14 +712,17 @@ texreg::texreg(regs,
                groups = grouplabs,
                custom.columns = list("p-value" = r_int$Mp, "p-value" = r_int$Fp), custom.col.pos = c(4,6),
                custom.coef.names = varlabs,
-               custom.model.names = c("Males BCS", "Males MCS", "Females BCS", "Females MCS"),
+               custom.model.names = c("\\multicolumn{3}{c}{\\textbf{Males}} & \\multicolumn{3}{c}{\\textbf{Females}} \\\\ 
+                                        \\cmidrule(lr){2-4} \\cmidrule(lr){5-7} 
+                                      & (1) & (2) & (3) & (4) & (5) & (6) \\\\
+                                      & BCS", "MCS", "BCS", "MCS"),
                custom.note = "",
                include.rmse = FALSE,
                table = FALSE
                )
 
 @
-\justify {\scriptsize \emph{Notes}: Robust standard errors in parentheses. All estimates additionally control for region of birth, mother height, number of previous stillbirths at child's birth, preterm birth, a dummy for missing gestational age, and number of other children in the household at child age 5.
+\justify {\scriptsize \emph{Notes}: The table shows coefficients from linear regressions of children's internalising socioemotional skills at five years of age on family background information. The dependent variable is a factor score obtained from the factor model in \autoref{sec:methods}. Col. (1) and (2) show coefficients and standard errors in parentheses, for male children in the BCS and MCS cohorts separately. The latter are obtained using 1,000 bootstrap repetitions, taking into account the factor estimation stage that precedes the regression. Col. (3) shows the p-value of a test that the coefficient is the same in the two cohorts. Col. (4) to (6) repeat for female children. All estimates additionally control for region of birth, mother height, number of previous stillbirths at child's birth, preterm birth, a dummy for missing gestational age, and number of other children in the household at child age 5. See \autoref{tab:harmvar} for a description of the variables used.
 \par}
 \end{table}
 
@@ -759,7 +770,7 @@ table <- bcs_outctab_mat
 printoutctab(table, 4)
 
 @
-\justify {\scriptsize \emph{Notes}: Robust standard errors in parentheses. All estimates additionally control for region of birth, maternal education (5), maternal employment (5), father occupation (5), maternal background (age, height, nonwhite ethnicity, number of children in HH), pregnancy (firstborn child, number of previous stillbirths, mother smoked in pregnancy, preterm birth, (log) birth weight).
+\justify {\scriptsize \emph{Notes}: The table shows coefficients from linear regressions of cohort members' adolescent and adult outcomes on their externalising and internalising socioemotional skills at five years of age. Col. (1) shows the mean of the outcome for males. Col. (2) regresses the outcome on the scores obtained from the factor model in \autoref{sec:methods}. Col. (3) additionally controls for cognitive ability at age five. This is a simple factor score obtained by aggregating the available cognitive measures. Col. (4) uses sum scores (see \autoref{fig:sumscores}) instead of factor scores. All standard errors in parentheses are obtained using 1,000 bootstrap repetitions, taking into account the factor estimation stage that precedes the regression. Col. (5) to (8) repeat for female cohort members.  All estimates additionally control for region of birth, maternal education (5), maternal employment (5), father occupation (5), maternal background (age, height, nonwhite ethnicity, number of children in HH), pregnancy (firstborn child, number of previous stillbirths, mother smoked in pregnancy, preterm birth, (log) birth weight). See \autoref{tab:harmvar} for a description of the variables used.
 \par}
 \end{table}
 
@@ -769,12 +780,27 @@ printoutctab(table, 4)
 <<REGS_OUTC_BCS2, results='asis', dependson="REGS_OUTC">>=
 
 # collapse to matrix
-bcs_outctab_mat <- do.call(rbind,lapply(bcs_outctab[c("hnvq30", "lhgrpay38", "obs42")],matrix,ncol=9,byrow=FALSE))
+bcs_outctab_mat <- do.call(rbind,lapply(bcs_outctab[c("hnvq30", "lginc34", "lhgrpay38")],matrix,ncol=9,byrow=FALSE))
 table <- bcs_outctab_mat
 printoutctab(table, 3)
 
 @
-\justify {\scriptsize \emph{Notes}: Robust standard errors in parentheses. All estimates additionally control for region of birth, maternal education (5), maternal employment (5), father occupation (5), maternal background (age, height, nonwhite ethnicity, number of children in HH), pregnancy (firstborn child, number of previous stillbirths, mother smoked in pregnancy, preterm birth, (log) birth weight).
+\justify {\scriptsize \emph{Notes}: The table shows coefficients from linear regressions of cohort members' adolescent and adult outcomes on their externalising and internalising socioemotional skills at five years of age. Col. (1) shows the mean of the outcome for males. Col. (2) regresses the outcome on the scores obtained from the factor model in \autoref{sec:methods}. Col. (3) additionally controls for cognitive ability at age five. This is a simple factor score obtained by aggregating the available cognitive measures. Col. (4) uses sum scores (see \autoref{fig:sumscores}) instead of factor scores. All standard errors in parentheses are obtained using 1,000 bootstrap repetitions, taking into account the factor estimation stage that precedes the regression. Col. (5) to (8) repeat for female cohort members.  All estimates additionally control for region of birth, maternal education (5), maternal employment (5), father occupation (5), maternal background (age, height, nonwhite ethnicity, number of children in HH), pregnancy (firstborn child, number of previous stillbirths, mother smoked in pregnancy, preterm birth, (log) birth weight). See \autoref{tab:harmvar} for a description of the variables used.
+\par}
+\end{table}
+
+\begin{table}
+\centering\footnotesize
+\caption{Predictors of adult outcomes -- BCS}\label{tab:bcs_adult2}
+<<REGS_OUTC_BCS3, results='asis', dependson="REGS_OUTC">>=
+
+# collapse to matrix
+bcs_outctab_mat <- do.call(rbind,lapply(bcs_outctab[c("smoke38", "smoke42", "obs42")],matrix,ncol=9,byrow=FALSE))
+table <- bcs_outctab_mat
+printoutctab(table, 3)
+
+@
+\justify {\scriptsize \emph{Notes}: The table shows coefficients from linear regressions of cohort members' adolescent and adult outcomes on their externalising and internalising socioemotional skills at five years of age. Col. (1) shows the mean of the outcome for males. Col. (2) regresses the outcome on the scores obtained from the factor model in \autoref{sec:methods}. Col. (3) additionally controls for cognitive ability at age five. This is a simple factor score obtained by aggregating the available cognitive measures. Col. (4) uses sum scores (see \autoref{fig:sumscores}) instead of factor scores. All standard errors in parentheses are obtained using 1,000 bootstrap repetitions, taking into account the factor estimation stage that precedes the regression. Col. (5) to (8) repeat for female cohort members.  All estimates additionally control for region of birth, maternal education (5), maternal employment (5), father occupation (5), maternal background (age, height, nonwhite ethnicity, number of children in HH), pregnancy (firstborn child, number of previous stillbirths, mother smoked in pregnancy, preterm birth, (log) birth weight). See \autoref{tab:harmvar} for a description of the variables used.
 \par}
 \end{table}
 
@@ -790,7 +816,7 @@ table <- mcs_outctab_mat
 printoutctab(table, 4)
 
 @
-\justify {\scriptsize \emph{Notes}: Robust standard errors in parentheses. All estimates additionally control for region of birth, maternal education (5), maternal employment (5), father occupation (5), maternal background (age, height, nonwhite ethnicity, number of children in HH), pregnancy (firstborn child, number of previous stillbirths, mother smoked in pregnancy, preterm birth, (log) birth weight).
+\justify {\scriptsize \emph{Notes}: The table shows coefficients from linear regressions of cohort members' adolescent and adult outcomes on their externalising and internalising socioemotional skills at five years of age. Col. (1) shows the mean of the outcome for males. Col. (2) regresses the outcome on the scores obtained from the factor model in \autoref{sec:methods}. Col. (3) additionally controls for cognitive ability at age five. This is a simple factor score obtained by aggregating the available cognitive measures. Col. (4) uses sum scores (see \autoref{fig:sumscores}) instead of factor scores. All standard errors in parentheses are obtained using 1,000 bootstrap repetitions, taking into account the factor estimation stage that precedes the regression. Col. (5) to (8) repeat for female cohort members.  All estimates additionally control for region of birth, maternal education (5), maternal employment (5), father occupation (5), maternal background (age, height, nonwhite ethnicity, number of children in HH), pregnancy (firstborn child, number of previous stillbirths, mother smoked in pregnancy, preterm birth, (log) birth weight). See \autoref{tab:harmvar} for a description of the variables used.
 \par}
 \end{table}
 
@@ -801,80 +827,85 @@ printoutctab(table, 4)
 \begin{figure}
 <<FACDENS, dependson="SELECTDATA", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
 @
-\caption{Scores}
-\justify {\scriptsize \emph{Notes}: Density of scores from final model.
+\caption{Distribution of factor scores}\label{fig:dens}
+\justify {\scriptsize \emph{Notes}: The figure shows the distribution of the externalising and internalising socioemotional skills scores at age five obtained from the factor model, by gender and cohort. The scores are estimated from parameter estimates in \autoref{tab:measpars}, using an Empirical Bayes Modal approach. Higher scores correspond to \emph{better} skills. The distribution is estimated nonparametrically, using an Epanechnikov kernel. The figure also reports the $p$ value from Kolmogorov-Smirnov tests of equality between the distribution in BCS and MCS.
 \par}
 \end{figure}
 
 \begin{figure}
 <<RAWHIST, dependson="SELECTDATA", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
 @
-\caption{Sum scores}
-\justify {\scriptsize \emph{Notes}: Density of sum scores without factor analysis.
+\caption{Distribution of sum scores}\label{fig:sumscores}
+\justify {\scriptsize \emph{Notes}: The figure shows the distribution of the externalising and internalising sum scores at age five, by gender and cohort. The scores are obtained by assigning 0, 1, or 2 points for each item in the scale in \autoref{tab:scalecomp}. Zero points are assigned for `Certainly Applies / True' responses, one point for `Sometimes applies / somewhat true', and two points for `Doesn't apply'. Only 0 or 1 points are assigned for items that are coded as having two categories (5,6, and 11). Higher scores correspond to \emph{better} skills.
 \par}
 \end{figure}
 
 \begin{figure}
-<<FACINEQ_FSC, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
+<<FACINEQ_FSC, dependson="SELECTDATA", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
 fi <- fi_fsc # select result
 gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
                         fi$ineqlist[[3]],fi$ineqlist[[4]],
                         fi$histlist[[1]],fi$histlist[[2]], fi$legend,
                         ncol=2, nrow=4, heights = c(4,4,2,0.5))
 @
-\caption{Inequality by father occupation -- normalised}
+\caption{Skill inequality by father's occupation}
+\justify {\scriptsize \emph{Notes}: The figure shows unconditional mean values of socioemotional skills scores by gender, cohort, and father's occupation at age five. Father's occupation is based on Registrar General's social class, with classes I to III Non Manual being `White collar' and classes III Manual to V (plus `other') being `Blue collar'. `No father figure' is defined as absence of a male figure living in the household. The four panels on top present mean and 95\% confidence intervals. Given that we cannot compare means of skills, all scores are normalised to take value zero for the `Blue collar' category, so that the gradient is emphasised. The bottom two panels present the unconditional distribution of father's occupation.
+\par}
 \end{figure}
 
 
 \begin{figure}
-<<FACINEQ_PS, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
+<<FACINEQ_PS, dependson="SELECTDATA", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
 fi <- fi_ps # select result
 gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
                         fi$ineqlist[[3]],fi$ineqlist[[4]],
                         fi$histlist[[1]],fi$histlist[[2]], fi$legend,
                         ncol=2, nrow=4, heights = c(4,4,2,0.5))
 @
-\caption{Inequality by mother education -- normalised}
+\caption{Skill inequality by mother's education}
+\justify {\scriptsize \emph{Notes}: The figure shows unconditional mean values of socioemotional skills scores by gender, cohort, and mother's education at age five. Mother's education is a dummy for whether the mother continued schooling past the minimum leaving age, based on her date of birth. The four panels on top present mean and 95\% confidence intervals. Given that we cannot compare means of skills, all scores are normalised to take value zero for the `Compulsory' category, so that the gradient is emphasised. The bottom two panels present the unconditional distribution of mother's education.
+\par}
 \end{figure}
 
 \begin{figure}
-<<FACINEQ_SM, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=10, out.width='\\linewidth'>>=
+<<FACINEQ_SM, dependson="SELECTDATA", dev='tikz', fig.height=10, fig.width=10, out.width='\\linewidth'>>=
 fi <- fi_sm # select result
 gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
                         fi$ineqlist[[3]],fi$ineqlist[[4]],
                         fi$histlist[[1]],fi$histlist[[2]], fi$legend,
                         ncol=2, nrow=4, heights = c(4,4,2,0.5))
 @
-\caption{Inequality by mother smoking in pregnancy -- normalised}
+\caption{Skill inequality by mother's pregnancy smoking}
+\justify {\scriptsize \emph{Notes}: The figure shows unconditional mean values of socioemotional skills scores by gender, cohort, and mother's pregnancy smoking. Mother's education is a dummy for whether the mother reported smoking during pregnancy. The four panels on top present mean and 95\% confidence intervals. Given that we cannot compare means of skills, all scores are normalised to take value zero for the `Non-smoker' category, so that the gradient is emphasised. The bottom two panels present the unconditional distribution of mother's pregnancy smoking
+\par}
 \end{figure}
 
 \begin{figure}
-<<ITEMINEQ_FSC, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=11, out.width='\\linewidth'>>=
+<<ITEMINEQ_FSC, dependson="SELECTDATA", dev='tikz', fig.height=10, fig.width=11, out.width='\\linewidth'>>=
 itempl_fsc
 @
-\caption{Item-level changes in inequality -- father occupation}
-\justify {\scriptsize \emph{Notes}: The graph displays the ratio between low and high SES in the prevalence of each behaviour, separately by cohort.
+\caption{Item-level inequality by father's occupation}
+\justify {\scriptsize \emph{Notes}: The graph displays the ratio between the prevalence of each item in our scale in children of white collar vs blue collar fathers, by cohort and gender. All items that have three categories in the scale have been dichotomised. For example, if the prevalence of the `Restless' behaviours among children of blue collar fathers in the BCS cohort is 7.5\%, and 5\% among white collar fathers, the ratio will be 1.5. The error bars represent 95\% confidence intervals.
 \par}
 \end{figure}
 
 \begin{figure}
-<<ITEMINEQ_PS, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=11, out.width='\\linewidth'>>=
+<<ITEMINEQ_PS, dependson="SELECTDATA", dev='tikz', fig.height=10, fig.width=11, out.width='\\linewidth'>>=
 itempl_ps
 @
-\caption{Item-level changes in inequality -- mother education}
-\justify {\scriptsize \emph{Notes}: The graph displays the ratio between low and high SES in the prevalence of each behaviour, separately by cohort.
+\caption{Item-level inequality by mother's education}
+\justify {\scriptsize \emph{Notes}: The graph displays the ratio between the prevalence of each item in our scale in children of educated vs uneducated mothers, by cohort and gender. All items that have three categories in the scale have been dichotomised. For example, if the prevalence of the `Restless' behaviours among children of mothers with compulsory schooling in the BCS cohort is 7.5\%, and 5\% among mothers with post-compulsory schooling, the ratio will be 1.5. The error bars represent 95\% confidence intervals.
 \par}
 \end{figure}
 
 \begin{figure}
-<<ITEMINEQ_SM, dependson="SELECTDATA", dev='tikz', fig.height=9, fig.width=11, out.width='\\linewidth'>>=
+<<ITEMINEQ_SM, dependson="SELECTDATA", dev='tikz', fig.height=10, fig.width=11, out.width='\\linewidth'>>=
 itempl_sm
 @
-\caption{Item-level changes in inequality -- mother smoking in pregnancy}
-\justify {\scriptsize \emph{Notes}: The graph displays the ratio between low and high SES in the prevalence of each behaviour, separately by cohort.
+\caption{Item-level inequality by mother's pregnancy smoking}
+\justify {\scriptsize \emph{Notes}: The graph displays the ratio between the prevalence of each item in our scale in children of mothers who smoked in pregnancy vs non-smokers, by cohort and gender. All items that have three categories in the scale have been dichotomised. For example, if the prevalence of the `Restless' behaviours among children of smoker mothers in the BCS cohort is 7.5\%, and 5\% among non-smoker mothers, the ratio will be 1.5. The error bars represent 95\% confidence intervals.
 \par}
 \end{figure}
-
 
 
 

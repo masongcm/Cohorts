@@ -15,7 +15,7 @@ for (o in 1:length(bcsoutcvars)) { # length(bcsoutcvars)
   form_outc <- list()
   form_outc$b    <- as.formula(paste0(outc, " ~ EXT + INT + age16 + region +", pplus(decvars)))
   form_outc$bc   <- as.formula(paste0(outc, " ~ EXT + INT + age16 + region + cogscore +", pplus(decvars)))
-  form_outc$bcr  <- as.formula(paste0(outc, " ~ EXT_RAW + INT_RAW + age16 + region + cogscore +", pplus(decvars)))
+  form_outc$bcr  <- as.formula(paste0(outc, " ~ EXT_RAWs + INT_RAWs + age16 + region + cogscore +", pplus(decvars)))
   
   for (s in c("M", "F")) {
     # bootstrap SEs
@@ -58,7 +58,7 @@ for (o in 1:length(mcsoutcvars)) { # length(bcsoutcvars)
   form_outc <- list()
   form_outc$b    <- as.formula(paste0(outc," ~ EXT + INT + age14 + region +", pplus(decvars)))
   form_outc$bc   <- as.formula(paste0(mcsoutcvars[o]," ~ EXT + INT + age14 + region + cogscore +", pplus(decvars)))
-  form_outc$bcr  <- as.formula(paste0(mcsoutcvars[o]," ~ EXT_RAW + INT_RAW + age14 + region + cogscore +", pplus(decvars)))
+  form_outc$bcr  <- as.formula(paste0(mcsoutcvars[o]," ~ EXT_RAWs + INT_RAWs + age14 + region + cogscore +", pplus(decvars)))
   bootcoefs <- list()
   
   for (s in c("M", "F")) {
@@ -107,19 +107,19 @@ bcs_outctab <- list()
 for (i in 1:length(bcsoutcvars)) {
   lab <- paste0("\\textit{\\textbf{", bcsoutclabs[i], "}}")
   bcs_outctab[[bcsoutcvars[i]]] <- matrix(c(lab, dvmeans_bcs_m[i], "", "", "", dvmeans_bcs_f[i], "", "", "",   # outcome and means
-                                            "Externalising (factor)", # row label
+                                            "Externalising skills", # row label
                                             "", cellpr(bcsoutcsum$M[[i]]$b, "EXT"), cellpr(bcsoutcsum$M[[i]]$bc, "EXT"), "", # males EXT
                                             "", cellpr(bcsoutcsum$F[[i]]$b, "EXT"), cellpr(bcsoutcsum$M[[i]]$bc, "EXT"), "", # females EXT
-                                            "Internalising (factor)", # row label
+                                            "Internalising skills", # row label
                                             "", cellpr(bcsoutcsum$M[[i]]$b, "INT"), cellpr(bcsoutcsum$M[[i]]$bc, "INT"), "", # males EXT
                                             "", cellpr(bcsoutcsum$F[[i]]$b, "INT"), cellpr(bcsoutcsum$F[[i]]$bc, "INT"), "", # females EXT
-                                            "Externalising (raw score)", # row label
-                                            "", "", "", cellpr(bcsoutcsum$M[[i]]$bcr, "EXT_RAW"), # males EXT
-                                            "", "", "", cellpr(bcsoutcsum$F[[i]]$bcr, "EXT_RAW"), # females EXT
-                                            "Internalising (raw score)", # row label
-                                            "", "", "", cellpr(bcsoutcsum$M[[i]]$bcr, "INT_RAW"), # males EXT
-                                            "", "", "", cellpr(bcsoutcsum$F[[i]]$bcr, "INT_RAW"), # females EXT
-                                            "Cognition (factor)", # row label
+                                            "Externalising (sum score)", # row label
+                                            "", "", "", cellpr(bcsoutcsum$M[[i]]$bcr, "EXT_RAWs"), # males EXT
+                                            "", "", "", cellpr(bcsoutcsum$F[[i]]$bcr, "EXT_RAWs"), # females EXT
+                                            "Internalising (sum score)", # row label
+                                            "", "", "", cellpr(bcsoutcsum$M[[i]]$bcr, "INT_RAWs"), # males EXT
+                                            "", "", "", cellpr(bcsoutcsum$F[[i]]$bcr, "INT_RAWs"), # females EXT
+                                            "Cognitive skills", # row label
                                             "", "", cellpr(bcsoutcsum$M[[i]]$bc, "cogscore"), cellpr(bcsoutcsum$M[[i]]$bcr, "cogscore"), # males COG
                                             "", "", cellpr(bcsoutcsum$F[[i]]$bc, "cogscore"), cellpr(bcsoutcsum$F[[i]]$bcr, "cogscore"), # females COG
                                             "\\newline Adj. R$^2$", # row label
@@ -142,19 +142,19 @@ mcs_outctab <- list()
 for (i in 1:length(mcsoutcvars)) {
   lab <- paste0("\\textit{\\textbf{", mcsoutclabs[i], "}}")
   mcs_outctab[[mcsoutcvars[i]]] <- matrix(c(lab, dvmeans_mcs_m[i], "", "", "", dvmeans_mcs_f[i], "", "", "",   # outcome and means
-                                            "Externalising (factor)", # row label
+                                            "Externalising skills", # row label
                                             "", cellpr(mcsoutcsum$M[[i]]$b, "EXT"), cellpr(mcsoutcsum$M[[i]]$bc, "EXT"), "", # males EXT
                                             "", cellpr(mcsoutcsum$F[[i]]$b, "EXT"), cellpr(mcsoutcsum$M[[i]]$bc, "EXT"), "", # females EXT
-                                            "Internalising (factor)", # row label
+                                            "Internalising skills", # row label
                                             "", cellpr(mcsoutcsum$M[[i]]$b, "INT"), cellpr(mcsoutcsum$M[[i]]$bc, "INT"), "", # males EXT
                                             "", cellpr(mcsoutcsum$F[[i]]$b, "INT"), cellpr(mcsoutcsum$F[[i]]$bc, "INT"), "", # females EXT
-                                            "Externalising (raw score)", # row label
-                                            "", "", "", cellpr(mcsoutcsum$M[[i]]$bcr, "EXT_RAW"), # males EXT
-                                            "", "", "", cellpr(mcsoutcsum$F[[i]]$bcr, "EXT_RAW"), # females EXT
-                                            "Internalising (raw score)", # row label
-                                            "", "", "", cellpr(mcsoutcsum$M[[i]]$bcr, "INT_RAW"), # males EXT
-                                            "", "", "", cellpr(mcsoutcsum$F[[i]]$bcr, "INT_RAW"), # females EXT
-                                            "Cognition (factor)", # row label
+                                            "Externalising (sum score)", # row label
+                                            "", "", "", cellpr(mcsoutcsum$M[[i]]$bcr, "EXT_RAWs"), # males EXT
+                                            "", "", "", cellpr(mcsoutcsum$F[[i]]$bcr, "EXT_RAWs"), # females EXT
+                                            "Internalising (sum score)", # row label
+                                            "", "", "", cellpr(mcsoutcsum$M[[i]]$bcr, "INT_RAWs"), # males EXT
+                                            "", "", "", cellpr(mcsoutcsum$F[[i]]$bcr, "INT_RAWs"), # females EXT
+                                            "Cognitive skills", # row label
                                             "", "", cellpr(mcsoutcsum$M[[i]]$bc, "cogscore"), cellpr(mcsoutcsum$M[[i]]$bcr, "cogscore"), # males COG
                                             "", "", cellpr(mcsoutcsum$F[[i]]$bc, "cogscore"), cellpr(mcsoutcsum$F[[i]]$bcr, "cogscore"), # females COG
                                             "\\newline Adj. R$^2$", # row label

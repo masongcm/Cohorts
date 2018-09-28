@@ -16,7 +16,7 @@ mchxbth <-  list(apply(
 decvarslist_int <- c(decvarslist, mchxbth)
 
 # names of the groups
-decvarsgroups <- c("Maternal education (5)", "Maternal employment (5)", "Father occupation (5)","Maternal background (0)", "Pregnancy")
+decvarsgroups <- c("Maternal education (5)", "Maternal employment (5)", "Father occ. (5) - White Collar = 0","Maternal background (0)", "Pregnancy")
 
 # make into vector
 decvars <- unname(unlist(decvarslist))
@@ -49,13 +49,12 @@ mcs14outc$id <- mcs14outc$mcsid
 mcsoutc <- merge(regdata[regdata$cohort=="MCS",], mcs14outc, by="id", all.x = TRUE)
 mcsoutc$cogscore <- as.vector(factor.scores(mcsoutc[,c("C1", "C2", "C3")], fa(mcsoutc[,c("C1", "C2", "C3")], factors=1), method = "Bartlett")$scores)
 
-# recode
-bcsoutc$hscl42 <- NA # high social class
-bcsoutc$hscl42[bcsoutc$scl42 %in% c(1,2)] <- 1
-bcsoutc$hscl42[bcsoutc$scl42 %in% 3:7] <- 0
-bcsoutc$hnvq30 <- NA # high NVQ
-bcsoutc$hnvq30[bcsoutc$nvq30 %in% c(4,5)] <- 1
-bcsoutc$hnvq30[bcsoutc$nvq30 %in% 0:3] <- 0
+# recode NVQ and employment
+bcsoutc <- bcsoutc %>%
+  mutate(hnvq30 = ifelse(nvq30 %in% c(4,5), 1, ifelse(nvq30 %in% c(0,1,2,3), 0, NA))) %>%
+  mutate(hnvq34 = ifelse(nvq34 %in% c(4,5), 1, ifelse(nvq34 %in% c(0,1,2,3), 0, NA))) %>%
+  mutate(emp34 = ifelse(empst34 %in% c(1,2), 1, ifelse(empst34==0, 0, NA))) %>%
+  mutate(emp42 = ifelse(empst42 %in% c(1,2), 1, ifelse(empst42==0, 0, NA)))
 
 # BMI splits
 # BMI for age in adolescence http://www.who.int/growthref/who2007_bmi_for_age/en/
@@ -72,37 +71,45 @@ bcsoutc$obs42 <- ifelse(bcsoutc$bmi42 > 30, 1, 0)
 bcsoutc$owt42 <- ifelse(bcsoutc$bmi42 > 25, 1, 0)
 # log BMI
 bcsoutc$lbmi16 <- log(bcsoutc$bmi16)
+bcsoutc$lbmi42 <- log(bcsoutc$bmi42)
 mcsoutc$lbmi14 <- log(mcsoutc$bmi14)
 
 
 # select variables
-bcsoutclabs <- c(smktry16 = "Tried smoking (16)",
+bcsoutclabs <- c(smktry16 = "Tried smoking (BCS - 16)",
+                 bmi16 = "BMI (BCS - 16)",
+                 #hialc16 = ">10 alcohol U last week (16)",
                  #alcoh16 = "Alcohol last week (16)",
                  #canntry16 = "Tried cannabis (16)",
-                 bmi16 = "BMI (16)",
                  #lbmi16 = "log BMI (16)",
-                 owt16 = "Overweight (16)",
-                 thn16 = "Thin (16)",
-                 hnvq30 = "Higher education (30)",
-                 lginc34 = "(log) Gross weekly income (34)",
-                 lhgrpay38 = "(log) Gross hr. pay (38)",
+                 #owt16 = "Overweight (16)",
+                 #thn16 = "Thin (16)",
+                 #hnvq30 = "Higher education (30)",
+                 hnvq34 = "Higher education (34)",
+                 lgpay34 = "(log) Gross weekly pay (34)",
+                 #emp34 = "Employed (34)",
+                 lgpay42 = "(log) Gross weekly pay (42)",
+                 emp42 = "Employed (42)",
+                 #lhgrpay38 = "(log) Gross hr. pay (38)",
                  #hscl42 = "Social class I/II (42)",
-                 smoke38 = "Daily smoker (38)",
+                 #smoke38 = "Daily smoker (38)",
                  smoke42 = "Daily smoker (42)",
-                 bmi42 = "BMI (42)",
+                 bmi42 = "BMI (42)"
+                 #lbmi42 = "BMI (42)",
+                 #lbmi42 = "(log) BMI (42)",
                  #owt42 = "Overweight (42)",
-                 obs42 = "Obese (42)"
+                 #obs42 = "Obese (42)"
 )
 bcsoutcvars <- names(bcsoutclabs)
 
 # select variables
-mcsoutclabs <- c(smktry14 = "Tried smoking (14)",
+mcsoutclabs <- c(smktry14 = "Tried smoking (MCS - 14)",
                  #alctry14 = "Tried alcohol (14)",
                  #canntry14 = "Tried cannabis (14)",
-                 selfharm14 = "Self-harmed in past year (14)",
-                 bmi14 = "BMI (14)",
+                 #selfharm14 = "Self-harmed in past year (14)",
+                 bmi14 = "BMI (MCS - 14)"
                  #lbmi14 = "log BMI (14)",
-                 owt14 = "Overweight (14)",
-                 thn14 = "Thin (14)"
+                 #owt14 = "Overweight (14)",
+                 #thn14 = "Thin (14)"
 )
 mcsoutcvars <- names(mcsoutclabs)

@@ -18,7 +18,6 @@ library(tikzDevice)
 library(gtools)
 library(here)
 library(rio)
-library(dummies)
 library(dplyr)
 library(tidyr)
 library(forcats)
@@ -26,6 +25,7 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 library(ggpubr)
+library(kableExtra)
 
 
 dir_data  <- here("rdata/")
@@ -178,9 +178,12 @@ cohdata <- cohdata[complete.cases(cohdata[,c(grep("X[0-9]", names(X.all), value=
 # add raw scores
 cohdata$EXT_RAW <- rowSums(apply(cohdata[,paste("X", seq(1,6), sep="")], 2, function(x) as.numeric(x)), na.rm = T)
 cohdata$INT_RAW <- rowSums(apply(cohdata[,paste("X", seq(7,11), sep="")], 2, function(x) as.numeric(x)), na.rm = T)
-cohdata$EXT_RAWr <- residuals(lm(EXT_RAW ~ age, data=cohdata, na.action = na.exclude))
+cohdata$EXT_RAWr <- residuals(lm(EXT_RAW ~ age, data=cohdata, na.action = na.exclude)) # residualised
 cohdata$INT_RAWr <- residuals(lm(INT_RAW ~ age, data=cohdata, na.action = na.exclude))
 
+# standardise raw scores using BCS M
+cohdata$EXT_RAWs <- (cohdata$EXT_RAW - mean(cohdata[cohdata$cohortsex=="BCS.M", 'EXT_RAW']))/sd(cohdata[cohdata$cohortsex=="BCS.M", 'EXT_RAW'])
+cohdata$INT_RAWs <- (cohdata$INT_RAW - mean(cohdata[cohdata$cohortsex=="BCS.M", 'INT_RAW']))/sd(cohdata[cohdata$cohortsex=="BCS.M", 'INT_RAW'])
 
 # FINAL CLEANING/RECODING
 

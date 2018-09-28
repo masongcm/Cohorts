@@ -92,10 +92,10 @@ addopts.dens <- function(x) {
 }
 
 # densities of factor scores
-pdext.ebm.m <- ggplot(subset(finaldata, sex=="M"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Males EXT")
-pdint.ebm.m <- ggplot(subset(finaldata, sex=="M"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Males INT")
-pdext.ebm.f <- ggplot(subset(finaldata, sex=="F"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Females EXT")
-pdint.ebm.f <- ggplot(subset(finaldata, sex=="F"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Females INT")
+pdext.ebm.m <- ggplot(subset(finaldata, sex=="M"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Males Externalising")
+pdint.ebm.m <- ggplot(subset(finaldata, sex=="M"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Males Internalising")
+pdext.ebm.f <- ggplot(subset(finaldata, sex=="F"), aes(x=EXT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Females Externalising")
+pdint.ebm.f <- ggplot(subset(finaldata, sex=="F"), aes(x=INT, group=cohort, fill=cohort, colour=cohort)) + ggtitle("Females Internalising")
 denslist <- list(pdext.ebm.m, pdint.ebm.m, pdext.ebm.f, pdint.ebm.f) 
 denslist <- lapply(denslist, addopts.dens) # apply options to all graphs
 # add KS pvalue

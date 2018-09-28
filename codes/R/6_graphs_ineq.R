@@ -108,6 +108,7 @@ plotineq <- function(data, categ,
   out$ineqlist <- ineqlist
   out$histlist <- histlist
   out$legend <- legend_b
+  out$data <- datatemp
   
   return(out)
 }
@@ -116,16 +117,16 @@ plotineq <- function(data, categ,
 # reorder social class to have "other" on the LHS (scl10c)
 finaldata$scl10c <- factor(finaldata$scl10b, levels(finaldata$scl10b)[c(5,1:4)])
 # demean scores for lowest class
-finaldata <- demean(finaldata, "scl10b", "IIINM", "dsc")
+ineqdata_temp <- demean(finaldata, "scl10b", "IIINM", "dsc")
 # make plots
-fi_sc <- plotineq(finaldata, "scl10b", "dsc", ylab = "Score (IIINM = 0)", xlab = "Family Social Class (10)",
+fi_sc <- plotineq(ineqdata_temp, "scl10b", "dsc", ylab = "Score (IIINM = 0)", xlab = "Family Social Class (10)",
                   ylim = c(-.6,.4), vline=4.5)
 
 # FATHER SOCIAL CLASS at 5 --------------------
 # demean scores for lowest class
-finaldata <- demean(finaldata, "fscl5wb", "Blue collar", "dfsc")
+ineqdata_temp <- demean(finaldata, "fscl5wb", "Blue collar", "dfsc")
 # make plots
-fi_fsc <- plotineq(finaldata, "fscl5wb", "dfsc", ylab = "Score (Blue c. = 0)", xlab = "Father Occupation (5)",
+fi_fsc <- plotineq(ineqdata_temp, "fscl5wb", "dfsc", ylab = "Score (Blue c. = 0)", xlab = "Father Occupation (5)",
                    ylim = c(-.4,.4))
 
 # # non-normalised version
@@ -134,19 +135,19 @@ fi_fsc <- plotineq(finaldata, "fscl5wb", "dfsc", ylab = "Score (Blue c. = 0)", x
 
 # MATERNAL SCHOOLING -------------------------
 # demean scores for lowest level
-finaldata <- demean(finaldata, "mysch5b", "17-18", "dys")
-fi_ys <- plotineq(finaldata, "mysch5b", "dys", ylab = "Score (17-18 = 0)", xlab = "Age mother left FTE (5)",
+ineqdata_temp <- demean(finaldata, "mysch5b", "17-18", "dys")
+fi_ys <- plotineq(ineqdata_temp, "mysch5b", "dys", ylab = "Score (17-18 = 0)", xlab = "Age mother left FTE (5)",
                   ylim = c(-.6,.4))
 
 # MATERNAL POSTCOMPULSORY  -------------------------
-finaldata <- demean(finaldata, "mpsla5", "Compulsory", "dps")
-fi_ps <- plotineq(finaldata, "mpsla5", "dps", ylab = "Score (Compuls. = 0)", xlab = "Maternal schooling (5)",
+ineqdata_temp <- demean(finaldata, "mpsla5", "Compulsory", "dps")
+fi_ps <- plotineq(ineqdata_temp, "mpsla5", "dps", ylab = "Score (Compuls. = 0)", xlab = "Maternal schooling (5)",
                   ylim = c(-.1,.4))
 
 
 # MATERNAL EMPLOYMENT  -------------------------
-finaldata <- demean(finaldata, "mempl5", "Unempl./At home", "dme")
-fi_me <- plotineq(finaldata, "mempl5", "dme", ylab = "Score (Unempl./At home = 0)", xlab = "Maternal employment (5)")
+ineqdata_temp <- demean(finaldata, "mempl5", "Unempl./At home", "dme")
+fi_me <- plotineq(ineqdata_temp, "mempl5", "dme", ylab = "Score (Unempl./At home = 0)", xlab = "Maternal employment (5)")
 
 # EMPLOYMENT*EDUCATION  -------------------------
 # generate interaction
@@ -156,11 +157,11 @@ levels(finaldata$mscem5) <- c("Compuls. \n Unempl./Home",
                                 "Post-comp. \n Unempl./Home",
                                 "Post-comp. \n Employed"
 )
-finaldata <- demean(finaldata, "mscem5", "Compuls. \n Unempl./Home", "dmecs")
-fi_mecs <- plotineq(finaldata, "mscem5", "dmecs", ylab = "Score (Compuls. + Unempl. = 0)", xlab = "Maternal employment/education at 5",
+ineqdata_temp <- demean(finaldata, "mscem5", "Compuls. \n Unempl./Home", "dmecs")
+fi_mecs <- plotineq(ineqdata_temp, "mscem5", "dmecs", ylab = "Score (Compuls. + Unempl. = 0)", xlab = "Maternal employment/education at 5",
                     ylim = c(-.2,.6), vline=2.5)
 
 # SMOKING IN PREGNANCY
-finaldata <- demean(finaldata, "smkpr", "Non-smoker", "dsm")
-fi_sm <- plotineq(finaldata, "smkpr", "dsm", ylab = "Score (Non-smoker = 0)", xlab = "Maternal smoking (pregn.)",
+ineqdata_temp <- demean(finaldata, "smkpr", "Non-smoker", "dsm")
+fi_sm <- plotineq(ineqdata_temp, "smkpr", "dsm", ylab = "Score (Non-smoker = 0)", xlab = "Maternal smoking (pregn.)",
                   ylim = c(-.6,.1))

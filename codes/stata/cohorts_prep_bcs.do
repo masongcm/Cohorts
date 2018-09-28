@@ -476,6 +476,77 @@ rename xage?? agebmi??
 tempfile bcsbmi
 save `bcsbmi'
 
+
+*QUALIFICATIONS AT 30	 *******************************************************
+
+use "$bcsraw/2000/bcs6derived.dta", clear
+rename _all, lower
+keep bcsid hinvq00
+rename hinvq00 nvq30
+recode nvq30 (-9=.)
+tempfile bcsoutc30y
+save `bcsoutc30y'
+
+*QUALIFICATIONS AT 34	 *******************************************************
+
+use "$bcsraw/2004/bcs7derived.dta", clear
+rename _all, lower
+rename bd7hnvq nvq34
+keep bcsid nvq34
+tempfile bcsqual34y
+save `bcsqual34y'
+
+*EARNINGS AT 34	 *******************************************************
+
+use "$bcsraw/2004/bcs_2004_followup.dta", clear
+
+// smoking
+recode bd7smoke (-7 = .) (0 1 2 = 0) (3/6 = 1), gen(smoke34)
+
+// income
+recode b7cgropd (1 = 1) (2 = 0.5) (3 = 0.25) (4 = 0.23333) (5 = 0.019178) (6 9 = .), gen(towgpay)
+gen gpay7 = b7cgropy*towgpay if b7cgropy>0
+qui su gpay7, det
+replace gpay7 = . if gpay7>r(p99) // trim
+gen lgpay7 = log(gpay7)
+
+gen gearn7 = b7seearn/52 if b7seearn>=0 // earnings
+qui su gearn7, det
+replace gearn7 = . if gearn7>r(p99) // trim
+gen lgearn7 = log(gearn7)
+
+recode b7cnetpd (1 = 1) (2 = 0.5) (3 = 0.25) (4 = 0.23333) (5 = 0.019178) (6 9 = .), gen(townpay)
+gen npay7 = b7cnetpy*townpay if b7cnetpy>0
+gen gprof7 = b7seprit/52 if b7seprit>=0 // profit
+egen ginc7 = rowtotal(gpay7 gprof7 gearn7), mi
+replace ginc7 = 0 if !inlist(bd7ecact,1,2,3,4,.) & ginc7==. // not working
+gen lginc7 = log(ginc7)
+
+
+// employment
+recode bd7ecact (1 2 = 1) (3 4 = 2) (5/12 = 0) (-9/-1 = .), gen(empst34)
+lab def empl	0 "Not employed" 1 "Employed" 2 "Self employed"
+lab val empst34 empl
+
+rename gpay7 gpay34
+rename lgpay7 lgpay34
+rename gearn7 gearn34
+rename lgearn7 lgearn34
+
+lab var smoke34		"Daily smoker (34)"
+lab var gpay34		"Gross pay (34)"
+lab var lgpay34		"(log) Gross pay (34)"
+lab var gearn34		"Income from Self-employment (34)"
+lab var lgearn34	"(log) Income from Self-employment (34)"
+lab var empst34		"Employment (34)"
+
+
+rename lginc7 lginc34
+keep bcsid smoke34 empst34 lgpay34 lgearn34
+tempfile bcsoutc34y
+save `bcsoutc34y'
+
+
 *SOCIAL CLASS (adult, 42)	 **********************************************
 use "$data/CohortsHarmonised/raw/bcs70_harmonised_adultses.dta", clear // income
 rename BCSID bcsid
@@ -494,49 +565,59 @@ keep bcsid scl42
 tempfile bcsscl42y
 save `bcsscl42y'
 
+* economic activity at 42
+use "$bcsraw/2012/bcs70_2012_derived.dta", clear
+rename _all, lower
+keep bcsid bd9ecact
+tempfile ecact42
+save `ecact42'
+
 *SMOKING at 42 
 use "$bcsraw/2012/bcs70_2012_flatfile.dta", clear
 rename _all, lower
+merge 1:1 bcsid using `ecact42', nogen
+
+// smoking
 recode b9smokig (-9/-1 = .) (1 2 3 = 0) (4 = 1), gen(smoke42)
-keep bcsid smoke42
+
+// income
+recode b9grop (1 = 1) (2 = 0.5) (3 = 0.333) (4=0.25) (5 = 0.23333) (6 = 0.116666) (52 = 0.019178) (-9 -8 -1 9 10 90 95 96 = .), gen(towgpay)
+gen gpay9 = b9groa*towgpay if b9groa>0
+qui su gpay9, det
+replace gpay9 = . if gpay9>r(p99) // trim
+gen lgpay9 = log(gpay9)
+
+gen nearn9 = b9sepa /52 if b9sepa >=0 // take home income from SE
+qui su nearn9, det
+replace nearn9 = . if nearn9>r(p99) // trim
+gen lnearn9 = log(nearn9)
+
+recode b9netp (1 = 1) (2 = 0.5) (3 = 0.333) (4=0.25) (5 = 0.23333) (6 = 0.116666) (52 = 0.019178) (-9 -8 -1 9 10 90 95 96 = .), gen(townpay)
+gen npay9 = b9neta*townpay if b9neta>0
+egen ninc9 = rowtotal(npay9 nearn9), mi
+replace ninc9 = 0 if !inlist(bd9ecact,1,2,3,4,.) & ninc9==. // not working
+gen lninc9 = log(ninc9)
+
+// employment
+recode bd9ecact (1 2 = 1) (3 4 = 2) (5/12 = 0) (-9/-1 = .), gen(empst42)
+lab def empl	0 "Not employed" 1 "Employed" 2 "Self employed"
+lab val empst42 empl
+
+rename gpay9 gpay42
+rename lgpay9 lgpay42
+rename nearn9 nearn42
+rename lnearn9 lnearn42
+lab var smoke42		"Daily smoker (42)"
+lab var gpay42		"Gross pay (42)"
+lab var lgpay42		"(log) Gross pay (42)"
+lab var nearn42		"Income from Self-employment (42)"
+lab var lnearn42	"(log) Income from Self-employment (42)"
+lab var empst42		"Employment (42)"
+
+keep bcsid smoke42 empst42 lgpay42 lnearn42
 tempfile bcsoutc42y
 save `bcsoutc42y'
 
-*QUALIFICATIONS AT 30	 *******************************************************
-
-use "$bcsraw/2000/bcs6derived.dta", clear
-rename _all, lower
-keep bcsid hinvq00
-rename hinvq00 nvq30
-recode nvq30 (-9=.)
-tempfile bcsoutc30y
-save `bcsoutc30y'
-
-
-*EARNINGS AT 34	 *******************************************************
-
-use "$bcsraw/2004/bcs_2004_followup.dta", clear
-
-// smoking
-recode bd7smoke (-7 = .) (0 1 2 = 0) (3/6 = 1), gen(smoke34)
-
-// income
-recode b7cgropd (1 = 1) (2 = 0.5) (3 = 0.25) (4 = 0.23333) (5 = 0.019178) (6 9 = .), gen(towgpay)
-gen gpay7 = b7cgropy*towgpay if b7cgropy>0
-recode b7cnetpd (1 = 1) (2 = 0.5) (3 = 0.25) (4 = 0.23333) (5 = 0.019178) (6 9 = .), gen(townpay)
-gen npay7 = b7cnetpy*townpay if b7cnetpy>0
-gen gprof7 = b7seprit/52 if b7seprit>=0 // profit
-gen gearn7 = b7seearn/52 if b7seearn>=0 // earnings
-egen ginc7 = rowtotal(gpay7 gprof7 gearn7), mi
-replace ginc7 = 0 if !inlist(bd7ecact,1,2,3,4,.) & ginc7==. // not working
-gen lginc7 = log(ginc7)
-
-lab var lginc7		"(log) gross weekly income (pay+profit+earnings) (34y)"
-lab var smoke34		"Daily smoker (34y)"
-rename lginc7 lginc34
-keep bcsid lginc34 smoke34
-tempfile bcsoutc34y
-save `bcsoutc34y'
 
 *EARNINGS AT 38	 *******************************************************
 
@@ -570,6 +651,9 @@ recode gh1 (-2 -1 =.) (1=0) (2/4 =1), gen(smktry16b)
 gen smktry16 =  smktry16a
 replace smktry16 = smktry16b if smktry16==.
 recode f56 (-2 -1 =.) (1/max=1), gen(alcoh16)
+recode f57_tot (-4/-1 = .) (0/9 = 0) (10/max=1), gen(hialc16)
+replace hialc16 = 0 if alcoh16==0
+replace alcoh16 = 1 if f57_tot>0
 recode hd1 (-2 -1 =.) (7=0) (1/6=1), gen(alctry16)
 recode gf2 (-2 -1 =.) (1/3=1) (4=0), gen(porn16)
 egen hadsex16 = anymatch(hb9_2 hb9_3 hb9_4 hb9_5 hb9_6 hb9_8 hb9_9), values(1)
@@ -586,6 +670,7 @@ lab var age16			"Age at parent interview (16)"
 lab var smktry16		"Tried smoking (16)"
 lab var alctry16		"Tried alcohol (16)"
 lab var alcoh16			"Alcohol in past week (16)"
+lab var hialc16			">10 Units alcohol in past week (16)"
 lab var drunk16			"Ever been drunk (16)"
 lab var porn16			"Porn in past month (16)"
 lab var hadsex16		"Had sex (16)"
@@ -597,10 +682,11 @@ lab var shplift16		"Shoplifted >5£ in past year (16)"
 
 egen tokeep = rownonmiss(smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16)
 drop if tokeep==0
-keep bcsid smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16 canntry16 age16
+keep bcsid smktry16 alctry16 alcoh16 drunk16 porn16 hadsex16 drugtry16 read16 propdam16 shplift16 canntry16 age16 
 
 merge 1:1 bcsid using `bcsoutc30y', nogen keep(1 3)
 merge 1:1 bcsid using `bcsoutc34y', nogen keep(1 3)
+merge 1:1 bcsid using `bcsqual34y', nogen keep(1 3)
 merge 1:1 bcsid using `bcsoutc38y', nogen keep(1 3)
 merge 1:1 bcsid using `bcsoutc42y', nogen keep(1 3)
 merge 1:1 bcsid using `bcsscl42y', nogen keep(1 3)

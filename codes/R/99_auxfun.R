@@ -197,7 +197,7 @@ cellpr <- function(estimtab, vr) {
 
 # print R2 (with padding)
 prr2 <- function(mod) {
-  return(paste0("\\newline ", sprintf("%.4f", summary(mod)$adj.r.squared)))
+  return(paste0("\\newline ", sprintf("%.3f", summary(mod)$adj.r.squared)))
 }
 
 # function to print pvals as strings in square brackets

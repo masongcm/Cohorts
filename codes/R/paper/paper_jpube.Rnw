@@ -165,6 +165,7 @@ read_chunk(here("codes/R/3_inv_aux.R"))
 read_chunk(here("codes/R/3_inv_fit.R"))
 read_chunk(here("codes/R/4_bootstrap.R"))
 read_chunk(here("codes/R/5_selectvars.R"))
+read_chunk(here("codes/R/5_sumstats.R"))
 read_chunk(here("codes/R/6_graphs.R"))
 read_chunk(here("codes/R/6_graphs_ineq.R"))
 read_chunk(here("codes/R/6_graphs_item.R"))
@@ -234,6 +235,10 @@ read_chunk(here("codes/R/99_auxfun.R"))
 
 <<SELECTDATA_OUTC, dependson="SELECTDATA">>=
 # load outcomes data
+@
+
+<<SUMSTATS, dependson="SELECTDATA">>=
+# make table of summary stats
 @
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -468,7 +473,7 @@ printoutctab(outctabs_mat, length(outctabs))
 <<REGS_OUTC_ADULT, results='asis', dependson="REGS_OUTC">>=
 
 # eliminate raw rows and columns
-outcs <- c("hnvq34", "emp34", "lgpay34", "emp42", "lgpay42")
+outcs <- c("hnvq34", "lgpay34", "emp42", "lgpay42")
 outctabs <- list()
 for (o in 1:length(outcs)) outctabs[[outcs[o]]] <- bcs_outctab[[outcs[o]]][-4:-5, c(-5,-9)]
 # collapse to matrix
@@ -567,7 +572,7 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 \centering\setstretch{1.2} \footnotesize
 <<MEANTAB, dependson="MEANTABLE", results='asis'>>=
 require(xtable)
-table <- meantab # females
+table <- meantab
 table <- table[,!names(table) %in% c("bcs.text", "bcs.num", "mcs.text", "mcs.num")] # drop if unneeded
 
   print(xtable(table,
@@ -606,6 +611,43 @@ table <- table[,!names(table) %in% c("bcs.text", "bcs.num", "mcs.text", "mcs.num
 \par}
 \end{table}
 \end{landscape}
+
+\clearpage
+\begin{table}[]
+\caption{Summary statistics}\label{tab:sumstats}
+\centering\setstretch{1.2} \footnotesize
+<<SUMSTATS_TAB, dependson="SUMSTATS", results='asis'>>=
+require(xtable)
+table <- summtab 
+table <- table[,!names(table) %in% c("bcs.text", "bcs.num", "mcs.text", "mcs.num")] # drop if unneeded
+
+  print(xtable(table,
+               align="L{0cm}L{.3\\textwidth}C{.1\\textwidth}C{.1\\textwidth}C{.1\\textwidth}C{.1\\textwidth}",
+               digits = 1
+  ), 
+  include.rownames=F,
+  include.colnames=F,
+  booktabs = T,
+  add.to.row = list(pos = c(list(0)),
+                    command = c(
+                      # header
+                      paste(" & 
+                            \\multicolumn{2}{c}{\\textbf{Males}} & \\multicolumn{2}{c}{\\textbf{Females}}
+                            \\\\ \\cmidrule(lr){2-3} \\cmidrule(lr){4-5} 
+                            & BCS & MCS & BCS & MCS \\\\
+                            "
+                            , sep="")
+                    )),
+  sanitize.text.function = function(x){x},
+  sanitize.rownames.function = function(x){""}, # to not print row numbers
+  tabular.environment = "tabular",
+  floating = FALSE
+  )
+
+@
+\justify {\scriptsize \emph{Notes}: The table shows mean (standard deviation) of harmonised variables used in the analysis.
+\par}
+\end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

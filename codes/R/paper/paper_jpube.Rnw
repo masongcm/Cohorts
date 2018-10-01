@@ -125,8 +125,7 @@ Gordon Street, London WC1H0AX, UK. Email: o.attanasio@ucl.ac.uk. We thank partic
 
 
 
-\input{text/paper_jpube_1intro.tex}
-\input{text/paper_jpube_1blit.tex}
+\input{text/paper_jpube_1introlit.tex}
 \input{text/paper_jpube_2datamethods.tex}
 \input{text/paper_jpube_3resultsconclusion.tex}
 
@@ -565,7 +564,7 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 
 \clearpage
 \bibliographystyle{chicago}
-\bibliography{/Users/giacomomason/Dropbox/Zotero/cohorts.bib}
+\bibliography{cohorts.bib}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

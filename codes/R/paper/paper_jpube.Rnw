@@ -101,34 +101,34 @@
 \usepackage{authblk}
 \title{Inequality in socioemotional skills: a cross-cohort comparison}
 \author{Orazio Attanasio \hspace{10pt} Richard Blundell \\  Gabriella Conti \hspace{10pt} Giacomo Mason}
-\affil{\emph{Institute for Fiscal Studies} \\ \emph{UCL Department of Economics}}
+\affil{\emph{Institute for Fiscal Studies} \\ \emph{Department of Economics, University College London}}
 \date{\today}
-
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
-
 
 \begin{titlepage}
 \maketitle
 
   \begin{abstract}
-    Abstract here
-  \end{abstract}
+  We examine changes in inequality in socio-emotional skills very early in life in two British cohorts born 30 years apart. We construct socio-emotional scales comparable across cohorts for both boys and girls, using two validated instruments for the measurement of child behaviour. We identify two dimensions of socio-emotional skills for each cohort: `internalising' and `externalising', related to the ability of children to focus their concentration and to engage in interpersonal activities, respectively. Using recent methodological advances in factor analysis, we establish comparability in the inequality of these early skills across cohorts, but not in their average level. We document for the first time that inequality in these early skills has increased across cohorts, especially for boys and at the bottom of the distribution. We also document changes in conditional skills gaps across cohorts. We find an increase in the socio-emotional skills gap in the younger cohort for children born to mothers with higher socio-economic status (education and employment), and to mothers who smoked during pregnancy. The increase in inequality in early socio-emotional skills is particularly pronounced for boys. On the other hand, we find a decline in the skills gradient for children without a father figure in the household. Lastly, we document that socio-emotional skills measured at a much earlier age than in most of the existing literature are significant predictors of outcomes both in adolescence and adulthood, in particular health and health behaviours. Our results show the importance of formally testing comparability of measurements to study skills differences across groups, and in general point to the role of inequalities in the early years for the accumulation of health and human capital across the life course.
+  
+  	Keywords: Inequality, Socio-emotional skills, Cohort studies, Measurement invariance
 
-\vspace{30pt}
-{\footnotesize 
-We thank {\color{orange} participants to the Trans Atlantic Public Economics Seminar }
-We are grateful to The Centre for Longitudinal Studies, UCL Institute of Education for the use of the data and to the UK Data Archive and UK Data Service for making them available. However, they bear no responsibility for the analysis or interpretation of the data. 
-Giacomo Mason obtained funding thanks to an Economic and Social Research Council graduate scholarship.
-}
+	JEL Classification: J13, J24, I14, I24, C38
+  \end{abstract}
+\vspace{20pt}
+
+\thanks{
+\footnotesize{Corresponding Author: Orazio Attanasio, Department of Economics, University College London,
+Gordon Street, London WC1H0AX, UK. Email: o.attanasio@ucl.ac.uk. We thank participants to the NBER/LSE Trans-Atlantic Public Economics Seminar (TAPES) and our two discussants Hilary Hoynes and Gabriel Ulyssea for excellent comments. We are grateful to The Centre for Longitudinal Studies, UCL Institute of Education, for the collection of the data, and to the UK Data Archive and UK Data Service for making them available. However, they bear no responsibility for the analysis or interpretation of the data. Giacomo Mason is funded by an Economics and Social Research Council scholarship.}}
 \end{titlepage}
 
 
 
-
-
-\input{/Users/giacomomason/Dropbox/cohorts_shared/paper_jpube_1intro.tex}
-\input{/Users/giacomomason/Dropbox/cohorts_shared/paper_jpube_2datamethods.tex}
-\input{/Users/giacomomason/Dropbox/cohorts_shared/paper_jpube_3resultsconclusion.tex}
+\input{text/paper_jpube_1intro.tex}
+\input{text/paper_jpube_1blit.tex}
+\input{text/paper_jpube_2datamethods.tex}
+\input{text/paper_jpube_3resultsconclusion.tex}
 
 
 <<MAIN,cache=FALSE,echo=FALSE,results='hide',message=FALSE,warning=FALSE>>=
@@ -270,6 +270,31 @@ read_chunk(here("codes/R/99_auxfun.R"))
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{table}[ht]
+\caption{Subscale of comparable items}\label{tab:scalecomp}
+\centering\setstretch{1.2}
+\begingroup\footnotesize
+\begin{tabular}{C{.03\textwidth}C{.05\textwidth}C{.04\textwidth}L{.12\textwidth}L{.3\textwidth}L{.3\textwidth}}
+  \toprule
+ Itm. & Factor & Cat. & Title & Rutter Wording (BCS 1970) & SDQ Wording (MCS 2000/1) \\ \midrule
+ 1 & EXT & 3 & \textit{Restless} & Very restless. Often running about or jumping up and down. Hardly ever still & Restless, overactive, cannot stay still for long   \\
+   2 & EXT & 3 & \textit{Squirmy/fidgety} & Is squirmy or fidgety & Constantly fidgeting or squirming  \\
+   3 & EXT & 3 & \textit{Fights/bullies} & Frequently fights other children + \newline Bullies other children & Often fights with other children or bullies them  \\
+   4 & EXT & 3 & \textit{Distracted} & Cannot settle to anything for more than a few moments & Easily distracted, concentration wanders  \\
+   5 & EXT & 2 & \textit{Tantrums} & Has temper tantrums & Often has temper tantrums or hot tempers \\
+   6 & EXT & 2 & \textit{Disobedient} & Is often disobedient & (+) Generally obedient, usually does what adults request \\
+   7 & INT & 3 & \textit{Worried} & Often worried, worries about many things  & Many worries, often seems worried \\
+   8 & INT & 3 & \textit{Fearful} & Tends to be fearful or afraid of new things or new situations & Nervous or clingy in new situations, easily loses confidence  \\
+   9 & INT & 3 & \textit{Solitary} & Tends to do things on his/her own, rather solitary & Rather solitary, tends to play alone  \\
+  10 & INT & 3 & \textit{Unhappy} & Often appears miserable, unhappy, tearful or distressed & Often unhappy, down-hearted or tearful \\
+  11 & INT & 2 & \textit{Aches} & Complains of headaches + \newline Complains of stomach-ache or has vomited & Often complains of head- aches, stomach-ache or sickness \\
+   \bottomrule
+\end{tabular}
+\endgroup
+\justify {\scriptsize \emph{Notes}: \emph{Itm.} is item number. \emph{Factor} is the latent construct to which the item loads -- EXT is Externalising skills, INT is Internalising skills. \emph{Cat.} is the number of categories in which the item is coded -- 2 denotes a binary item (applies/does not apply) and 3 denotes a 3-category item. \emph{Title} is a short label for the item. \emph{Wording} columns show the actual wording in the scales used in each of the cohort studies. Items denoted by (+) are positively coded in the original scale.
+\par}
+\end{table}
 
 \begin{table}
 \caption{Quantile differences in scores}\label{tab:iqdiff}
@@ -473,7 +498,7 @@ printoutctab(outctabs_mat, length(outctabs))
 <<REGS_OUTC_ADULT, results='asis', dependson="REGS_OUTC">>=
 
 # eliminate raw rows and columns
-outcs <- c("hnvq34", "lgpay34", "emp42", "lgpay42")
+outcs <- c("hnvq34", "emp42", "lgpay42")
 outctabs <- list()
 for (o in 1:length(outcs)) outctabs[[outcs[o]]] <- bcs_outctab[[outcs[o]]][-4:-5, c(-5,-9)]
 # collapse to matrix
@@ -555,7 +580,7 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
         \renewcommand{\thefigure}{A\arabic{figure}}%
 
 % Appendix text
-\input{/Users/giacomomason/Dropbox/cohorts_shared/paper_jpube_4appendix.tex}
+\input{text/paper_jpube_4appendix.tex}
 
 
 % Appendix tables
@@ -563,7 +588,7 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 \section{Appendix tables}
 
 % from tex file
-\input{/Users/giacomomason/Dropbox/cohorts_shared/paper_jpube_5apptables.tex}
+\input{text/paper_jpube_5apptables.tex}
 
 \clearpage
 \begin{landscape}
@@ -860,24 +885,6 @@ print.xtable(xtable(table,
 
 @
 \justify {\scriptsize \emph{Notes}: The table presents estimates for the factor model with loadings $\lambda$ and thresholds $\tau$ restricted to be equal across cohorts. Panel A shows estimates of the measurement parameters. Loadings and thresholds are the same across all cohorts. Intercepts are restricted to zero in the reference group, i.e. males in BCS (not shown). Variances of the error terms are restricted to one in the reference group, i.e. males in BCS (not shown), and for the items that only have two categories (5, 6, 11). Panel B shows estimates of the latent variable parameters. Means are restricted to zero in all cohort-gender groups, while variances are restricted to one only in the reference group, i.e. males in BCS.
-\par}
-\end{table}
-
-\begin{table}
-\centering\scriptsize
-\caption{Predictors of adolescent outcomes, with sum scores}\label{tab:adol_app}
-\resizebox{15cm}{!}{
-<<REGS_OUTC_ADOL_APP, results='asis', dependson="REGS_OUTC">>=
-
-# collect adolescent outcomes
-outctabs <- list(bcs_outctab$smktry16, bcs_outctab$bmi16, mcs_outctab$smktry14, mcs_outctab$bmi14)
-# collapse to matrix
-outctabs_mat <- do.call(rbind,lapply(outctabs,matrix,ncol=9,byrow=FALSE))
-printoutctab_raw(outctabs_mat, length(outctabs))
-
-@
-}
-\justify {\scriptsize \emph{Notes}: The table shows coefficients from linear regressions of cohort members' adolescent and adult outcomes on their externalising and internalising socioemotional skills at five years of age. Col. (1) shows the mean of the outcome for males. Col. (2) regresses the outcome on the scores obtained from the factor model in \autoref{sec:methods}. Col. (3) additionally controls for cognitive ability at age five. This is a simple factor score obtained by aggregating the available cognitive measures. Col. (4) uses sum scores (see \autoref{fig:sumscores}) instead of factor scores. All standard errors in parentheses are obtained using 1,000 bootstrap repetitions, taking into account the factor estimation stage that precedes the regression. Col. (5) to (8) repeat for female cohort members.  All estimates additionally control for region of birth, maternal education (5), maternal employment (5), father occupation (5), maternal background (age, height, nonwhite ethnicity, number of children in HH), pregnancy (firstborn child, number of previous stillbirths, mother smoked in pregnancy, preterm birth, (log) birth weight). See \autoref{tab:harmvar} for a description of the variables used.
 \par}
 \end{table}
 

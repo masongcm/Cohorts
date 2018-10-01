@@ -1,0 +1,40 @@
+
+\section{Deriving a common scale of socioemotional skills}\label{asec:scales}
+
+In the BCS data, maternal reports on child socioemotional skills are measured using the Rutter A Scale \citep{Rutter1970} -- see Panel A of \autoref{tab:scales}. The Rutter items are rated on three levels: `Does not apply', `Somewhat applies', `Certainly applies'. Since they are all behaviours indicating lower skills, we encode all of them in reverse, i.e. `Certainly applies' = 0, `Somewhat applies' = 1, `Does not apply' = 2. We augment the 19-item Rutter Scale with four additional parent-reported questions from the parental questionnaire, items A to D. These are rated on 4 levels: `Never in the last 12 months', `less than once a month', `at least once a month', `at least once a week'. we recode these into binary indicators, with `Never' and `Less than once a month' to 1 and zero otherwise. To increase comparability between the two scales, we merge together two pairs of items: 4 and 19 (to mirror SDQ item 12 ``Often fights with other children or bullies them"), and A and B (to mirror SDQ item 3 ``Often complains of head-aches, stomach-ache or sickness"). We assign the lowest category among the two original items to the newly obtained item. We also recode items 5 and 14 to binary instead of three categories. These items are recorded with a positive phrasing in SDQ, so a 3-category split would be harder to compare.
+
+In MCS, we use the 25-item strengths and difficulties questionnaire \citep{Goodman1997} -- see Panel B of \autoref{tab:scales}. All items are recorded on a 4-point scale: `Not true', `Somewhat true', `Certainly true', `Can't say'. We set the latter option to missing and recode the rest in ascending order of skill as for the BCS items, i.e. `Certainly true' = 0, `Somewhat true' = 1, `Not true' = 2. For comparability with the BCS Rutter scale, we dichotomise items 3 and 5 to make them comparable with , and dichotomise and invert items 7, and 14.
+
+
+\section{Measurement invariance details}\label{asec:midet}
+
+\subsection{Alternative parameterisations for the configural model}
+
+There are infinite ways to parameterise the configural model defined by \eqref{eq:propens} and \eqref{eq:thresh}. Widely used parameterisations are:
+\bi[label=$\diamond$]
+\item \underline{Delta parameterisation} {[WE{\textDelta}]} \citep{Wu2016a}
+
+For all groups: $$\text{diag}(\bm{\Phi}) = \bm{I}, \quad \bm{\kappa}=\bm{0}, \quad \bm{\nu}=\bm{0}, \quad \text{and} \; \text{diag}(\bm{\Sigma})=\bm{I}.$$
+
+\item \underline{Theta parameterisation} {[WE{\textTheta}]} \citep{Wu2016a}
+
+For all groups: $$\text{diag}(\bm{\Phi}) = \bm{I}, \quad \bm{\kappa}=\bm{0}, \quad \bm{\nu}=\bm{0}, \quad \text{and} \; \text{diag}(\bm{\Psi})=\bm{I}.$$
+
+\item \underline{Anchored parameterisation} {[MT]} \citep{Millsap2004}
+  \bi
+  \item For all groups, normalise a reference loading to 1 for each factor
+  \item Set invariant across groups one threshold per item (e.g. $\tau_{0,Ai} = \tau_{0,Bi}$), and an additional threshold in the reference items above
+  \item In the first group: $\bm{\kappa_A}=\bm{0}$, $\text{diag}(\bm{\Sigma}_A)=\bm{I}$
+  \item Set all intercepts $\bm{\nu}$ to zero
+  \ei
+\ei
+The first two parameterisations (WE{\textDelta} and WE{\textTheta}) normalise the mean and variance of factors to the same constants in both groups, and they leave all loadings and intercepts to be freely estimated; they only differ in whether the additional required normalisation is imposed on the variances of the error terms ($\bm{\Psi}$) or on the diagonal of the covariance matrix of the measures ($\bm{\Sigma}$). The MT parameterisation instead proceeds by identifying parameters in one group first, and then imposing cross-group equality constraints to identify parameters in other groups \citep{Wu2016a}.
+
+\subsection{Identification of models with different levels of invariance}
+
+In the case where available measures are continuous, MI analysis is straightforward \citep{vandeSchoot2012}. The hierarchy of the nested models usually proceeds by testing loadings first, and then intercepts (to establish \emph{metric} and \emph{scalar} invariance -- see \citealp{Vandenberg2000a}).
+
+Invariance of systems with categorical measures, such as the scale we examine in this paper, is less well understood. In particular, the lack of explicit location and scale in the measures introduces an additional set of parameters compared to the continuous case (thresholds $\tau$). This makes identification reliant on more stringent normalisations. A first comprehensive approach for categorical measures was proposed by \cite{Millsap2004}. New identification results in \cite{Wu2016a} indicate that, in the categorical case, invariance properties cannot be examined by simply restricting one set of parameters at a time. This is because the identification conditions used in the configural baseline model, while being minimally restrictive on their own, become binding once certain additional restrictions are imposed. In light of this, they propose models that identify structures of different invariance levels. They find that some restrictions cannot be tested alone against the configural model, because the models they generate are statistically equivalent. This is true of loading invariance, and also of threshold invariance in the case when the number of categories of each ordinal item is 3 or less. Furthermore, they suggest that comparison of both latent means and variances requires invariance in loadings, thresholds, and intercepts. A summary of the approach by \cite{Wu2016a} is available in \autoref{tab:invparam}.
+
+
+

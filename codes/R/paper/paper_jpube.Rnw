@@ -269,6 +269,7 @@ read_chunk(here("codes/R/99_auxfun.R"))
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
 
 \begin{table}[ht]
 \caption{Subscale of comparable items}\label{tab:scalecomp}

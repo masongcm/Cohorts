@@ -102,7 +102,7 @@
 \title{Inequality in socioemotional skills: a cross-cohort comparison}
 \author{Orazio Attanasio \hspace{10pt} Richard Blundell \\  Gabriella Conti \hspace{10pt} Giacomo Mason}
 \affil{\emph{Institute for Fiscal Studies} \\ \emph{Department of Economics, University College London}}
-\date{\today}
+\date{October 2018}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
@@ -120,7 +120,7 @@
 
 \thanks{
 \footnotesize{Corresponding Author: Orazio Attanasio, Department of Economics, University College London,
-Gordon Street, London WC1H0AX, UK. Email: o.attanasio@ucl.ac.uk. We thank participants to the NBER/LSE Trans-Atlantic Public Economics Seminar (TAPES) and our two discussants Hilary Hoynes and Gabriel Ulyssea for excellent comments. We are grateful to The Centre for Longitudinal Studies, UCL Institute of Education, for the collection of the data, and to the UK Data Archive and UK Data Service for making them available. However, they bear no responsibility for the analysis or interpretation of the data. Giacomo Mason is funded by an Economics and Social Research Council scholarship.}}
+Gordon Street, London WC1H0AX, UK. Email: o.attanasio@ucl.ac.uk. We thank participants to the NBER/LSE Trans-Atlantic Public Economics Seminar (TAPES) and our two discussants Hilary Hoynes and Gabriel Ulyssea for excellent comments. We are grateful to The Centre for Longitudinal Studies, UCL Institute of Education, for the collection of the data, and to the UK Data Archive and UK Data Service for making them available. However, they bear no responsibility for the analysis or interpretation of the data. We're especially thankful to George Ploubidis for his guidance in the early stages of the project. Giacomo Mason is funded by an Economics and Social Research Council scholarship.}}
 \end{titlepage}
 
 

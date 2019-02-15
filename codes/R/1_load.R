@@ -92,6 +92,7 @@ names(bcs5aux)[names(bcs5aux)=="epvt_z"] <- "C1" # vocabulary test
 names(bcs5aux)[names(bcs5aux)=="copy_z"] <- "C2"
 names(bcs5aux)[names(bcs5aux)=="hfd_z"]  <- "C3"
 bcs5aux$rwtd <- 1
+bcs5aux$weight1 <- 1
 
 # MCS -------------------------------------------
 mcs5data <- read.dta(paste(dir_data, "mcs5yeng.dta", sep=""), convert.factors = F) # all MCS data
@@ -131,7 +132,7 @@ for (i in 1:ncol(mcs5sdqc)) mcs5sdqcf[,i] <- as.ordered(mcs5sdqc[,i])
 # add SES and cognitive data
 mcs5aux <- cbind(mcs5data[,c("mcsid", 
                              auxvars, 
-                             "rwtd",
+                             "rwtd", "weight1",
                              "nvoc_basz", "psim_basz", "patc_basz")]
 )
 names(mcs5aux)[names(mcs5aux)=="mcsid"] <- "id"
@@ -160,7 +161,7 @@ X.all <- data.frame(rbind(Xtemp.bcs, Xtemp.mcs))
 
 # assemble final data
 cohdata <- X.all[,c(grep("X", names(X.all), value=T), 
-                    "id", "cohort", auxvars, "rwtd",
+                    "id", "cohort", auxvars, "rwtd", "weight1",
                     "C1", "C2", "C3")]
 colnames(cohdata)[colnames(cohdata) == "ageint5"] <- "age"
 cohdata$sex <- factor(cohdata$sex)

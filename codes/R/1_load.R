@@ -13,8 +13,6 @@ library(lavaan)
 library(semTools)
 library(gdata)
 library(xtable)
-library(cowplot)
-library(tikzDevice)
 library(gtools)
 library(here)
 library(rio)
@@ -172,9 +170,6 @@ cohdata$cohortsex <- factor(cohdata$cohortsex,levels(cohdata$cohortsex)[c(1,3,2,
 levels(cohdata$cohortsex) <- c("BCS.M", "BCS.F", "MCS.M", "MCS.F")
 cohdata <- cohdata[!is.na(cohdata$cohortsex),] # drop missings
 
-# keep only complete cases in X
-cohdata <- cohdata[complete.cases(cohdata[,c(grep("X[0-9]", names(X.all), value=T),"age","sex")]),]
-
 # add raw scores
 cohdata$EXT_RAW <- rowSums(apply(cohdata[,paste("X", seq(1,6), sep="")], 2, function(x) as.numeric(x)), na.rm = T)
 cohdata$INT_RAW <- rowSums(apply(cohdata[,paste("X", seq(7,11), sep="")], 2, function(x) as.numeric(x)), na.rm = T)
@@ -241,8 +236,9 @@ cohdata <- cohdata[ , !(names(cohdata) %in% "preterm2")]
 # save dataset
 export(cohdata[,!names(cohdata) %in% c("INT_RAW", "EXT_RAW", "INT_RAWr", "EXT_RAWr")], paste0(dir_data,"cohorts_all.dta"))
 
-# KEEP ONLY REWEIGHTED SAMPLE
-cohdata2 <- cohdata
+# keep only REWEIGHTED SAMPLE and COMPLETE CASES
+cohdata_all <- cohdata
+cohdata <- cohdata[complete.cases(cohdata[,c(grep("X[0-9]", names(X.all), value=T),"age","sex")]),]
 cohdata <- cohdata[cohdata$rwtd==1,]
 
 # MODEL LIST

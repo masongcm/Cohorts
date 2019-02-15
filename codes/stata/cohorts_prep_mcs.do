@@ -436,9 +436,9 @@ save `mcscog5y'
 *SKILLS at 11	 ***************************************************************
 
 * BAS
-use "$mcsraw/S5/mcs5_cm_asssessment.dta", clear
+use "$mcsraw/S5/mcs5_cm_assessment.dta", clear
 rename _all, lower
-keep if eccnum00==1					// keep only first child
+keep if ecnum00==1					// keep only first child
 
 gen datetest11 = ym(ecinty00, ecintm00)
 gen dateb = ym(eccdby00, eccdbm00)
@@ -452,10 +452,10 @@ tempfile mcscog11y
 save `mcscog11y'
 
 * SDQ
-use "$mcsraw/S5/mcs5_cm_capi.dta", clear
+use "$mcsraw/S5/mcs5_parent_cm_interview.dta", clear
 rename _all, lower
-keep if eccnum00==1					// keep only first child
-keep if eppnum00==1					// keep only MAIN (exclude partner)
+keep if ecnum00==1					// keep only first child
+keep if epnum00==1					// keep only MAIN (exclude partner)
 
 gen datesdq11 = ym(ecinty00, ecintm00)
 gen dateb = ym(eccdby00, eccdbm00)
@@ -777,7 +777,7 @@ local covarstokeep country region ///
 /* SAVE 5y FILE */
 preserve
 egen ncmiss=rowmiss(mcs5_sdq*)
-drop if ncmiss >21
+//drop if ncmiss >21
 keep mcsid sentry pttype2 mcs5_sdq* *_basz *_bas age*5 rwtd `covarstokeep'
 saveold "$rdata/mcs5yeng.dta", replace version(12)
 keep if rwtd==1
@@ -788,7 +788,7 @@ restore
 /* SAVE 11y FILE */
 preserve
 egen ncmiss=rowmiss(mcs11_sdq*)
-drop if ncmiss >21
+//drop if ncmiss >21
 keep mcsid sentry pttype2 mcs11_sdq* mcs11_ws* age*11 rwtd `covarstokeep'
 saveold "$rdata/mcs11yeng.dta", replace version(12)
 keep if rwtd==1

@@ -444,7 +444,7 @@ local covarstokeep country region ///
 preserve
 * SAMPLE SELECTION
 egen ncmiss=rowmiss(bcs10_rut*)
-drop if ncmiss >22
+//drop if ncmiss >22
 
 keep bcsid age*10 bcs10_rut* bcs10_ws* `covarstokeep'
 saveold "$rdata/bcs10yeng.dta", replace version(12)
@@ -457,7 +457,7 @@ restore
 preserve
 * SAMPLE SELECTION
 egen ncmiss=rowmiss(bcs5_rut*)
-drop if ncmiss >22
+//drop if ncmiss >22
 
 keep bcsid age*5 epvt_z copy_z hfd_z bcs5_rut* `covarstokeep'
 saveold "$rdata/bcs5yeng.dta", replace version(12)

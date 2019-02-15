@@ -3,23 +3,23 @@
 # import syntax and estimate core models
 
 # WE CONFIGURAL - THETA PARAMETERISATION (Condition 8)
-c.th.4 <- glue::collapse(readLines(paste0(dir_syntax, "c_th_4.lav")), sep=" \n  ")
+c.th.4 <- glue::glue_collapse(readLines(paste0(dir_syntax, "c_th_4.lav")), sep=" \n  ")
 
 # WE CONFIGURAL - DELTA PARAMETERISATION (Condition 7)
-c.dl.2a <- glue::collapse(readLines(paste0(dir_syntax, "c_dl_2a.lav")), sep=" \n  ")
+c.dl.2a <- glue::glue_collapse(readLines(paste0(dir_syntax, "c_dl_2a.lav")), sep=" \n  ")
 
 # WE THRESHOLD invariance, theta par (Condition 15)
-t.th.4 <- glue::collapse(readLines(paste0(dir_syntax, "t_th_4.lav")), sep=" \n  ")
+t.th.4 <- glue::glue_collapse(readLines(paste0(dir_syntax, "t_th_4.lav")), sep=" \n  ")
 
 # WE THRESHOLD+LOADINGS invariance, theta par (Condition 19)
-tl.th.4 <- glue::collapse(readLines(paste0(dir_syntax, "tl_th_4.lav")), sep=" \n  ")
-tl.mt.4 <- glue::collapse(readLines(paste0(dir_syntax, "tl_mt_4.lav")), sep=" \n  ")
+tl.th.4 <- glue::glue_collapse(readLines(paste0(dir_syntax, "tl_th_4.lav")), sep=" \n  ")
+tl.mt.4 <- glue::glue_collapse(readLines(paste0(dir_syntax, "tl_mt_4.lav")), sep=" \n  ")
 
 # WE THRESHOLD+LOADINGS+INTERCEPT invariance, theta par (Condition 27)
-tli.th.4 <- glue::collapse(readLines(paste0(dir_syntax, "tli_th_4.lav")), sep=" \n  ")
+tli.th.4 <- glue::glue_collapse(readLines(paste0(dir_syntax, "tli_th_4.lav")), sep=" \n  ")
 
 # PARTIAL INTERCEPT INVARIANCE
-tlip.th.4 <- glue::collapse(readLines(paste0(dir_syntax, "tlip_th_4.lav")), sep=" \n  ")
+tlip.th.4 <- glue::glue_collapse(readLines(paste0(dir_syntax, "tlip_th_4.lav")), sep=" \n  ")
 
 # allocate empty lists
 fa.c <- list()

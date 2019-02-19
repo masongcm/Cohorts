@@ -156,6 +156,13 @@ getlvpars <- function(fit, groups = 2) {
 ########################################################################
 # printing for outcomes tables
 
+# generic prn function
+prn <- function(obj, dig=3) {
+  if (!is.na(obj)) sprintf(paste0("%.",dig,"f"), round(obj, digits = dig)) 
+  else ""
+}
+prn <- Vectorize(prn, vectorize.args = "obj")
+
 # function to print coefficients in correct format
 prcoef <- function(x) {
   if (abs(x)<10) out <- sub("^(-?)0.", "\\1.", sprintf("%.3f", x))

@@ -24,7 +24,8 @@ library(grid)
 library(gridExtra)
 library(ggpubr)
 library(kableExtra)
-
+library(purrr)
+library(stringr)
 
 dir_data  <- here("rdata/")
 dir_syntax  <- here("codes/R/syntax/")

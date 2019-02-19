@@ -109,7 +109,7 @@ for (i in 1:length(bcsoutcvars)) {
   bcs_outctab[[bcsoutcvars[i]]] <- matrix(c(lab, dvmeans_bcs_m[i], "", "", "", dvmeans_bcs_f[i], "", "", "",   # outcome and means
                                             "Externalising skills (5)", # row label
                                             "", cellpr(bcsoutcsum$M[[i]]$b, "EXT"), cellpr(bcsoutcsum$M[[i]]$bc, "EXT"), "", # males EXT
-                                            "", cellpr(bcsoutcsum$F[[i]]$b, "EXT"), cellpr(bcsoutcsum$M[[i]]$bc, "EXT"), "", # females EXT
+                                            "", cellpr(bcsoutcsum$F[[i]]$b, "EXT"), cellpr(bcsoutcsum$F[[i]]$bc, "EXT"), "", # females EXT
                                             "Internalising skills (5)", # row label
                                             "", cellpr(bcsoutcsum$M[[i]]$b, "INT"), cellpr(bcsoutcsum$M[[i]]$bc, "INT"), "", # males EXT
                                             "", cellpr(bcsoutcsum$F[[i]]$b, "INT"), cellpr(bcsoutcsum$F[[i]]$bc, "INT"), "", # females EXT
@@ -144,7 +144,7 @@ for (i in 1:length(mcsoutcvars)) {
   mcs_outctab[[mcsoutcvars[i]]] <- matrix(c(lab, dvmeans_mcs_m[i], "", "", "", dvmeans_mcs_f[i], "", "", "",   # outcome and means
                                             "Externalising skills (5)", # row label
                                             "", cellpr(mcsoutcsum$M[[i]]$b, "EXT"), cellpr(mcsoutcsum$M[[i]]$bc, "EXT"), "", # males EXT
-                                            "", cellpr(mcsoutcsum$F[[i]]$b, "EXT"), cellpr(mcsoutcsum$M[[i]]$bc, "EXT"), "", # females EXT
+                                            "", cellpr(mcsoutcsum$F[[i]]$b, "EXT"), cellpr(mcsoutcsum$F[[i]]$bc, "EXT"), "", # females EXT
                                             "Internalising skills (5)", # row label
                                             "", cellpr(mcsoutcsum$M[[i]]$b, "INT"), cellpr(mcsoutcsum$M[[i]]$bc, "INT"), "", # males EXT
                                             "", cellpr(mcsoutcsum$F[[i]]$b, "INT"), cellpr(mcsoutcsum$F[[i]]$bc, "INT"), "", # females EXT

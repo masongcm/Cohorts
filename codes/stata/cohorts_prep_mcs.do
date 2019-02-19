@@ -702,7 +702,7 @@ forvalues i=1(1)25 {
 ********************************************************************************
 
 * SAMPLE SELECTION
-keep if naturalmother5 == 1	// keep only interviews with natural mother
+//keep if naturalmother5 == 1	// keep only interviews with natural mother
 drop if region > 6			// drop interviews not in England
 keep if country == 1
 keep if sentry == 1 // only those who entered in sweep 1
@@ -767,7 +767,7 @@ append using `ethn'
 ****************************
 /* SAVE FILES for R */
 
-local covarstokeep country region ///
+local covarstokeep 	weight1 country region ///
 					?scl ///
 					sex smkpr singlem malaise mempl nprevst caesbirth ///
 					ethn bwt lowbwt gestaw preterm mothageb mothagefb teenm parity firstb mheight mweight mbmi ///

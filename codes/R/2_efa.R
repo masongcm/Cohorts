@@ -22,7 +22,6 @@ bcscor.f <- hetcor(items.bcs.f, ML=TRUE, std.err = F)$correlations
 bcsfa.f <- fa(r=bcscor.f, nfactors=2, rotate = rotation, fm="wls")
 
 
-
 ## ---- BCSEFARES
 # Scree
 ns.bcs <- nScree(bcscor)$Components
@@ -68,6 +67,7 @@ items.mcs.f <- cohdata[cohdata$cohort=="MCS" & cohdata$sex=="F",c(grep("X[0-9]",
 nmcs.f <- dim(items.mcs.f)[1]
 mcscor.f <- hetcor(items.mcs.f, ML=TRUE, std.err = F)$correlations
 mcsfa.f <- fa(r=mcscor.f, nfactors=2, rotate = rotation, fm="wls")
+
 
 ## ---- MCSEFARES
 # VSS for number of factors

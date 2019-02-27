@@ -42,7 +42,7 @@ qdtable <- bind_rows(bdatlist) %>%
     med = median(value),
     ciu = quantile(value, .975),
     cil = quantile(value, .025),
-    medci = sprintf("%s\\n[%s,%s]", prn(med), prn(cil), prn(ciu))
+    medci = sprintf("$%s$ \\newline $[%s,%s]$", prn(med), prn(cil), prn(ciu))
   ) %>%
   select(-med, -ciu, -cil) %>%
   # unite cohortsex and reorder
@@ -52,15 +52,7 @@ qdtable <- bind_rows(bdatlist) %>%
   spread(cohortsex, medci) %>%
   mutate(
     pcdiff = paste0(str_sub(pcdiff,2,3), " - ",  str_sub(pcdiff,4,5))
-    )
+  )
 
-# qdtable[,-1] %>% # drop first column
-#   kable("latex", escape = F, booktabs = T, linesep = "", align=c('l','c','c','c','c'),
-#         col.names = c("Quantile diff.", "BCS (1970)", "MCS (2000/1)", "BCS (1970)", "MCS (2000/1)")) %>%
-#   add_header_above(c(" " = 1,  "Males" = 2, "Females" = 2)) %>%
-#   column_spec(2:5, width = "3em") %>%
-#   mutate_all(linebreak)
-#   
-  
 
   

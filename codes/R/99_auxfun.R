@@ -88,7 +88,7 @@ getmeaspars <- function(fit, groups = 2, mode = "tli") {
   # add latent factor and reorder
   allparout$factor <- as.matrix(c(rep("EXT",6), rep("INT",5)))
   allparout <- cbind(allparout[,c("measure", "factor")], allparout[,!names(allparout) %in% c("measure", "factor")])
-  
+  allparout[,"measure"] <- str_remove(allparout[,"measure"], "X") # remove X
   return(allparout)
 }
 

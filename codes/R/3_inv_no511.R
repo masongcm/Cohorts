@@ -39,7 +39,7 @@ fscorrs <- fss %>% # compute correlations
   summarise(label = paste0("r = ", sprintf("%.3f", cor(full, no511))))
   
 ggplot(fss, aes(x = full, y = no511)) + 
-  geom_point(alpha = .3) + 
+  geom_point(alpha = .15) + 
   coord_fixed() +
   facet_grid(cols = vars(skill)) + 
   xlab("Score (all items)") + ylab("Score (excl. items 5 and 11)") + 

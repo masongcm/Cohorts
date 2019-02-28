@@ -52,7 +52,7 @@ mcsfa_all <- fa(r=mcscor_all, nfactors=5, rotate = rotation, fm="wls")
 
 # names
 sdqnames <- c("Considerate", "Restless*", "Headaches/stomachaches*",
-              "Shares", "Tantrums", "Solitary*", "Obedient*",
+              "Shares", "Tantrums*", "Solitary*", "Obedient*",
               "Worried*", "Helpful", "Squirmy/Fidgety*", 
               "Good friend", "Fights/Bullies*", "Unhappy*",
               "Liked", "Distracted*", "Clingy", "Kind", "Lies",

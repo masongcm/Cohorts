@@ -1,40 +1,34 @@
 
 \section{Deriving a common scale of socioemotional skills}\label{asec:scales}
 
-In the BCS data, maternal reports on child socioemotional skills are measured using the Rutter A Scale \citep{Rutter1970} -- see Panel A of \autoref{tab:scales}. The Rutter items are rated on three levels: `Does not apply', `Somewhat applies', `Certainly applies'. Since they are all behaviours indicating lower skills, we encode all of them in reverse, i.e. `Certainly applies' = 0, `Somewhat applies' = 1, `Does not apply' = 2. We augment the 19-item Rutter Scale with four additional parent-reported questions from the parental questionnaire, items A to D. These are rated on 4 levels: `Never in the last 12 months', `less than once a month', `at least once a month', `at least once a week'. we recode these into binary indicators, with `Never' and `Less than once a month' to 1 and zero otherwise. To increase comparability between the two scales, we merge together two pairs of items: 4 and 19 (to mirror SDQ item 12 ``Often fights with other children or bullies them"), and A and B (to mirror SDQ item 3 ``Often complains of head-aches, stomach-ache or sickness"). We assign the lowest category among the two original items to the newly obtained item. We also recode items 5 and 14 to binary instead of three categories. These items are recorded with a positive phrasing in SDQ, so a 3-category split would be harder to compare.
+In the BCS data, maternal reports on child socioemotional skills are measured using the Rutter A Scale \citep{Rutter1970} -- see Panel A of \autoref{tab:scales}. The Rutter items are rated on three levels: `Does not apply', `Somewhat applies', `Certainly applies'. Since they are all behaviours indicating lower skills, we encode all of them in reverse, i.e. `Certainly applies' = 0, `Somewhat applies' = 1, `Does not apply' = 2. We augment the 19-item Rutter Scale with three additional parent-reported questions from the parental questionnaire, items A, B, and D. These are rated on 4 levels: `Never in the last 12 months', `less than once a month', `at least once a month', `at least once a week'. we recode these into binary indicators, with `Never' and `Less than once a month' to 1 and zero otherwise. To increase comparability between the two scales, we merge together two pairs of items: 4 and 19 (to mirror SDQ item 12 ``Often fights with other children or bullies them"), and A and B (to mirror SDQ item 3 ``Often complains of head-aches, stomach-ache or sickness"). We assign the lowest category among the two original items to the newly obtained item. We also recode items 5 and 14 to binary instead of three categories. These items are recorded with a positive phrasing in SDQ, so a 3-category split would be harder to compare.
 
 In MCS, we use the 25-item strengths and difficulties questionnaire \citep{Goodman1997} -- see Panel B of \autoref{tab:scales}. All items are recorded on a 4-point scale: `Not true', `Somewhat true', `Certainly true', `Can't say'. We set the latter option to missing and recode the rest in ascending order of skill as for the BCS items, i.e. `Certainly true' = 0, `Somewhat true' = 1, `Not true' = 2. For comparability with the BCS Rutter scale, we dichotomise items 3 and 5 to make them comparable with , and dichotomise and invert items 7, and 14.
 
+\section{Robustness of exploratory analysis}\label{asec:fullefa}
 
-\section{Measurement invariance details}\label{asec:midet}
+In this section, we repeat the exploratory analysis step in \autoref{sec:ea} for the full set of Rutter and SDQ items. This is to show that the factor structure emerging from exploratory analysis of the 11-item subscale is consistent with what would emerge considering the original scales in their entirety. Again, we proceed by first assessing the optimal number of factors, and then examining the loading obtained from exploratory factor analysis.
 
-\subsection{Alternative parameterisations for the configural model}
+Results for the optimal number of factors as indicated by different approaches are in \autoref{tab:numfac_all}. Similarly to the 11-item subscale, there is not much agreement between methods. Since the purpose of this section is to assess the robustness of the 11-item subscale, we adopt a conservative approach by estimating EFA models with the largest number of factors suggested, i.e. five. In this way, we allow for richer factor solutions, that have more power to disprove our simpler two-factor solution for the novel subscale.
 
-There are infinite ways to parameterise the configural model defined by \eqref{eq:propens} and \eqref{eq:thresh}. Widely used parameterisations are:
-\bi[label=$\diamond$]
-\item \underline{Delta parameterisation} {[WE{\textDelta}]} \citep{Wu2016a}
+\autoref{tab:load_bcsall} presents factor loadings for the Rutter scale in BCS, with the addition of the "headaches/stomachaches" and "tantrums" items (see Appendix \autoref{asec:scales}). The split between externalising and internalising items that we recover in the 11-item scale is almost entirely preserved in the full scale, as seen by items loading on factors 1 and 2. The only exception is the "headaches/stomachaches" item, which seems to load on a separate factor. We carry out robustness checks for the measurement invariance analysis excluding this item in Appendix \autoref{asec:no511}.
 
-For all groups: $$\text{diag}(\bm{\Phi}) = \bm{I}, \quad \bm{\kappa}=\bm{0}, \quad \bm{\nu}=\bm{0}, \quad \text{and} \; \text{diag}(\bm{\Sigma})=\bm{I}.$$
+The same analysis is repeated for the SDQ scale in MCS in \autoref{tab:load_mcsall}. An internalising, emotional dimension (factor 3) emerges neatly, and coherently with the analysis on our subscale. The externalising items from our subscales are split across two dimensions in this full-scale EFA: one more related to hyperactivity (factor 2) and one to conduct problems (factor 4). This is consistent with the original structure of the SDQ \citep{Goodman1997}.
 
-\item \underline{Theta parameterisation} {[WE{\textTheta}]} \citep{Wu2016a}
 
-For all groups: $$\text{diag}(\bm{\Phi}) = \bm{I}, \quad \bm{\kappa}=\bm{0}, \quad \bm{\nu}=\bm{0}, \quad \text{and} \; \text{diag}(\bm{\Psi})=\bm{I}.$$
+\section{Robustness of item choice}\label{asec:no511}
 
-\item \underline{Anchored parameterisation} {[MT]} \citep{Millsap2004}
-  \bi
-  \item For all groups, normalise a reference loading to 1 for each factor
-  \item Set invariant across groups one threshold per item (e.g. $\tau_{0,Ai} = \tau_{0,Bi}$), and an additional threshold in the reference items above
-  \item In the first group: $\bm{\kappa_A}=\bm{0}$, $\text{diag}(\bm{\Sigma}_A)=\bm{I}$
-  \item Set all intercepts $\bm{\nu}$ to zero
-  \ei
-\ei
-The first two parameterisations (WE{\textDelta} and WE{\textTheta}) normalise the mean and variance of factors to the same constants in both groups, and they leave all loadings and intercepts to be freely estimated; they only differ in whether the additional required normalisation is imposed on the variances of the error terms ($\bm{\Psi}$) or on the diagonal of the covariance matrix of the measures ($\bm{\Sigma}$). The MT parameterisation instead proceeds by identifying parameters in one group first, and then imposing cross-group equality constraints to identify parameters in other groups \citep{Wu2016a}.
+In deriving our novel 11-item scale, we construct two items for the BCS cohort based on questions that are not in the original Rutter scale -- namely those concerning "headaches/stomachaches" and "tantrums" (see Appendix \autoref{asec:scales} above for details). Concerns might arise that introducing these items might somewhat invalidate our main conclusions, rather than provide additional informational content on children's externalising and internalising behaviours and symptoms.
 
-\subsection{Identification of models with different levels of invariance}
+In fact, exploratory factor analysis (on both on the full Rutter and SDQ scales and on the 11-item subscale) shows that these items, numbered 5 and 11, perform poorly and exhibit relatively low factor loadings. As a robustness check, we replicate the main results of the paper by excluding them from the subscale.
 
-In the case where available measures are continuous, MI analysis is straightforward \citep{vandeSchoot2012}. The hierarchy of the nested models usually proceeds by testing loadings first, and then intercepts (to establish \emph{metric} and \emph{scalar} invariance -- see \citealp{Vandenberg2000a}).
+Panel C of \autoref{tab:fit} shows that the measurement invariance analysis yields the same qualitative results once these two items are included. \autoref{fig:scatter_no511} shows a scatter plot of the factor scores obtained from the factor model with and without items 5 and 11. They exhibit very high correlation, thus indicating that our results in \autoref{sec:results} would not substantially change if we omitted the two items with the least informational content.
 
-Invariance of systems with categorical measures, such as the scale we examine in this paper, is less well understood. In particular, the lack of explicit location and scale in the measures introduces an additional set of parameters compared to the continuous case (thresholds $\tau$). This makes identification reliant on more stringent normalisations. A first comprehensive approach for categorical measures was proposed by \cite{Millsap2004}. New identification results in \cite{Wu2016a} indicate that, in the categorical case, invariance properties cannot be examined by simply restricting one set of parameters at a time. This is because the identification conditions used in the configural baseline model, while being minimally restrictive on their own, become binding once certain additional restrictions are imposed. In light of this, they propose models that identify structures of different invariance levels. They find that some restrictions cannot be tested alone against the configural model, because the models they generate are statistically equivalent. This is true of loading invariance, and also of threshold invariance in the case when the number of categories of each ordinal item is 3 or less. Furthermore, they suggest that comparison of both latent means and variances requires invariance in loadings, thresholds, and intercepts. A summary of the approach by \cite{Wu2016a} is available in \autoref{tab:invparam}.
+
+
+
+
+
 
 
 

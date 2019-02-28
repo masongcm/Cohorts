@@ -359,6 +359,58 @@ table <- summtab_estimall
 \end{table}
 
 
+\begin{table}[ht]
+\centering\setstretch{1.2} \footnotesize
+\caption{Parameterisations for measurement invariance}\label{tab:invparam}
+\begin{tabular}{L{.18\textwidth}L{.4\textwidth}L{.45\textwidth}}
+\toprule
+\textbf{Invariance level}     & \textbf{Description} & \textbf{Restrictions} \\ \midrule \\
+Configural (WE{\textTheta})   
+    & \bi[label=$\cdot$] \item Minimally restrictive model for identification \ei
+    & For all groups: $\begin{array}{|l} \text{diag}(\bm{\Phi}) = \bm{I} \\
+                      \bm{\kappa}=\bm{0} \\
+                      \bm{\nu}=\bm{0} \\
+                      \text{diag}(\bm{\Psi})=\bm{I} \end{array}$
+                      \\ \\
+Threshold invariance
+    & \bi[label=$\cdot$] \item Restricts thresholds $\tau$ to be equal across groups
+                  \item Statistically equivalent to configural (when measures have 3 categories or less)\ei
+    & $\tau_{1,ci} = \tau_{1,c^\prime i}$ for all items, $\forall c, c^\prime$
+                      \newline $\tau_{2,ci} = \tau_{2,c^\prime i}$ for non-binary items, $\forall c, c^\prime$
+                      \newline For all groups: $\begin{array}{|l} \text{diag}(\bm{\Phi}) = \bm{I} \\ 
+                                                \bm{\kappa}=\bm{0} \end{array}$
+                      \newline For ref. group $A$: $\;\begin{array}{|l} \bm{\nu}_A=\bm{0} \\
+                                                  \text{diag}(\bm{\Sigma}_A)=\bm{I} \end{array}$
+                   \\ \\
+Threshold and Loading invariance
+    & \bi[label=$\cdot$] \item Restricts thresholds $\tau$ and loadings $\lambda$ to be equal across groups
+                  \item Allows comparison of latent factor variances \ei
+    & $\tau_{1,ci} = \tau_{1,c^\prime i}$ for all items, $\forall c, c^\prime$
+                      \newline $\tau_{2,ci} = \tau_{2,c^\prime i}$ for non-binary items, $\forall c, c^\prime$
+                      \newline $\lambda_{ci} = \lambda_{c^\prime i}$ for all items, $\forall c, c^\prime$
+                      \newline For all groups: $\bm{\kappa}=\bm{0}$
+                      \newline For ref. group $A$: $\;\begin{array}{|l} \bm{\nu}_A=\bm{0} \\
+                                                  \text{diag}(\bm{\Sigma}_A)=\bm{I} \\
+                                                  \text{diag}(\bm{\Phi}_A) = \bm{I} \end{array}$ 
+                   \\ \\
+Threshold, Loading, and Intercept invariance
+    & \bi[label=$\cdot$] \item Restricts thresholds $\tau$ and loadings $\lambda$ to be equal across groups
+                  \item Restricts intercepts $\nu$ to zero in both groups
+                  \item Allows comparison of latent factor variances \emph{and} means \ei
+    & $\tau_{1,ci} = \tau_{1,c^\prime i}$ for all items, $\forall c, c^\prime$
+                      \newline $\tau_{2,ci} = \tau_{2,c^\prime i}$ for non-binary items, $\forall c, c^\prime$
+                      \newline $\lambda_{ci} = \lambda_{c^\prime i}$ for all items, $\forall c, c^\prime$
+                      \newline For all groups: $\bm{\nu}=\bm{0}$
+                      \newline For ref. group $A$: $\;\begin{array}{|l} \bm{\kappa}_A=\bm{0} \\
+                                                  \text{diag}(\bm{\Sigma}_A)=\bm{I} \\
+                                                  \text{diag}(\bm{\Phi}_A) = \bm{I} \end{array}$ 
+\\ \\ \bottomrule
+\end{tabular}
+\justify {\scriptsize \emph{Notes}: Adapted from \cite{Wu2016a}.
+\par}
+\end{table}
+
+
 \begin{table}
 \caption{Quantile differences in scores}\label{tab:iqdiff}
 \centering\setstretch{1.2}\footnotesize
@@ -713,7 +765,7 @@ loadtab %>%
   add_header_above(c(" " = 2,  "BCS (1970)" = 2, "MCS (2000/1)" = 2))
 
 @
-\justify {\scriptsize \emph{Notes}: The table displays the factor loadings obtained from exploratory factor analysis (EFA) on our novel scale, separately by cohort. The EFA is based on the decomposition of the polychoric correlation matrix, and uses weighted least squares and oblimin rotation.
+\justify {\scriptsize \emph{Notes}: The table displays the factor loadings obtained from exploratory factor analysis (EFA) on our novel scale, separately by cohort. The EFA is performed decomposing the polychoric correlation matrix of the items and using weighted least squares, and the solution is rescaled using oblique factor rotation (\emph{oblimin}). We use the \textbf{\textsf{R}} package \texttt{psych}, version 1.8.4 \citep{Revelle2018}.
 \par}
 \end{table}
 
@@ -753,7 +805,7 @@ bcs_loadtab_all %>%
         col.names = c("Item", "Title", "Factor 1", "Factor 2", "Factor 3", "Factor 4 ", "Factor 5"))
 
 @
-\justify {\scriptsize \emph{Notes}: The table displays the factor loadings obtained from exploratory factor analysis (EFA) on the full set of Rutter items from the BCS. The EFA is based on the decomposition of the polychoric correlation matrix, and uses weighted least squares and oblimin rotation. Items denoted by * are used in the 11-item scale, and items denoted by ** are combined in the 11-item scale.
+\justify {\scriptsize \emph{Notes}: The table displays the factor loadings obtained from exploratory factor analysis (EFA) on the full set of Rutter items from the BCS. Items denoted by * are used in the 11-item scale. The EFA is performed decomposing the polychoric correlation matrix of the items and using weighted least squares, and the solution is rescaled using oblique factor rotation (\emph{oblimin}). We use the \textbf{\textsf{R}} package \texttt{psych}, version 1.8.4 \citep{Revelle2018}.
 \par}
 \end{table}
 
@@ -776,64 +828,12 @@ mcs_loadtab_all %>%
         col.names = c("Item", "Title", "Factor 1", "Factor 2", "Factor 3", "Factor 4 ", "Factor 5"))
 
 @
-\justify {\scriptsize \emph{Notes}: The table displays the factor loadings obtained from exploratory factor analysis (EFA) on the full set of SDQ items from the BCS. The EFA is based on the decomposition of the polychoric correlation matrix, and uses weighted least squares and oblimin rotation. Items denoted by * are used in the 11-item scale.
+\justify {\scriptsize \emph{Notes}: The table displays the factor loadings obtained from exploratory factor analysis (EFA) on the full set of SDQ items from the BCS. Items denoted by * are used in the 11-item scale. The EFA is performed decomposing the polychoric correlation matrix of the items and using weighted least squares, and the solution is rescaled using oblique factor rotation (\emph{oblimin}). We use the \textbf{\textsf{R}} package \texttt{psych}, version 1.8.4 \citep{Revelle2018}.
 \par}
 \end{table}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{table}[ht]
-\centering\setstretch{1.2} \footnotesize
-\caption{Parameterisations for measurement invariance}\label{tab:invparam}
-\begin{tabular}{L{.18\textwidth}L{.45\textwidth}L{.3\textwidth}}
-\toprule
-\textbf{Invariance level}     & \textbf{Description} & \textbf{Restrictions} \\ \midrule \\
-Configural (WE{\textTheta})   
-    & \bi[label=$\cdot$] \item Minimally restrictive model for identification \ei
-    & For all groups: $\begin{array}{|l} \text{diag}(\bm{\Phi}) = \bm{I} \\
-                      \bm{\kappa}=\bm{0} \\
-                      \bm{\nu}=\bm{0} \\
-                      \text{diag}(\bm{\Psi})=\bm{I} \end{array}$
-                      \\ \\
-Threshold invariance
-    & \bi[label=$\cdot$] \item Restricts thresholds $\tau$ to be equal across groups
-                  \item Statistically equivalent to configural (when measures have 3 categories or less)\ei
-    & $\tau_{1,ci} = \tau_{1,c^\prime i}$ for all items, $\forall c, c^\prime$
-                      \newline $\tau_{2,ci} = \tau_{2,c^\prime i}$ for non-binary items, $\forall c, c^\prime$
-                      \newline For all groups: $\begin{array}{|l} \text{diag}(\bm{\Phi}) = \bm{I} \\ 
-                                                \bm{\kappa}=\bm{0} \end{array}$
-                      \newline For ref. group $A$: $\;\begin{array}{|l} \bm{\nu}_A=\bm{0} \\
-                                                  \text{diag}(\bm{\Sigma}_A)=\bm{I} \end{array}$
-                   \\ \\
-Threshold and Loading invariance
-    & \bi[label=$\cdot$] \item Restricts thresholds $\tau$ and loadings $\lambda$ to be equal across groups
-                  \item Allows comparison of latent factor variances \ei
-    & $\tau_{1,ci} = \tau_{1,c^\prime i}$ for all items, $\forall c, c^\prime$
-                      \newline $\tau_{2,ci} = \tau_{2,c^\prime i}$ for non-binary items, $\forall c, c^\prime$
-                      \newline $\lambda_{ci} = \lambda_{c^\prime i}$ for all items, $\forall c, c^\prime$
-                      \newline For all groups: $\bm{\kappa}=\bm{0}$
-                      \newline For ref. group $A$: $\;\begin{array}{|l} \bm{\nu}_A=\bm{0} \\
-                                                  \text{diag}(\bm{\Sigma}_A)=\bm{I} \\
-                                                  \text{diag}(\bm{\Phi}_A) = \bm{I} \end{array}$ 
-                   \\ \\
-Threshold, Loading, and Intercept invariance
-    & \bi[label=$\cdot$] \item Restricts thresholds $\tau$ and loadings $\lambda$ to be equal across groups
-                  \item Restricts intercepts $\nu$ to zero in both groups
-                  \item Allows comparison of latent factor variances \emph{and} means \ei
-    & $\tau_{1,ci} = \tau_{1,c^\prime i}$ for all items, $\forall c, c^\prime$
-                      \newline $\tau_{2,ci} = \tau_{2,c^\prime i}$ for non-binary items, $\forall c, c^\prime$
-                      \newline $\lambda_{ci} = \lambda_{c^\prime i}$ for all items, $\forall c, c^\prime$
-                      \newline For all groups: $\bm{\nu}=\bm{0}$
-                      \newline For ref. group $A$: $\;\begin{array}{|l} \bm{\kappa}_A=\bm{0} \\
-                                                  \text{diag}(\bm{\Sigma}_A)=\bm{I} \\
-                                                  \text{diag}(\bm{\Phi}_A) = \bm{I} \end{array}$ 
-\\ \\ \bottomrule
-\end{tabular}
-\justify {\scriptsize \emph{Notes}: Adapted from \cite{Wu2016a}.
-\par}
-\end{table}
-
 
 
 \begin{landscape}

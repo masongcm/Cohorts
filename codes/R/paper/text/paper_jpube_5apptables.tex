@@ -1,5 +1,28 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{sidewaystable}[ht!]
+\caption{Description of harmonised variables}\label{tab:harmvar}
+\centering\setstretch{1.2} \scriptsize
+\begin{tabular}{L{.18\textwidth}C{.1\textwidth}L{.3\textwidth}L{.75\textwidth}}
+\toprule
+Variable Group & Age & Variable & Note \\
+\midrule
+Maternal education & 5 & Post-compulsory schooling$^d$ & Whether mother continued schooling past the compulsory age, based on her year of birth. School leaving age in England was changed from 14 to 15 in 1947 and from 15 to 16 in 1972. \\ \\[-1.5em]
+Maternal employment & 5 & Employed$^d$ & Includes full time and part time \\ \\[-1.5em]
+Father occupation & 5 & White collar (I-IIINM)$^d$ \newline Blue collar (IIIM-V-other)$^d$ \newline No father figure$^d$ & Based on father's Registrar General Social Class classification of occupations. White collar includes I (Professional), II (Managerial/technical), IIINM (Skilled non-manual). Blue collar includes IIIM (Skilled manual), IV (Partly skilled), V (Unskilled), Other, Unemployed, and Armed forces. No father figure is a dummy for children whose father does not live in the same household. Father's social class was recorded using the SOC2000 classification in MCS. We use the derivation matrices kindly provided by David Pevalin at ISER (available at https://www.iser.essex.ac.uk/archives/nssec/derivations-of-social-class) to map SOC2000 into Registrar General Social Class. \\ \\[-1.5em]
+Maternal background & 0/5 & Mother's age at birth \newline Mother's height (cm) \newline Mother unmarried at birth$^d$ \newline Child nonwhite ethnicity$^d$  \newline Number of children in HH & All variables are self-reported by the mother at birth, except for number of children in household (at five years old). Unmarried is only based on marital status, and includes cohabitation. \\ \\[-1.5em]
+Pregnancy & 0 & Child is firstborn$^d$ \newline Number of previous stillbirths \newline Mother smoked in pregnancy$^d$ \newline Preterm birth (under 37 weeks gestation)$^d$ \newline (log) birth weight (kg) & Parity, stillbirths, and smoking are self-reported by the mother. Gestational length and birth weight are from hospital records. \\ \\[-1.5em]
+Cognitive skills & 5 & & Based on test batteries administered to the cohort member at five. Three tests are used for BCS children: Copy Designs (child is asked to copy simple designs adjacently), Human Figure Drawing (child draws an entire human figure), English Picture Vocabulary Test (child identifies the picture referring to a word among four pictures). Three tests are used in the MCS: BAS Naming Vocabulary (child is shown a series of pictures and asked to name it), BAS Picture Similarity (child is shown a row of 4 pictures on a page and places a card with a fifth picture under the one most similar to it), BAS Pattern Construction (child constructs a design by putting together flat squares or solid cubes with patterns on each side).
+ \\ \\[-1.5em]
+Adolescent outcomes & 16 (BCS) \newline 14 (MCS) & Child tried smoking$^d$ \newline Body Mass Index (BMI) & Smoking is self reported by the child. Height and weight are taken as part of a medical examination. \\ \\[-1.5em]
+Adult outcomes (BCS only) & 34 \newline 42 \newline 34, 42 & Higher education$^d$ \newline Employed$^d$ \newline (log) gross weekly pay & Higher education is defined as having a university degree or its vocational equivalent. It corresponds to level 4 or 5 in the National Vocational Qualification (NVQ) equivalence. Employed is a dummy for being in paid employment or self-employment, either full or part time. Gross weekly pay is weekly pre-tax pay from the respondent's main activity, conditional on being a paid employee. \\
+\bottomrule
+\end{tabular}
+\justify {\scriptsize \emph{Notes}: Variables denoted by $^d$ are binary or categorical.
+\par}
+\end{sidewaystable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{table}[ht!]
 \caption{Behavioural screening scales in the BCS and MCS five-year surveys}\label{tab:scales}
@@ -73,30 +96,3 @@
 \justify {\scriptsize \emph{Notes}: Items denoted by $^+$ are positively worded in the original scale. Items denoted by $^*$ are retained in the new 11-item comparable scale.
 \par}
 \end{table}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{landscape}
-\begin{table}[ht!]
-\caption{Description of harmonised variables}\label{tab:harmvar}
-\centering\setstretch{1.2} \scriptsize
-\begin{tabular}{L{.18\textwidth}C{.1\textwidth}L{.3\textwidth}L{.75\textwidth}}
-\toprule
-Variable Group & Age & Variable & Note \\
-\midrule
-Maternal education & 5 & Post-compulsory schooling$^d$ & Whether mother continued schooling past the compulsory age, based on her year of birth. School leaving age in England was changed from 14 to 15 in 1947 and from 15 to 16 in 1972. \\ \\[-1.5em]
-Maternal employment & 5 & Employed$^d$ & Includes full time and part time \\ \\[-1.5em]
-Father occupation & 5 & White collar (I-IIINM)$^d$ \newline Blue collar (IIIM-V-other)$^d$ \newline No father figure$^d$ & Based on father's Registrar General Social Class classification of occupations. White collar includes I (Professional), II (Managerial/technical), IIINM (Skilled non-manual). Blue collar includes IIIM (Skilled manual), IV (Partly skilled), V (Unskilled), Other, Unemployed, and Armed forces. No father figure is a dummy for children whose father does not live in the same household. Father's social class was recorded using the SOC2000 classification in MCS. We use the derivation matrices kindly provided by David Pevalin at ISER (available at https://www.iser.essex.ac.uk/archives/nssec/derivations-of-social-class) to map SOC2000 into Registrar General Social Class. \\ \\[-1.5em]
-Maternal background & 0/5 & Mother's age at birth \newline Mother's height (cm) \newline Mother unmarried at birth$^d$ \newline Child nonwhite ethnicity$^d$  \newline Number of children in HH & All variables are self-reported by the mother at birth, except for number of children in household (at five years old). Unmarried is only based on marital status, and includes cohabitation. \\ \\[-1.5em]
-Pregnancy & 0 & Child is firstborn$^d$ \newline Number of previous stillbirths \newline Mother smoked in pregnancy$^d$ \newline Preterm birth (under 37 weeks gestation)$^d$ \newline (log) birth weight (kg) & Parity, stillbirths, and smoking are self-reported by the mother. Gestational length and birth weight are from hospital records. \\ \\[-1.5em]
-Cognitive skills & 5 & & Based on test batteries administered to the cohort member at five. Three tests are used for BCS children: Copy Designs child is asked to copy simple designs adjacently), Human Figure Drawing (child draws an entire human figure), English Picture Vocabulary Test (child identifies the picture referring to a word among four pictures). Three \emph{different} tests are used in the MCS: BAS Naming Vocabulary (child is shown a series of pictures and asked to name it), BAS Picture Similarity (child is shown a row of 4 pictures on a page and places a card with a fifth picture under the one most similar to it), BAS Pattern Construction (child constructs a design by putting together flat squares or solid cubes with patterns on each side).
-
- \\ \\[-1.5em]
-Adolescent outcomes & 16 (BCS) \newline 14 (MCS) & Child tried smoking$^d$ \newline Body Mass Index (BMI) & Smoking is self reported by the child. Height and weight are taken as part of a medical examination. \\ \\[-1.5em]
-Adult outcomes (BCS only) & 34 \newline 42 \newline 34, 42 & Higher education$^d$ \newline Employed$^d$ \newline (log) gross weekly pay & Higher education is defined on having a university degree or its vocational equivalent. It corresponds to level 4 or 5 in the National Vocational Qualification (NVQ) equivalence. Employed is a dummy for being in paid employment or self-employment, either full or part time. Gross weekly pay is weekly pre-tax pay from the respondent's main activity, conditional on being a paid employee. \\
-\bottomrule
-\end{tabular}
-\justify {\scriptsize \emph{Notes}: Variables denoted by $^d$ are binary or categorical.
-\par}
-\end{table}
-\end{landscape}
-

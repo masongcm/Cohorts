@@ -29,6 +29,7 @@ library(stringr)
 
 dir_data  <- here("rdata/")
 dir_syntax  <- here("codes/R/syntax/")
+dir_stata_estimates  <- here("stata_estimates/")
 
 # define printfit function
 printfit <- function(m) {

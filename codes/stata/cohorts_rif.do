@@ -25,6 +25,7 @@ global temp   		"$data/temp"
 global proj			"/Users/giacomomason/Documents/Projects/CohortStudies"
 global dofiles  	"$proj/codes/stata"
 global tables  		"$proj/tables"
+global stata_estimates  		"$proj/stata_estimates"
 global graphs  		"$proj/graphs"
 global suppdata  	"$proj/suppdata"
 global rdata  		"$proj/rdata"
@@ -53,19 +54,46 @@ local decvars `decvars_med' `decvars_mem' `decvars_ses' `decvars_mch' `decvars_p
 local numdv : list sizeof local(decvars);
 di "`numdv'";
 
+/* rescale EXT/INT to be all positive */
+replace EXT = EXT+100;
+replace INT = INT+100;
+su EXT if sex == 1 & cohort == 1, det;
+su EXT if sex == 1 & cohort == 2, det;
+
+
 /* RIF decompositions */
+
+log using "$stata_estimates/riflog.txt", text replace;
+local glab1 "M";
+local glab2 "F";
+
+local iq1 = "25 75";
+local iq2 = "50 90";
+local iq3 = "10 50";
+
 local skill EXT INT;
 foreach s of local skill {;
-	forvalues g = 1(1)2 {;
-	preserve;
-	qui oaxaca_rif `s' `decvars' if sex == `g', by(cohort) wgt(1) rif(iqr(.75 .25)) rwlogit(`decvars');
-	mat R = r(table);
-	mat R = R';
+	forvalues q = 1(1)3 {;
+	local qstr = subinstr("`iq`q''"," ","",.);
+		forvalues g = 1(1)2 {;
+		preserve;
+		qui log on;
+		
+		di "";
+		di "";
+		di "***********************************************";
+		di "RIF Decomposition estimates for `s' - `glab`g''";
+		di "";
+		 
+		/*bootstrap:oaxaca_rif `s' `decvars' if sex == `g', by(cohort) wgt(1) rif(iqr(`iq`q'')) rwlogit(`decvars');*/
+		oaxaca_rif `s' `decvars' if sex == `g', by(cohort) wgt(1) rif(iqr(`iq`q'')) rwlogit(`decvars');
+		mat R = r(table);
+		qui log off;
+		mat R = R';
+		xsvmat R, norestore names(col) roweqnames(eqname) rownames(varname);
+		export delimited "$stata_estimates/rif_`s'_`glab`g''_`qstr'.csv", replace;
 	
-	clear;
-	xsvmat R, norestore names(col) roweqnames(eqname) rownames(varname);
-	export delimited "$tables/rif_`s'_`g'.csv", replace;
-
-	restore;
+		restore;
+		};
 	};
 };

@@ -102,7 +102,7 @@
 \title{Inequality in socioemotional skills: a cross-cohort comparison}
 \author{Orazio Attanasio \hspace{10pt} Richard Blundell \\  Gabriella Conti \hspace{10pt} Giacomo Mason}
 \affil{\emph{Institute for Fiscal Studies} \\ \emph{Department of Economics, University College London}}
-\date{December 2018}
+\date{\today}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 

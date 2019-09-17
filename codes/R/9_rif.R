@@ -54,6 +54,12 @@ rif_beta_all$component <- factor(
   )
 levels(rif_beta_all$component) <- c("Total Diff.", "Composition", "Specif. Error", "Coefficient", "Reweight. Error")
 
+# common graph options
+bptheme <- theme(axis.title.x = element_blank(),
+                 axis.text.x = element_blank(), axis.line.x = element_blank(),
+                 axis.ticks=element_blank(),
+                 strip.background=element_rect(fill="white"),
+                 panel.spacing = unit(1, "lines"))
 
 # Normal BAR PLOT, by gender
 palette_5 <- c("#d95f02", "#7570b3", "#b5b1e6", "#1b9e77", "#99c9bc")
@@ -66,21 +72,14 @@ for (g in c("Males", "Females")) {
     geom_bar(stat = "identity", position = "dodge") +
     ggtitle(g) +
     geom_hline(yintercept = 0) +
-    ylab("Difference") +
+    ylab("Difference") + ylim(-.2, .4) +
     facet_grid(~ skill + iq) +
     scale_fill_manual("Component", values = palette_5) + 
     bptheme
 }
 
-
 ## ---- RIF_PLOTS_PC
 # Normal BAR PLOT, by gender, percentages
-bptheme <- theme(axis.title.x = element_blank(),
-                 axis.text.x = element_blank(), axis.line.x = element_blank(),
-                 axis.ticks=element_blank(),
-                 strip.background=element_rect(fill="white"),
-                 panel.spacing = unit(1, "lines"))
-
 palette_4 <- c("#7570b3", "#b5b1e6", "#1b9e77", "#99c9bc")
 rif_plots_pc <- list()
 for (g in c("Males", "Females")) {

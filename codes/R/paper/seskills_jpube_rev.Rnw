@@ -172,6 +172,7 @@ read_chunk(here("codes/R/6_graphs_item.R"))
 read_chunk(here("codes/R/7_ineq_quantiles.R"))
 read_chunk(here("codes/R/8_regs_dep.R"))
 read_chunk(here("codes/R/8_regs_outc.R"))
+read_chunk(here("codes/R/9_rif.R"))
 read_chunk(here("codes/R/99_auxfun.R"))
 
 @
@@ -273,6 +274,10 @@ read_chunk(here("codes/R/99_auxfun.R"))
 # make item-level inequality graphs
 @
 
+<<RIF_PLOTS_PREP, dependson="SELECTDATA">>=
+# make RIF decomposition plots
+@
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 <<REGS_DEP, dependson="SELECTDATA">>=
@@ -286,10 +291,6 @@ read_chunk(here("codes/R/99_auxfun.R"))
 <<REGS_OUTC_TAB, dependson="REGS_OUTC">>=
 # make tables from regressions
 @
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -638,6 +639,15 @@ gridExtra::grid.arrange(fi$ineqlist[[1]],fi$ineqlist[[2]],
 @
 \caption{Skill inequality by father's occupation}\label{fig:ineqfsc}
 \justify {\scriptsize \emph{Notes}: The figure shows unconditional mean values of socioemotional skills scores by gender, cohort, and father's occupation at age five. Father's occupation is based on Registrar General's social class, with classes I to III Non Manual being `White collar' and classes III Manual to V (plus `other') being `Blue collar'. `No father figure' is defined as absence of a male figure living in the household. The four panels on top present mean and 95\% confidence intervals. Given that we cannot compare means of skills, all scores are normalised to take value zero for the `Blue collar' category, so that the gradient is emphasised. The bottom two panels present the unconditional distribution of father's occupation.
+\par}
+\end{figure}
+
+\begin{figure}
+<<RIF_PLOTS, dependson="RIF_PLOTS_PREP", dev='tikz', fig.height=8, fig.width=10, out.width='\\linewidth'>>=
+gridExtra::grid.arrange(rif_plots[[1]],rif_plots[[2]], ncol=1, nrow=2)
+@
+\caption{RIF decomposition of quantile differences}\label{fig:rif}
+\justify {\scriptsize \emph{Notes}: 
 \par}
 \end{figure}
 

@@ -13,8 +13,8 @@ capture macro drop _all
 capture log close
 set more off
 set scheme s1color
-set seed 42			/* for random reweighting */
-
+set seed 4129736			/* for random reweighting */
+set matsize 10000
 
 global data 		"/Users/giacomomason/Documents/Data"
 global bcsraw   	"$data/BCS/raw"
@@ -54,6 +54,19 @@ local decvars `decvars_med' `decvars_mem' `decvars_ses' `decvars_mch' `decvars_p
 local numdv : list sizeof local(decvars);
 di "`numdv'";
 
+/* create interactions */
+local decvars_int `decvars';
+local nvar : word count `decvars';
+forval i = 1/`nvar' {;
+  forval j = 1/`=`i'-1' {;
+    local x : word `i' of `decvars';
+    local y : word `j' of `decvars';
+    generate `x'_X_`y' = `x' * `y';
+	local decvars_int `decvars_int' `x'_X_`y';
+  };
+};
+
+
 /* rescale EXT/INT to be all positive */
 replace EXT = EXT+100;
 replace INT = INT+100;
@@ -79,21 +92,36 @@ foreach s of local skill {;
 		preserve;
 		qui log on;
 		
+		/* normal SEs */
 		di "";
 		di "";
 		di "***********************************************";
-		di "RIF Decomposition estimates for `s' - `glab`g''";
+		di "RIF Decomposition estimates for `s' - `glab`g'' - NORMAL STANDARD ERRORS";
 		di "";
-		 
-		/*bootstrap:oaxaca_rif `s' `decvars' if sex == `g', by(cohort) wgt(1) rif(iqr(`iq`q'')) rwlogit(`decvars');*/
-		oaxaca_rif `s' `decvars' if sex == `g', by(cohort) wgt(1) rif(iqr(`iq`q'')) rwlogit(`decvars');
+		oaxaca_rif `s' `decvars' if sex == `g', by(cohort) wgt(1) rif(iqr(`iq`q'')) rwlogit(`decvars_int') relax noisily;
 		mat R = r(table);
 		qui log off;
 		mat R = R';
 		xsvmat R, norestore names(col) roweqnames(eqname) rownames(varname);
 		export delimited "$stata_estimates/rif_`s'_`glab`g''_`qstr'.csv", replace;
-	
 		restore;
+		
+		
+		/* bootstrap SEs */
+		di "";
+		di "";
+		di "***********************************************";
+		di "RIF Decomposition estimates for `s' - `glab`g'' - BOOTSTRAP STANDARD ERRORS";
+		di "";
+		preserve;
+		bootstrap, reps(1000) nodrop: oaxaca_rif `s' `decvars' if sex == `g', by(cohort) wgt(1) rif(iqr(`iq`q'')) rwlogit(`decvars_int') relax noisily;
+		mat R = r(table);
+		qui log off;
+		mat R = R';
+		xsvmat R, norestore names(col) roweqnames(eqname) rownames(varname);
+		export delimited "$stata_estimates/rif_`s'_`glab`g''_`qstr'_boot.csv", replace;
+		restore;
+		
 		};
 	};
 };

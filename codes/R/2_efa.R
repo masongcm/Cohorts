@@ -68,7 +68,6 @@ nmcs.f <- dim(items.mcs.f)[1]
 mcscor.f <- hetcor(items.mcs.f, ML=TRUE, std.err = F)$correlations
 mcsfa.f <- fa(r=mcscor.f, nfactors=2, rotate = rotation, fm="wls")
 
-
 ## ---- MCSEFARES
 # VSS for number of factors
 ns.mcs <- nScree(mcscor)$Components
@@ -99,4 +98,50 @@ mr.mcs.ext <- fisherz2r(mean(fz.mcs.ext, na.rm=T))
 fz.mcs.int <- fz.mcs[7:11,7:11]
 mr.mcs.int <- fisherz2r(mean(fz.mcs.int, na.rm=T))
 
+
+## ---- BCSEFA_ADD
+# use only 1 factor
+bcsfa1 <- fa(r=bcscor, nfactors=1, rotate = rotation, fm="wls")
+bcsfa1.m <- fa(r=bcscor.m, nfactors=1, rotate = rotation, fm="wls")
+bcsfa1.f <- fa(r=bcscor.f, nfactors=1, rotate = rotation, fm="wls")
+# 3 factors for females
+bcsfa3.f <- fa(r=bcscor.f, nfactors=3, rotate = rotation, fm="wls")
+
+## ---- MCSEFA_ADD
+# use only 1 factor
+mcsfa1 <- fa(r=mcscor, nfactors=1, rotate = rotation, fm="wls")
+mcsfa1.m <- fa(r=mcscor.m, nfactors=1, rotate = rotation, fm="wls")
+mcsfa1.f <- fa(r=mcscor.f, nfactors=1, rotate = rotation, fm="wls")
+# 3 factors for females
+mcsfa3.f <- fa(r=mcscor.f, nfactors=3, rotate = rotation, fm="wls")
+
+loadtab <- cbind(meantab$num, meantab$title, 
+                 data.frame(cbind(
+                   bcsfa1.m$loadings,
+                   bcsfa1.f$loadings,
+                   bcsfa3.f$loadings,
+                   mcsfa1.m$loadings,
+                   mcsfa1.f$loadings,
+                   mcsfa3.f$loadings
+                 ))
+                 )
+colnames(loadtab) <- c("item", "title", 
+                       "bcs1m", "bcs1f", "bcs3f1", "bcs3f2", "bcs3f3",
+                       "mcs1m", "mcs1f", "mcs3f1", "mcs3f2", "mcs3f3"
+)
+
+loadtab %>%
+  mutate_at(vars(matches("cs")), round, 3) %>%
+  mutate_at(
+    vars(matches("cs")),
+    function(x) cell_spec(x, "latex", bold = ifelse(abs(x) > .3, TRUE, FALSE))
+    ) %>%
+  kable("latex", escape = F, booktabs = T, linesep = "", align=c('c','l','c','c','c','c','c','c','c','c','c','c'),
+        col.names = c("Item", "Title", 
+                      "Males", "Females", "Females Factor 1", "Females Factor 2", "Females Factor 3",
+                      "Males", "Females", "Females Factor 1", "Females Factor 2", "Females Factor 3"
+                      )) %>%
+  add_header_above(c(" " = 2,  
+                     "BCS (1970) - 1 factor" = 2, "BCS (1970) - 3 factors" = 3, 
+                     "MCS (2000/1) - 1 factor" = 2, "MCS (2000/1) - 3 factors" = 3))
 

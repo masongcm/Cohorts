@@ -1,3 +1,12 @@
+## ---- FA_INV_AUX_1FAC
+# robustness checks with a single factor
+c.th.4.1f <- glue::glue_collapse(readLines(paste0(dir_syntax, "c_th_4_1f.lav")), sep=" \n  ")
+tl.th.4.1f <- glue::glue_collapse(readLines(paste0(dir_syntax, "tl_th_4_1f.lav")), sep=" \n  ")
+tli.th.4.1f <- glue::glue_collapse(readLines(paste0(dir_syntax, "tli_th_4_1f.lav")), sep=" \n  ")
+
+fa.c.1f   <- cfa(c.th.4.1f, data = fadata[[1]], group = "cohortsex", estimator="wlsmv", parameterization="theta")
+fa.tl.1f   <- cfa(tl.th.4.1f, data = fadata[[1]], group = "cohortsex", estimator="wlsmv", parameterization="theta",group.equal='loadings')
+fa.tli.1f <- cfa(tli.th.4.1f, data = fadata[[1]], group = "cohortsex", estimator="wlsmv", parameterization="theta", group.equal='loadings')
 
 ## ---- FA_INV_AUX_SYN
 # syntax for robustness checks

@@ -238,6 +238,10 @@ read_chunk(here("codes/R/99_auxfun.R"))
 # robustness checks without items 5-11
 @
 
+<<FA_INV_AUX_1FAC>>=
+# robustness checks with 1 factor
+@
+
 <<FA_FIT>>=
 # assemble fit indices into matrices
 @
@@ -1005,6 +1009,47 @@ print(xtable(table,
 \end{table}
 \end{landscape}
 
+\begin{landscape}
+\begin{table}[ht]
+\caption{Measurement invariance fit comparison -- single factor}\label{tab:fit_1f}
+\centering\setstretch{1.2} \scriptsize
+<<FA_FIT_RES_1F, dependson="FA_FIT", results='asis'>>=
+require(xtable)
+
+# MAKE FIT TABLES
+fit_1f <- afitab(list(fa.c.1f, fa.tl.1f, fa.tli.1f), 
+                 c("Configural", 
+                   "Threshold + Loading Inv", 
+                   "Thr. + Load. + Intercept Inv")
+)
+
+print(xtable(fit_1f,
+                    align="L{0cm}L{.22\\textwidth}C{.08\\textwidth}C{.08\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.07\\textwidth}C{.07\\textwidth}C{.06\\textwidth}C{.06\\textwidth}C{.06\\textwidth}",
+                    digits = 4
+                    ),
+             size="\\footnotesize",
+             include.rownames=F,
+             include.colnames=F,
+             booktabs = T,
+             add.to.row = list(pos = c(list(0)),
+                              command = c(
+                              # header
+            "& & \\multicolumn{6}{c}{\\textbf{Absolute fit}} & \\multicolumn{6}{c}{\\textbf{Relative fit}} 
+                  \\\\ \\cmidrule(lr){3-8} \\cmidrule(lr){9-14}
+            Model & Num. par. & $\\chi^2$ & RMSE & SRMR & MFI & CFI & G-hat & $\\chi^2$ $p$ & \\textDelta RMSE & \\textDelta SRMR &  \\textDelta MFI & \\textDelta CFI & \\textDelta G-hat \\\\ 
+& (1) & (2) & (3) & (4) & (5) & (6) & (7) & (8) & (9) & (10) & (11) & (12) & (13) \\\\ \\midrule"
+                              )),
+             sanitize.text.function = function(x){x},
+             sanitize.rownames.function = function(x){""}, # to not print row numbers
+             tabular.environment = "tabular", width = "\\textwidth",
+             floating = FALSE
+)
+
+@
+\justify {\scriptsize \emph{Notes}: The table presents fit indices for models of different invariance levels, following \cite{Wu2016a} Col. (1) displays the number of estimated parameters for each model. Col. (2) and (8) present the value of the $\chi^2$ statistic and the pvalue of the test of equality with respect to the configural model. Col. (3)-(7) and (9)-(13) present alternative fit indices (AFIs), in absolute values and differences from the configural model respectively. RMSE = Root mean squared error of approximation; SRMR = standardised root mean residual; MFI = McDonald non-centrality index; CFI = comparative fit index; G-hat = gamma-hat.
+\par}
+\end{table}
+\end{landscape}
 
 \clearpage
 \begin{table}

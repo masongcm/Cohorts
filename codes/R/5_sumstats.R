@@ -29,7 +29,7 @@ sumlabs <- c(
              "Mother age", "Mother height (m)", "Unmarried", "Nonwhite child",
              "Firstborn child", "Number previous stillbirths", "Mother smoked in pregnancy", "Preterm birth",
              "Missing gest. age", "Birthweight (kg)",
-             "Number of children in HH",
+             "Number of children in the household",
              "Mother has post-compulsory education", "Mother is employed",
              "Father occupation: blue collar", "No father figure" 
 )
